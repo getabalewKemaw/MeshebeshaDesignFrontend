@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { Mail, Lock, Shield, Loader2, ArrowRight } from "lucide-react";
 
 export default function AdminSignInPage() {
   const router = useRouter();
@@ -11,11 +12,13 @@ export default function AdminSignInPage() {
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
       const { error } = await authClient.emailOtp.sendVerificationOtp({
@@ -24,9 +27,10 @@ export default function AdminSignInPage() {
       });
 
       if (error) {
-        setError(error.message || "Failed to send OTP");
+        setError(error.message || "Failed to send OTP. Please check if this is an admin email.");
       } else {
         setOtpSent(true);
+        setSuccess("Verification code sent to your email!");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -41,23 +45,40 @@ export default function AdminSignInPage() {
     setError("");
 
     try {
-      const { data, error } = await authClient.signIn.emailOtp({
+      const { error } = await authClient.signIn.emailOtp({
         email,
         otp,
       });
 
       if (error) {
-        setError(error.message || "Invalid OTP");
-      } else if (data) {
-        // Check if user has admin role
-        const session = await authClient.getSession();
-        if (session.data?.user.role !== "admin") {
-          setError("Access denied. Admin privileges required.");
-          await authClient.signOut();
-        } else {
-          // Redirect to home for now (no admin dashboard yet)
-          router.push("/");
-        }
+        setError(error.message || "Invalid OTP code");
+        return;
+      }
+
+      // Check if user has admin role
+      const session = await authClient.getSession();
+      
+      if (!session.data?.user) {
+        setError("Failed to verify session");
+        return;
+      }
+
+      if (session.data.user.role !== "admin") {
+        setError("Access denied. Admin privileges required.");
+        await authClient.signOut();
+        return;
+      }
+
+      // Check if 2FA is enabled
+      if (session.data.user.twoFactorEnabled) {
+        // Redirect to 2FA verification
+        router.push("/auth/verify-2fa");
+      } else {
+        // First time admin login - redirect to enable 2FA
+        setSuccess("Login successful! Please set up 2FA for security.");
+        setTimeout(() => {
+          router.push("/admin/dashboard");
+        }, 1500);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -67,72 +88,100 @@ export default function AdminSignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-700 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-700 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+        {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-            <span className="text-3xl">👑</span>
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full mb-4 shadow-lg">
+            <Shield className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Admin Portal
           </h1>
           <p className="text-gray-600">
-            Sign in with your admin credentials
+            Secure admin access with OTP verification
           </p>
         </div>
 
+        {/* Error Message */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-            {error}
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
+            <p className="text-sm font-medium">{error}</p>
           </div>
         )}
 
+        {/* Success Message */}
+        {success && (
+          <div className="bg-green-50 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded mb-6">
+            <p className="text-sm font-medium">{success}</p>
+          </div>
+        )}
+
+        {/* Email Form */}
         {!otpSent ? (
-          <form onSubmit={handleSendOTP} className="space-y-4">
+          <form onSubmit={handleSendOTP} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Admin Email
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Admin Email Address
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-transparent"
-                placeholder="getabalewkemaw@gmail.com"
-                required
-              />
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-slate-600 transition-colors"
+                  placeholder="admin@meshebeshadesign.com"
+                  required
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Only admin accounts can access this portal
+              </p>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gray-800 text-white py-3 rounded-lg font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {loading ? "Sending OTP..." : "Send Verification Code"}
+              {loading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Sending Code...
+                </>
+              ) : (
+                <>
+                  Send Verification Code
+                  <ArrowRight className="h-5 w-5" />
+                </>
+              )}
             </button>
           </form>
         ) : (
-          <form onSubmit={handleVerifyOTP} className="space-y-4">
+          <form onSubmit={handleVerifyOTP} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
+              <label className="block text-sm font-semibold text-gray-700 mb-2 text-center">
                 Enter 6-Digit Verification Code
               </label>
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => {
-                  const value = e.target.value.replace(/\D/g, "");
-                  if (value.length <= 6) {
-                    setOtp(value);
-                  }
-                }}
-                className="w-full px-4 py-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-600 focus:border-transparent text-center text-3xl tracking-[0.5em] font-bold"
-                placeholder="000000"
-                maxLength={6}
-                required
-                autoFocus
-              />
-              <p className="text-sm text-gray-600 mt-2 text-center">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                  className="w-full pl-10 pr-4 py-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-center text-3xl tracking-[0.5em] font-bold transition-colors"
+                  placeholder="000000"
+                  maxLength={6}
+                  required
+                  autoFocus
+                />
+              </div>
+              <p className="text-sm text-gray-500 mt-2 text-center">
                 Check your email for the verification code
               </p>
             </div>
@@ -140,26 +189,36 @@ export default function AdminSignInPage() {
             <button
               type="submit"
               disabled={loading || otp.length !== 6}
-              className="w-full bg-gray-800 text-white py-3 rounded-lg font-medium hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
-              {loading ? "Verifying..." : "Verify & Sign In"}
+              {loading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                <>
+                  <Shield className="h-5 w-5" />
+                  Verify & Access Admin Portal
+                </>
+              )}
             </button>
 
             <button
               type="button"
-              onClick={() => setOtpSent(false)}
-              className="w-full text-gray-600 hover:text-gray-800 text-sm"
+              onClick={() => {
+                setOtpSent(false);
+                setOtp("");
+                setSuccess("");
+              }}
+              className="w-full text-slate-600 hover:text-slate-800 text-sm font-medium"
             >
               ← Change Email
             </button>
           </form>
         )}
 
-        <p className="mt-8 text-center text-sm text-gray-600">
-          <a href="/auth/sign-in" className="text-gray-800 hover:text-gray-900 font-medium">
-            ← Back to user login
-          </a>
-        </p>
+
       </div>
     </div>
   );

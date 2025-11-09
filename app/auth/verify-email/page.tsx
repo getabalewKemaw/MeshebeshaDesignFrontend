@@ -64,8 +64,18 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-600 to-blue-600 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden p-4">
+      {/* Background Image with Overlay */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/ui/8.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-green-900/90 to-blue-900/90 backdrop-blur-sm"></div>
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 w-full max-w-md">
+        <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl p-8 border border-white/20">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
             <span className="text-3xl">📧</span>
@@ -146,6 +156,7 @@ export default function VerifyEmailPage() {
             ← Back to sign in
           </a>
         </p>
+        </div>
       </div>
     </div>
   );
