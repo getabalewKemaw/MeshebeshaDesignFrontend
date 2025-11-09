@@ -1,14 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { navLinks } from "@/constants/navlinks";
 import Button from "@/components/ui/Button";
+import { useAuth } from "@/lib/hooks/useAuth";
+import { authClient } from "@/lib/auth-client";
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, isAuthenticated, isAdmin } = useAuth();
   const [open, setOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await authClient.signOut();
+    setDropdownOpen(false);
+    router.push("/auth/sign-in");
+  };
+
+  const getUserInitials = () => {
+    if (!user?.name) return "U";
+    const names = user.name.split(" ");
+    if (names.length >= 2) {
+      return `${names[0][0]}${names[1][0]}`.toUpperCase();
+    }
+    return user.name[0].toUpperCase();
+  };
 
   return (
     <header className="sticky top-0 left-0 w-full z-50">
@@ -41,11 +76,115 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* Desktop Button */}
+          {/* Desktop Auth Section */}
           <div className="hidden md:block">
-            <Button className="bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800">
-              Sign Up
-            </Button>
+            {isAuthenticated && user ? (
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name}
+                      className="w-10 h-10 rounded-full object-cover shadow-md"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-md">
+                      {getUserInitials()}
+                    </div>
+                  )}
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-gray-900">{user.name}</p>
+                    <p className="text-xs text-gray-500 capitalize">{user.role || "User"}</p>
+                  </div>
+                  <svg
+                    className={`w-4 h-4 text-gray-600 transition-transform ${
+                      dropdownOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Dropdown Menu */}
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-2xl border border-gray-200 py-2 z-50 animate-fadeIn">
+                    <div className="px-4 py-3 border-b border-gray-200">
+                      <p className="text-sm font-semibold text-gray-900">{user.name}</p>
+                      <p className="text-xs text-gray-500 mt-1">{user.email}</p>
+                      {isAdmin && (
+                        <span className="inline-block mt-2 px-2 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">
+                          👑 Admin
+                        </span>
+                      )}
+                    </div>
+
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <span>📊</span>
+                      <span>Dashboard</span>
+                    </Link>
+
+                    <Link
+                      href="/profile"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <span>👤</span>
+                      <span>Profile</span>
+                    </Link>
+
+                    <Link
+                      href="/settings"
+                      onClick={() => setDropdownOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <span>⚙️</span>
+                      <span>Settings</span>
+                    </Link>
+
+                    {isAdmin && (
+                      <>
+                        <div className="border-t border-gray-200 my-2"></div>
+                        <Link
+                          href="/admin/dashboard"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2 text-sm text-purple-600 hover:bg-purple-50 transition-colors font-medium"
+                        >
+                          <span>👑</span>
+                          <span>Admin Panel</span>
+                        </Link>
+                      </>
+                    )}
+
+                    <div className="border-t border-gray-200 my-2"></div>
+
+                    <button
+                      onClick={handleSignOut}
+                      disabled={signingOut}
+                      className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors disabled:opacity-50"
+                    >
+                      <span>🚪</span>
+                      <span>{signingOut ? "Signing out..." : "Sign Out"}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link href="/auth/sign-in">
+                <Button className="bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800">
+                  Login
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Hamburger Menu */}
@@ -96,9 +235,63 @@ const Navbar = () => {
                   </Link>
                 </li>
               ))}
-              <Button className="bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800">
-                Sign Up
-              </Button>
+              {isAuthenticated && user ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-center gap-2 pb-2 border-b border-gray-200">
+                    {user.image ? (
+                      <img
+                        src={user.image}
+                        alt={user.name}
+                        className="w-12 h-12 rounded-full object-cover shadow-md"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+                        {getUserInitials()}
+                      </div>
+                    )}
+                    <div className="text-left">
+                      <p className="text-sm font-semibold text-gray-900">{user.name}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                  </div>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setOpen(false)}
+                    className="block text-center py-2 text-gray-700 hover:text-purple-600"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/profile"
+                    onClick={() => setOpen(false)}
+                    className="block text-center py-2 text-gray-700 hover:text-purple-600"
+                  >
+                    Profile
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      href="/admin/dashboard"
+                      onClick={() => setOpen(false)}
+                      className="block text-center py-2 text-purple-600 hover:text-purple-700 font-medium"
+                    >
+                      👑 Admin Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleSignOut}
+                    disabled={signingOut}
+                    className="w-full py-2 text-red-600 hover:text-red-700 disabled:opacity-50"
+                  >
+                    {signingOut ? "Signing out..." : "Sign Out"}
+                  </button>
+                </div>
+              ) : (
+                <Link href="/auth/sign-in" onClick={() => setOpen(false)}>
+                  <Button className="bg-zinc-900 text-white border-zinc-900 hover:bg-zinc-800">
+                    Login
+                  </Button>
+                </Link>
+              )}
             </ul>
           </div>
         )}

@@ -3,51 +3,44 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 
 export default function SignInPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [useOTP, setUseOTP] = useState(false);
-  const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-  const handleEmailPasswordSignIn = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    try {
-      const { data, error } = await authClient.signIn.email({
-        email,
-        password,
-        callbackURL: "/",
-      });
-
-      if (error) {
-        setError(error.message || "Sign in failed");
-      } else if (data?.twoFactorRedirect) {
-        // User has 2FA enabled, will be redirected automatically
-        return;
-      } else {
-        router.push("/");
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
-      const { data, error } = await authClient.emailOtp.sendVerificationOtp({
+      // First, check if user exists
+      const checkResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/check-email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const checkData = await checkResponse.json();
+
+      if (!checkData.exists) {
+        setError("No account found with this email. Please sign up first.");
+        setLoading(false);
+        return;
+      }
+
+      // If user exists, send OTP
+      const { error } = await authClient.emailOtp.sendVerificationOtp({
         email,
         type: "sign-in",
       });
@@ -56,6 +49,7 @@ export default function SignInPage() {
         setError(error.message || "Failed to send OTP");
       } else {
         setOtpSent(true);
+        setSuccess("OTP sent to your email!");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -70,7 +64,7 @@ export default function SignInPage() {
     setError("");
 
     try {
-      const { data, error } = await authClient.signIn.emailOtp({
+      const { error } = await authClient.signIn.emailOtp({
         email,
         otp,
       });
@@ -78,7 +72,7 @@ export default function SignInPage() {
       if (error) {
         setError(error.message || "Invalid OTP");
       } else {
-        router.push("/");
+        router.push("/dashboard");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -90,162 +84,149 @@ export default function SignInPage() {
   const handleGoogleSignIn = async () => {
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/",
+      callbackURL: `${window.location.origin}/dashboard`,
     });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-blue-600 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
-        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
-          Welcome Back
-        </h1>
-        <p className="text-center text-gray-600 mb-8">
-          Sign in to your MeshebeshaDesign account
-        </p>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4">
-            {error}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          {/* Logo/Title */}
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-gray-600">
+              Sign in to MeshebeshaDesign
+            </p>
           </div>
-        )}
 
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() => setUseOTP(false)}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-              !useOTP
-                ? "bg-purple-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            Password
-          </button>
-          <button
-            onClick={() => setUseOTP(true)}
-            className={`flex-1 py-2 px-4 rounded-lg font-medium transition-colors ${
-              useOTP
-                ? "bg-purple-600 text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            OTP
-          </button>
-        </div>
-
-        {!useOTP ? (
-          <form onSubmit={handleEmailPasswordSignIn} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                placeholder="you@example.com"
-                required
-              />
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
+              <p className="text-sm">{error}</p>
             </div>
+          )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                placeholder="••••••••"
-                required
-              />
+          {/* Success Message */}
+          {success && (
+            <div className="bg-green-50 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded mb-6">
+              <p className="text-sm">{success}</p>
             </div>
+          )}
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-        ) : !otpSent ? (
-          <form onSubmit={handleSendOTP} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-                placeholder="you@example.com"
-                required
-              />
-            </div>
+          {/* Email + OTP Form */}
+          {!otpSent ? (
+            <form onSubmit={handleSendOTP} className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Sending..." : "Send OTP"}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={handleOTPSignIn} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enter OTP
-              </label>
-              <input
-                type="text"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent text-center text-2xl tracking-widest"
-                placeholder="000000"
-                maxLength={6}
-                required
-              />
-              <p className="text-sm text-gray-600 mt-2">
-                Check your email for the OTP code
-              </p>
-            </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Sending OTP...
+                  </>
+                ) : (
+                  <>
+                    Send OTP
+                    <ArrowRight className="h-5 w-5" />
+                  </>
+                )}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleOTPSignIn} className="space-y-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Enter 6-Digit OTP
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-center text-2xl tracking-[0.5em] font-bold transition-colors"
+                    placeholder="000000"
+                    maxLength={6}
+                    required
+                  />
+                </div>
+                <p className="text-sm text-gray-500 mt-2 text-center">
+                  Check your email for the verification code
+                </p>
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? "Verifying..." : "Verify OTP"}
-            </button>
+              <button
+                type="submit"
+                disabled={loading || otp.length !== 6}
+                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  "Verify & Sign In"
+                )}
+              </button>
 
-            <button
-              type="button"
-              onClick={() => setOtpSent(false)}
-              className="w-full text-purple-600 hover:text-purple-700 text-sm"
-            >
-              Resend OTP
-            </button>
-          </form>
-        )}
+              <button
+                type="button"
+                onClick={() => {
+                  setOtpSent(false);
+                  setOtp("");
+                  setSuccess("");
+                }}
+                className="w-full text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+              >
+                ← Back to email
+              </button>
+            </form>
+          )}
 
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+          {/* Divider */}
+          <div className="mt-8">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-gray-500 font-medium">Or</span>
+              </div>
             </div>
           </div>
 
+          {/* Google Sign In */}
           <button
             onClick={handleGoogleSignIn}
-            className="mt-4 w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            type="button"
+            className="mt-6 w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all font-medium text-gray-700"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -265,22 +246,19 @@ export default function SignInPage() {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            <span className="font-medium text-gray-700">Sign in with Google</span>
+            Sign in with Google
           </button>
+
+          {/* Admin Link */}
+          <div className="mt-8 text-center">
+            <a 
+              href="/auth/sign-up" 
+              className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+            >
+            Don not have an account? Sign up
+            </a>
+          </div>
         </div>
-
-        <p className="mt-8 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
-          <a href="/auth/sign-up" className="text-purple-600 hover:text-purple-700 font-medium">
-            Sign up
-          </a>
-        </p>
-
-        <p className="mt-2 text-center text-sm text-gray-600">
-          <a href="/auth/admin/sign-in" className="text-purple-600 hover:text-purple-700 font-medium">
-            Admin Login
-          </a>
-        </p>
       </div>
     </div>
   );
