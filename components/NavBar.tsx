@@ -8,6 +8,8 @@ import Button from "@/components/ui/Button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
 
+import Image from "next/image";
+
 const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
@@ -33,7 +35,7 @@ const Navbar = () => {
     setSigningOut(true);
     await authClient.signOut();
     setDropdownOpen(false);
-    router.push("/auth/sign-in");
+    router.push("/");
   };
 
   const getUserInitials = () => {
@@ -85,7 +87,7 @@ const Navbar = () => {
                   className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   {user.image ? (
-                    <img
+                    <Image
                       src={user.image}
                       alt={user.name}
                       className="w-10 h-10 rounded-full object-cover shadow-md"
@@ -155,7 +157,7 @@ const Navbar = () => {
                       <>
                         <div className="border-t border-gray-200 my-2"></div>
                         <Link
-                          href="/admin/dashboard"
+                          href="/dashboard"
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-3 px-4 py-2 text-sm text-purple-600 hover:bg-purple-50 transition-colors font-medium"
                         >
@@ -239,7 +241,7 @@ const Navbar = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-center gap-2 pb-2 border-b border-gray-200">
                     {user.image ? (
-                      <img
+                      <Image
                         src={user.image}
                         alt={user.name}
                         className="w-12 h-12 rounded-full object-cover shadow-md"
@@ -270,7 +272,7 @@ const Navbar = () => {
                   </Link>
                   {isAdmin && (
                     <Link
-                      href="/admin/dashboard"
+                      href="/dashboard"
                       onClick={() => setOpen(false)}
                       className="block text-center py-2 text-purple-600 hover:text-purple-700 font-medium"
                     >
@@ -299,5 +301,4 @@ const Navbar = () => {
     </header>
   );
 };
-
 export default Navbar;
