@@ -330,7 +330,8 @@ export default function ProductMediaPage() {
 
           {media.length === 0 ? (
             <div className="text-center py-12">
-              <ImageIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <ImageIcon className="h-16 w
+              -16 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 No media yet
               </h3>
