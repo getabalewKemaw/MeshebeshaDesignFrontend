@@ -11,6 +11,16 @@ import { useEffect } from "react";
 import Navbar from "@/components/NavBar";
 import StockManagementDashboard from "@/components/products/StockManagementDashboard";
 
+/**
+ * Stock management page component that renders the admin inventory dashboard and enforces admin-only access.
+ *
+ * If authentication is loading, displays a centered spinner. If authentication has finished and the user is not
+ * an admin, redirects to "/dashboard" and renders nothing. When the user is an admin, renders the page layout with
+ * Navbar and the StockManagementDashboard.
+ *
+ * @returns The page's React element: a centered loading spinner while auth is loading, `null` for non-admin users,
+ * or the admin dashboard layout when the user is an admin.
+ */
 export default function StockManagementPage() {
   const { isAdmin, isLoading } = useAuth();
   const router = useRouter();

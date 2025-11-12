@@ -6,6 +6,15 @@ import Navbar from "@/components/NavBar";
 import { getPublicProductById, recordProductView } from "@/lib/api/products";
 import type { ProductWithDetails, ProductMedia } from "@/types/product";
 
+/**
+ * Render a product detail page showing media, variants, and product metadata.
+ *
+ * Fetches the public product using the route `id`, displays loading or error states,
+ * shows primary media with a thumbnail strip, a gallery, and variant cards, and
+ * records a product view after a successful load.
+ *
+ * @returns A React element that renders the product detail page UI.
+ */
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id;
@@ -158,5 +167,4 @@ export default function ProductDetailPage() {
     </>
   );
 }
-
 

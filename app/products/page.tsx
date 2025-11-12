@@ -15,6 +15,15 @@ const DEFAULT_FILTERS = {
   limit: 12,
 };
 
+/**
+ * Renders the products listing page with search, category and price filters, and paginated product results.
+ *
+ * The component fetches filter options and product data when filters change, maintains loading and error states,
+ * and provides UI controls for searching, selecting categories, setting a price range, clearing filters, and
+ * navigating pages.
+ *
+ * @returns The rendered React element for the products listing page.
+ */
 export default function ProductsPage() {
   const [products, setProducts] = useState<ProductWithDetails[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -234,5 +243,4 @@ export default function ProductsPage() {
     </>
   );
 }
-
 

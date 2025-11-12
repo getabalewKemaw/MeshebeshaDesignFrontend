@@ -339,7 +339,15 @@ export function useFilterOptions() {
 }
 
 /**
- * Hook for low stock alerts
+ * Provide low-stock product variants for a given threshold and a refetch control.
+ *
+ * @param threshold - Stock level threshold used to determine which variants are considered low stock (default 10)
+ * @returns An object containing:
+ * - `lowStockItems`: the same array as `variants`, alias for low-stock variants
+ * - `variants`: array of `ProductVariant` representing low-stock variants
+ * - `loading`: `true` while a fetch is in progress, `false` otherwise
+ * - `error`: error message when a fetch fails, or `null` when there is no error
+ * - `refetch`: function to re-run the low-stock fetch with the current `threshold`
  */
 export function useLowStock(threshold: number = 10) {
   const [variants, setVariants] = useState<ProductVariant[]>([]);
