@@ -13,6 +13,7 @@ import {
   ProductSearchFilters,
   FilterOptions,
   StockUpdateRequest,
+  ProductMedia,
   ApiResponse,
   PaginatedResponse,
 } from '@/types/product';
@@ -242,6 +243,77 @@ export async function updateVariant(
 }
 
 /**
+ * Upload media for a specific variant
+ */
+export async function uploadVariantMedia(
+  productId: string,
+  variantId: string,
+  files: FileList | File[]
+): Promise<ApiResponse<ProductMedia[]>> {
+  const formData = new FormData();
+  Array.from(files).forEach((file) => formData.append('files', file));
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/admin/products/${productId}/variants/${variantId}/media`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      }
+    );
+
+    return await response.json();
+  } catch (error) {
+    console.error('Variant media upload failed:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to upload variant media',
+    };
+  }
+}
+
+/**
+ * Get media for a specific variant
+ */
+export async function getVariantMedia(
+  productId: string,
+  variantId: string
+): Promise<ApiResponse<ProductMedia[]>> {
+  return apiCall<ProductMedia[]>(
+    `/api/v1/admin/products/${productId}/variants/${variantId}/media`
+  );
+}
+
+/**
+ * Reorder variant media
+ */
+export async function reorderVariantMedia(
+  productId: string,
+  variantId: string,
+  mediaIds: string[]
+): Promise<ApiResponse<ProductMedia[]>> {
+  return apiCall<ProductMedia[]>(
+    `/api/v1/admin/products/${productId}/variants/${variantId}/media/reorder`,
+    {
+      method: 'POST',
+      body: JSON.stringify({ mediaIds }),
+    }
+  );
+}
+
+/**
+ * Delete media (product or variant)
+ */
+export async function deleteMedia(
+  mediaId: string
+): Promise<ApiResponse<void>> {
+  return apiCall<void>(`/api/v1/admin/products/media/${mediaId}`, {
+    method: 'DELETE',
+  });
+}
+
+/**
  * Delete product variant
  */
 export async function deleteVariant(id: string): Promise<ApiResponse<void>> {
@@ -288,11 +360,51 @@ export async function bulkUpdateStock(
  */
 export async function checkStock(
   items: { variantId: string; quantity: number }[]
-): Promise<ApiResponse<{ available: boolean; details: any[] }>> {
-  return apiCall('/api/v1/admin/products/variants/stock/check', {
-    method: 'POST',
-    body: JSON.stringify({ items }),
-  });
+): Promise<ApiResponse<{ available: boolean; insufficientItems: string[] }>> {
+  return apiCall<{ available: boolean; insufficientItems: string[] }>(
+    '/api/v1/admin/products/variants/stock/check',
+    {
+      method: 'POST',
+      body: JSON.stringify({ items }),
+    }
+  );
+}
+
+/**
+ * Get product metrics for date range (admin)
+ */
+export async function getProductMetrics(
+  productId: string,
+  startDate: string,
+  endDate: string
+): Promise<ApiResponse<Record<string, unknown>[]>> {
+  return apiCall<Record<string, unknown>[]>(
+    `/api/v1/admin/products/${productId}/metrics?startDate=${startDate}&endDate=${endDate}`
+  );
+}
+
+/**
+ * Get top products by revenue (admin)
+ */
+export async function getTopProductsByRevenue(
+  days: number = 30,
+  limit: number = 10
+): Promise<ApiResponse<Record<string, unknown>[]>> {
+  return apiCall<Record<string, unknown>[]>(
+    `/api/v1/admin/products/analytics/top-revenue?days=${days}&limit=${limit}`
+  );
+}
+
+/**
+ * Manually trigger metrics update (admin)
+ */
+export async function updateMetrics(): Promise<ApiResponse<Record<string, unknown>>> {
+  return apiCall<Record<string, unknown>>(
+    '/api/v1/admin/products/analytics/update-metrics',
+    {
+      method: 'POST',
+    }
+  );
 }
 
 /**
@@ -404,36 +516,3 @@ export async function getProductAnalytics(
   );
 }
 
-/**
- * Get product metrics for date range (admin)
- */
-export async function getProductMetrics(
-  productId: string,
-  startDate: string,
-  endDate: string
-): Promise<ApiResponse<any[]>> {
-  return apiCall(
-    `/api/v1/admin/products/${productId}/metrics?startDate=${startDate}&endDate=${endDate}`
-  );
-}
-
-/**
- * Get top products by revenue (admin)
- */
-export async function getTopProductsByRevenue(
-  days: number = 30,
-  limit: number = 10
-): Promise<ApiResponse<any[]>> {
-  return apiCall(
-    `/api/v1/admin/products/analytics/top-revenue?days=${days}&limit=${limit}`
-  );
-}
-
-/**
- * Manually trigger metrics update (admin)
- */
-export async function updateMetrics(): Promise<ApiResponse<any>> {
-  return apiCall('/api/v1/admin/products/analytics/update-metrics', {
-    method: 'POST',
-  });
-}

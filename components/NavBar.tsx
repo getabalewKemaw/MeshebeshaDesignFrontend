@@ -89,6 +89,8 @@ const Navbar = () => {
                   {user.image ? (
                     <Image
                       src={user.image}
+                      width={200}
+                      height={200}
                       alt={user.name}
                       className="w-10 h-10 rounded-full object-cover shadow-md"
                     />
@@ -244,6 +246,8 @@ const Navbar = () => {
                       <Image
                         src={user.image}
                         alt={user.name}
+                        width={299}
+                        height={299}
                         className="w-12 h-12 rounded-full object-cover shadow-md"
                       />
                     ) : (

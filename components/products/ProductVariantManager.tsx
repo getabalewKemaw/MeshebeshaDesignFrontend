@@ -17,6 +17,7 @@ import {
   AlertCircle,
   Check,
   X,
+  ImagePlus,
 } from "lucide-react";
 import {
   getStockStatus,
@@ -25,6 +26,7 @@ import {
   COMMON_COLORS,
   COMMON_SIZES,
 } from "@/lib/utils/product-utils";
+import { deleteMedia } from "@/lib/api/products";
 
 interface ProductVariantManagerProps {
   productId: string;
@@ -37,32 +39,48 @@ export default function ProductVariantManager({
     variants,
     loading,
     error,
+    refetch,
     createVariant,
     updateVariant,
     deleteVariant,
     updateStock,
+    uploadVariantMedia,
   } = useProductVariants(productId);
 
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     sku: "",
-    size: "",
     color: "",
     priceOverride: "",
     stock: "",
+    availableSizes: [] as string[],
   });
   const [submitting, setSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [uploadingVariantId, setUploadingVariantId] = useState<string | null>(null);
+  const [deletingMediaId, setDeletingMediaId] = useState<string | null>(null);
+
+  const toggleSizeSelection = (size: string) => {
+    setFormData((prev) => {
+      const exists = prev.availableSizes.includes(size);
+      return {
+        ...prev,
+        availableSizes: exists
+          ? prev.availableSizes.filter((s) => s !== size)
+          : [...prev.availableSizes, size],
+      };
+    });
+  };
 
   // Reset form
   const resetForm = () => {
     setFormData({
       sku: "",
-      size: "",
       color: "",
       priceOverride: "",
       stock: "",
+      availableSizes: [],
     });
     setShowAddForm(false);
     setEditingId(null);
@@ -74,15 +92,21 @@ export default function ProductVariantManager({
     setSubmitting(true);
 
     try {
+      if (formData.availableSizes.length === 0) {
+        alert("Please select at least one size.");
+        setSubmitting(false);
+        return;
+      }
+
       const response = await createVariant({
         productId,
         sku: formData.sku || null,
-        size: formData.size || null,
         color: formData.color || null,
         priceOverride: formData.priceOverride
           ? parseFloat(formData.priceOverride)
           : null,
         stock: parseInt(formData.stock) || 0,
+        availableSizes: formData.availableSizes,
       });
 
       if (response.success) {
@@ -92,7 +116,8 @@ export default function ProductVariantManager({
       } else {
         alert(response.error || "Failed to create variant");
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("Failed to create variant", error);
       alert("Failed to create variant");
     } finally {
       setSubmitting(false);
@@ -107,14 +132,20 @@ export default function ProductVariantManager({
     setSubmitting(true);
 
     try {
+      if (formData.availableSizes.length === 0) {
+        alert("Please select at least one size.");
+        setSubmitting(false);
+        return;
+      }
+
       const response = await updateVariant(editingId, {
         sku: formData.sku || null,
-        size: formData.size || null,
         color: formData.color || null,
         priceOverride: formData.priceOverride
           ? parseFloat(formData.priceOverride)
           : null,
         stock: parseInt(formData.stock) || 0,
+        availableSizes: formData.availableSizes,
       });
 
       if (response.success) {
@@ -124,7 +155,8 @@ export default function ProductVariantManager({
       } else {
         alert(response.error || "Failed to update variant");
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("Failed to update variant", error);
       alert("Failed to update variant");
     } finally {
       setSubmitting(false);
@@ -143,7 +175,8 @@ export default function ProductVariantManager({
       } else {
         alert(response.error || "Failed to delete variant");
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("Failed to delete variant", error);
       alert("Failed to delete variant");
     }
   };
@@ -153,10 +186,15 @@ export default function ProductVariantManager({
     setEditingId(variant.id);
     setFormData({
       sku: variant.sku || "",
-      size: variant.size || "",
       color: variant.color || "",
       priceOverride: variant.priceOverride?.toString() || "",
       stock: variant.stock.toString(),
+      availableSizes:
+        variant.availableSizes && variant.availableSizes.length > 0
+          ? variant.availableSizes
+          : variant.size
+          ? [variant.size]
+          : [],
     });
     setShowAddForm(true);
   };
@@ -171,8 +209,53 @@ export default function ProductVariantManager({
       } else {
         alert(response.error || "Failed to update stock");
       }
-    } catch (err) {
+    } catch (error) {
+      console.error("Failed to update stock", error);
       alert("Failed to update stock");
+    }
+  };
+
+  const handleVariantMediaUpload = async (variantId: string, files: FileList | null) => {
+    if (!files || files.length === 0) {
+      return;
+    }
+    setUploadingVariantId(variantId);
+    try {
+      const response = await uploadVariantMedia(variantId, files);
+      if (response.success) {
+        setSuccessMessage("Media uploaded successfully!");
+        setTimeout(() => setSuccessMessage(""), 2000);
+      } else {
+        alert(response.error || "Failed to upload media");
+      }
+    } catch (error) {
+      console.error("Failed to upload media", error);
+      alert("Failed to upload media");
+    } finally {
+      setUploadingVariantId(null);
+    }
+  };
+
+  const handleDeleteVariantMedia = async (mediaId: string) => {
+    if (!confirm("Remove this media item?")) {
+      return;
+    }
+
+    setDeletingMediaId(mediaId);
+    try {
+      const response = await deleteMedia(mediaId);
+      if (response.success) {
+        await refetch();
+        setSuccessMessage("Media deleted successfully!");
+        setTimeout(() => setSuccessMessage(""), 2000);
+      } else {
+        alert(response.error || "Failed to delete media");
+      }
+    } catch (error) {
+      console.error("Failed to delete media", error);
+      alert("Failed to delete media");
+    } finally {
+      setDeletingMediaId(null);
     }
   };
 
@@ -257,25 +340,35 @@ export default function ProductVariantManager({
                 />
               </div>
 
-              {/* Size */}
-              <div>
+              {/* Sizes */}
+              <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Size
+                  Available Sizes
                 </label>
-                <select
-                  value={formData.size}
-                  onChange={(e) =>
-                    setFormData({ ...formData, size: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                >
-                  <option value="">Select size</option>
-                  {COMMON_SIZES.map((size) => (
-                    <option key={size} value={size}>
-                      {size}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex flex-wrap gap-2">
+                  {COMMON_SIZES.map((size) => {
+                    const selected = formData.availableSizes.includes(size);
+                    return (
+                      <button
+                        type="button"
+                        key={size}
+                        onClick={() => toggleSizeSelection(size)}
+                        className={`px-3 py-1 rounded-full border text-sm ${
+                          selected
+                            ? "bg-indigo-600 text-white border-indigo-600"
+                            : "border-gray-300 text-gray-700 hover:border-indigo-400 hover:text-indigo-600"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
+                {formData.availableSizes.length === 0 && (
+                  <p className="text-xs text-red-500 mt-2">
+                    Select at least one size for this variant.
+                  </p>
+                )}
               </div>
 
               {/* Color */}
@@ -410,11 +503,11 @@ export default function ProductVariantManager({
                           </p>
                         </div>
                       )}
-                      {variant.size && (
+                      {variant.availableSizes && variant.availableSizes.length > 0 && (
                         <div>
-                          <span className="text-gray-500">Size:</span>
+                          <span className="text-gray-500">Sizes:</span>
                           <p className="font-medium text-gray-900">
-                            {variant.size}
+                            {variant.availableSizes.join(", ")}
                           </p>
                         </div>
                       )}
@@ -498,6 +591,73 @@ export default function ProductVariantManager({
                       +10
                     </button>
                   </div>
+                </div>
+
+                {/* Variant Media */}
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium text-gray-700">
+                      Variant Media
+                    </span>
+                    <label className="inline-flex items-center gap-2 px-3 py-1 border border-dashed border-indigo-300 text-indigo-600 rounded-lg text-sm cursor-pointer hover:bg-indigo-50">
+                      <ImagePlus className="h-4 w-4" />
+                      <span>
+                        {uploadingVariantId === variant.id ? "Uploading..." : "Upload"}
+                      </span>
+                      <input
+                        type="file"
+                        accept="image/*,video/*"
+                        multiple
+                        className="hidden"
+                        disabled={uploadingVariantId === variant.id}
+                        onChange={(e) => {
+                          handleVariantMediaUpload(variant.id, e.target.files);
+                          if (e.target) {
+                            e.target.value = "";
+                          }
+                        }}
+                      />
+                    </label>
+                  </div>
+                  {variant.media && variant.media.length > 0 ? (
+                    <div className="flex flex-wrap gap-4">
+                      {variant.media.map((media) => (
+                        <div
+                          key={media.id}
+                          className="relative w-32 h-32 rounded-lg overflow-hidden border border-gray-200"
+                        >
+                          {media.mediaType === "video" ? (
+                            <video
+                              src={media.url}
+                              className="w-full h-full object-cover"
+                              muted
+                              controls={false}
+                            />
+                          ) : (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={media.url}
+                              alt={media.altText || variant.sku || "Variant media"}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteVariantMedia(media.id)}
+                            disabled={deletingMediaId === media.id}
+                            className="absolute top-1 right-1 bg-white/80 hover:bg-white text-red-600 p-1 rounded-full shadow"
+                            title="Remove media"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-500">
+                      No media uploaded for this variant yet.
+                    </p>
+                  )}
                 </div>
               </div>
             );

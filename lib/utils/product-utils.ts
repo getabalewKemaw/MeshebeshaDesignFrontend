@@ -179,11 +179,16 @@ export function getVariantDisplayName(variant: {
   size?: string | null;
   color?: string | null;
   sku?: string | null;
+  availableSizes?: string[];
 }): string {
   const parts: string[] = [];
   
   if (variant.color) parts.push(variant.color);
-  if (variant.size) parts.push(variant.size);
+  if (variant.availableSizes && variant.availableSizes.length > 0) {
+    parts.push(variant.availableSizes.join('/'));
+  } else if (variant.size) {
+    parts.push(variant.size);
+  }
   if (parts.length === 0 && variant.sku) parts.push(variant.sku);
   
   return parts.length > 0 ? parts.join(' / ') : 'Default';
@@ -218,11 +223,11 @@ export function calculatePercentageChange(current: number, previous: number): {
 /**
  * Debounce function for search inputs
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout;
+  let timeout: ReturnType<typeof setTimeout>;
   
   return function executedFunction(...args: Parameters<T>) {
     const later = () => {
