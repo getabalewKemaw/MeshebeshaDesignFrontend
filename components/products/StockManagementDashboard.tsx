@@ -32,6 +32,16 @@ interface BulkUpdateItem {
   newStock: number;
 }
 
+/**
+ * Stock management dashboard UI for viewing low-stock items and performing bulk stock updates.
+ *
+ * Displays low-stock and out-of-stock counts, a list of low-stock variants with search and export CSV capabilities,
+ * and a bulk update panel that lets users queue variants, edit target stock levels, and apply batched stock updates.
+ *
+ * Shows loading, error, empty, and success states and provides a refresh action to reload low-stock data.
+ *
+ * @returns The React element that renders the stock management dashboard.
+ */
 export default function StockManagementDashboard() {
   const { lowStockItems, loading, error, refetch } = useLowStock(10);
   const [bulkUpdates, setBulkUpdates] = useState<BulkUpdateItem[]>([]);

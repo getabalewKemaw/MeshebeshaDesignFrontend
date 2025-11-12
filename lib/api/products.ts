@@ -74,7 +74,9 @@ export async function getProducts(
 }
 
 /**
- * Get product by ID (admin)
+ * Fetches a product by its ID for admin access.
+ *
+ * @returns The product details wrapped in an `ApiResponse`
  */
 export async function getProductById(
   id: string
@@ -84,8 +86,16 @@ export async function getProductById(
 
 // ==================== PUBLIC BROWSE ====================
 /**
- * Get public product list with filters
- * Supports: categoryId, search (q), minPrice, maxPrice, page, limit
+ * Fetches a paginated list of public products that match the provided filters.
+ *
+ * @param params - Filter and pagination options
+ * @param params.categoryId - ID of the category to filter products by
+ * @param params.q - Full-text search query
+ * @param params.minPrice - Minimum price to include
+ * @param params.maxPrice - Maximum price to include
+ * @param params.page - Page number for pagination
+ * @param params.limit - Number of items per page
+ * @returns A paginated response containing product details and pagination metadata. On failure `success` is `false` and `data` is an empty array.
  */
 export async function getPublicProducts(params: {
   categoryId?: string;
@@ -119,7 +129,10 @@ export async function getPublicProducts(params: {
 }
 
 /**
- * Get public product details by ID
+ * Retrieve public product details for the specified product ID.
+ *
+ * @param id - The public product ID
+ * @returns The API response containing the product with details
  */
 export async function getPublicProductById(
   id: string
