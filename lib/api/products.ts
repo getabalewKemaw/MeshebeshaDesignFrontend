@@ -82,6 +82,51 @@ export async function getProductById(
   return apiCall<ProductWithDetails>(`/api/v1/admin/products/${id}`);
 }
 
+// ==================== PUBLIC BROWSE ====================
+/**
+ * Get public product list with filters
+ * Supports: categoryId, search (q), minPrice, maxPrice, page, limit
+ */
+export async function getPublicProducts(params: {
+  categoryId?: string;
+  q?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  page?: number;
+  limit?: number;
+} = {}): Promise<PaginatedResponse<ProductWithDetails>> {
+  const qs = new URLSearchParams();
+  if (params.categoryId) qs.append('categoryId', params.categoryId);
+  if (params.q) qs.append('search', params.q);
+  if (typeof params.minPrice === 'number') qs.append('minPrice', String(params.minPrice));
+  if (typeof params.maxPrice === 'number') qs.append('maxPrice', String(params.maxPrice));
+  if (params.page) qs.append('page', String(params.page));
+  if (params.limit) qs.append('limit', String(params.limit));
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/products${qs.toString() ? `?${qs.toString()}` : ''}`,
+      { credentials: 'include' }
+    );
+    return await response.json();
+  } catch (error) {
+    console.error('Public list failed:', error);
+    return {
+      success: false,
+      data: [],
+      pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
+    };
+  }
+}
+
+/**
+ * Get public product details by ID
+ */
+export async function getPublicProductById(
+  id: string
+): Promise<ApiResponse<ProductWithDetails>> {
+  return apiCall<ProductWithDetails>(`/api/v1/products/${id}`);
+}
+
 /**
  * Create product (admin)
  */

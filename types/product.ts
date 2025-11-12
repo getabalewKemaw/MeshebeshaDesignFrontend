@@ -46,6 +46,12 @@ export interface ProductVariant {
   stock: number;
   createdAt: string;
   updatedAt: string;
+  product?: {
+    id: string;
+    title: string;
+    price: number;
+    currency: string;
+  };
 }
 
 // Product Media

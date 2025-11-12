@@ -381,6 +381,7 @@ export function useLowStock(threshold: number = 10) {
   }, [threshold]);
 
   return {
+    lowStockItems: variants,
     variants,
     loading,
     error,
