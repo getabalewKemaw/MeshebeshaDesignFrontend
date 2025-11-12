@@ -206,6 +206,40 @@ export function useProductVariants(productId: string | null) {
     return response;
   }, [refetchVariants]);
 
+  const uploadVariantMedia = useCallback(
+    async (variantId: string, files: FileList | File[]) => {
+      if (!productId) {
+        return {
+          success: false,
+          error: 'Product ID is missing',
+        };
+      }
+      const response = await productApi.uploadVariantMedia(productId, variantId, files);
+      if (response.success) {
+        await refetchVariants();
+      }
+      return response;
+    },
+    [productId, refetchVariants]
+  );
+
+  const reorderVariantMedia = useCallback(
+    async (variantId: string, mediaIds: string[]) => {
+      if (!productId) {
+        return {
+          success: false,
+          error: 'Product ID is missing',
+        };
+      }
+      const response = await productApi.reorderVariantMedia(productId, variantId, mediaIds);
+      if (response.success) {
+        await refetchVariants();
+      }
+      return response;
+    },
+    [productId, refetchVariants]
+  );
+
   return {
     variants,
     loading,
@@ -215,6 +249,8 @@ export function useProductVariants(productId: string | null) {
     updateVariant,
     deleteVariant,
     updateStock,
+    uploadVariantMedia,
+    reorderVariantMedia,
   };
 }
 

@@ -44,8 +44,10 @@ export interface ProductVariant {
   color: string | null;
   priceOverride: number | null;
   stock: number;
+  availableSizes: string[];
   createdAt: string;
   updatedAt: string;
+  media?: ProductMedia[];
   product?: {
     id: string;
     title: string;
@@ -69,6 +71,7 @@ export interface ProductMedia {
   altText: string | null;
   description: string | null;
   createdAt: string;
+  variantId?: string | null;
 }
 
 // Product Analytics
