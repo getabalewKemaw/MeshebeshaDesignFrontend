@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import Navbar from "@/components/NavBar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import Image from "next/image";
+
 export default function ProfilePage() {
   const { user, refreshUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
@@ -101,9 +101,7 @@ export default function ProfilePage() {
                 {/* Profile Image */}
                 <div className="relative w-32 h-32">
                   {user?.image ? (
-                    <Image
-                    width={128}
-                    height={128}
+                    <img
                       src={user.image}
                       alt="Profile"
                       className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-xl"

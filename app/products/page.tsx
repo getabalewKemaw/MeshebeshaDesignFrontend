@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getPublicProducts, getFilterOptions } from "@/lib/api/products";
 import type { ProductWithDetails, FilterOptions } from "@/types/product";
 import Navbar from "@/components/NavBar";
+import Image from "next/image";
 
 const DEFAULT_FILTERS = {
   q: "",
@@ -184,7 +185,9 @@ export default function ProductsPage() {
                     {cover ? (
                       cover.mediaType === 'image' ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
+                         width={200}
+                         height={200}
                           src={cover.url}
                           alt={cover.altText || p.title}
                           className="w-full h-48 object-cover"
@@ -211,6 +214,8 @@ export default function ProductsPage() {
                 );
               })}
             </div>
+
+            
             <div className="flex items-center justify-center gap-4 mt-6">
               <button
                 className="px-3 py-2 border rounded disabled:opacity-50"

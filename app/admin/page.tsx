@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Navbar from "@/components/NavBar";
 import { Package, FolderTree, MessageSquare, TrendingUp } from "lucide-react";
-
 export default function AdminDashboard() {
   const { user, isAdmin, isLoading } = useAuth();
   const router = useRouter();
@@ -49,7 +48,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Total Products</p>
-                <p className="text-2xl font-bold text-gray-900 mt-2">--</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">1</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Package className="h-6 w-6 text-blue-600" />
@@ -61,7 +60,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Categories</p>
-                <p className="text-2xl font-bold text-gray-900 mt-2">--</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">5</p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
                 <FolderTree className="h-6 w-6 text-green-600" />
@@ -73,7 +72,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Custom Requests</p>
-                <p className="text-2xl font-bold text-gray-900 mt-2">--</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">12</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
                 <MessageSquare className="h-6 w-6 text-purple-600" />
@@ -85,7 +84,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">Active Products</p>
-                <p className="text-2xl font-bold text-gray-900 mt-2">--</p>
+                <p className="text-2xl font-bold text-gray-900 mt-2">1</p>
               </div>
               <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                 <TrendingUp className="h-6 w-6 text-orange-600" />
@@ -132,7 +131,7 @@ export default function AdminDashboard() {
 
           {/* Custom Requests Card */}
           <a
-            href="/admin/custom-requests"
+            href="/admin/chat"
             className="bg-white rounded-xl shadow-md p-8 hover:shadow-xl transition-shadow cursor-pointer group"
           >
             <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-200 transition-colors">

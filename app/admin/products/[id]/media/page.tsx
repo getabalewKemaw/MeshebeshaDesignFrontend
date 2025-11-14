@@ -33,19 +33,6 @@ export default function ProductMediaPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Helper function to ensure full Cloudinary URL
-  const getFullImageUrl = (url: string) => {
-    if (!url) return '';
-    // If already a full URL, return it
-    if (url.startsWith('http://') || url.startsWith('https://')) {
-      return url;
-    }
-    // If it's just a public ID or partial path, construct full URL
-    // This shouldn't happen, but just in case
-    console.warn('⚠️ Incomplete URL detected:', url);
-    return url;
-  };
-
   useEffect(() => {
     if (!isLoading && !isAdmin) {
       router.push("/dashboard");
@@ -62,9 +49,7 @@ export default function ProductMediaPage() {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/products/${productId}/media`,
-        {
-          credentials: "include",
-        }
+        { credentials: "include" }
       );
       const data = await response.json();
       if (data.success) {
@@ -86,9 +71,7 @@ export default function ProductMediaPage() {
     setSuccess("");
 
     const formData = new FormData();
-    Array.from(files).forEach((file) => {
-      formData.append("media", file);
-    });
+    Array.from(files).forEach((file) => formData.append("media", file));
 
     try {
       const response = await fetch(
@@ -109,9 +92,8 @@ export default function ProductMediaPage() {
       } else {
         setError(data.error || "Failed to upload images");
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred while uploading images");
-      console.error("Image upload error:", error);
     } finally {
       setUploadingImages(false);
     }
@@ -126,9 +108,7 @@ export default function ProductMediaPage() {
     setSuccess("");
 
     const formData = new FormData();
-    Array.from(files).forEach((file) => {
-      formData.append("media", file);
-    });
+    Array.from(files).forEach((file) => formData.append("media", file));
 
     try {
       const response = await fetch(
@@ -149,16 +129,15 @@ export default function ProductMediaPage() {
       } else {
         setError(data.error || "Failed to upload videos");
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred while uploading videos");
-      console.error("Video upload error:", error);
     } finally {
       setUploadingVideos(false);
     }
   };
 
   const handleDelete = async (mediaId: string) => {
-    if (!confirm("Delete this image?")) return;
+    if (!confirm("Delete this media?")) return;
 
     try {
       const response = await fetch(
@@ -172,12 +151,12 @@ export default function ProductMediaPage() {
       const data = await response.json();
 
       if (data.success) {
-        setSuccess("Image deleted successfully");
+        setSuccess("Media deleted successfully");
         fetchMedia();
       } else {
-        setError(data.error || "Failed to delete image");
+        setError(data.error || "Failed to delete media");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred while deleting");
     }
   };
@@ -190,16 +169,13 @@ export default function ProductMediaPage() {
     );
   }
 
-  if (!isAdmin) {
-    return null;
-  }
+  if (!isAdmin) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
         <div className="mb-8">
           <a
             href="/admin/products"
@@ -209,10 +185,9 @@ export default function ProductMediaPage() {
             Back to Products
           </a>
           <h1 className="text-3xl font-bold text-gray-900">Product Media</h1>
-          <p className="text-gray-600 mt-1">Upload and manage product images</p>
+          <p className="text-gray-600 mt-1">Upload and manage product images and videos</p>
         </div>
 
-        {/* Messages */}
         {error && (
           <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
             <p className="text-sm">{error}</p>
@@ -225,9 +200,8 @@ export default function ProductMediaPage() {
           </div>
         )}
 
-        {/* Upload Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {/* Images Upload */}
+          {/* Upload Images */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-900">📸 Upload Images</h3>
@@ -245,36 +219,25 @@ export default function ProductMediaPage() {
                 disabled={uploadingImages || uploadingVideos}
                 className="hidden"
               />
-              <label
-                htmlFor="image-upload"
-                className="cursor-pointer flex flex-col items-center"
-              >
+              <label htmlFor="image-upload" className="cursor-pointer flex flex-col items-center">
                 {uploadingImages ? (
                   <>
                     <Loader2 className="h-12 w-12 text-indigo-600 mb-4 animate-spin" />
-                    <p className="text-lg font-semibold text-gray-900 mb-2">
-                      Uploading...
-                    </p>
+                    <p className="text-lg font-semibold text-gray-900 mb-2">Uploading...</p>
                   </>
                 ) : (
                   <>
                     <Upload className="h-10 w-10 text-blue-400 mb-3" />
-                    <p className="text-md font-semibold text-gray-900 mb-1">
-                      Click to upload images
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      PNG, JPG, GIF • Up to 10MB each
-                    </p>
-                    <p className="text-xs text-blue-600 font-medium mt-2">
-                      ✨ Select multiple files
-                    </p>
+                    <p className="text-md font-semibold text-gray-900 mb-1">Click to upload images</p>
+                    <p className="text-xs text-gray-600">PNG, JPG, GIF • Up to 10MB each</p>
+                    <p className="text-xs text-blue-600 font-medium mt-2">✨ Select multiple files</p>
                   </>
                 )}
               </label>
             </div>
           </div>
 
-          {/* Videos Upload */}
+          {/* Upload Videos */}
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-900">🎥 Upload Videos</h3>
@@ -292,29 +255,18 @@ export default function ProductMediaPage() {
                 disabled={uploadingImages || uploadingVideos}
                 className="hidden"
               />
-              <label
-                htmlFor="video-upload"
-                className="cursor-pointer flex flex-col items-center"
-              >
+              <label htmlFor="video-upload" className="cursor-pointer flex flex-col items-center">
                 {uploadingVideos ? (
                   <>
                     <Loader2 className="h-12 w-12 text-purple-600 mb-4 animate-spin" />
-                    <p className="text-lg font-semibold text-gray-900 mb-2">
-                      Uploading...
-                    </p>
+                    <p className="text-lg font-semibold text-gray-900 mb-2">Uploading...</p>
                   </>
                 ) : (
                   <>
                     <Upload className="h-10 w-10 text-purple-400 mb-3" />
-                    <p className="text-md font-semibold text-gray-900 mb-1">
-                      Click to upload videos
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      MP4, MOV, AVI • Up to 100MB each
-                    </p>
-                    <p className="text-xs text-purple-600 font-medium mt-2">
-                      ✨ Select multiple files
-                    </p>
+                    <p className="text-md font-semibold text-gray-900 mb-1">Click to upload videos</p>
+                    <p className="text-xs text-gray-600">MP4, MOV, AVI • Up to 100MB each</p>
+                    <p className="text-xs text-purple-600 font-medium mt-2">✨ Select multiple files</p>
                   </>
                 )}
               </label>
@@ -330,85 +282,92 @@ export default function ProductMediaPage() {
 
           {media.length === 0 ? (
             <div className="text-center py-12">
-              <ImageIcon className="h-16 w
-              -16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                No media yet
-              </h3>
-              <p className="text-gray-600">
-                Upload your first images or videos using the forms above
-              </p>
+              <ImageIcon className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No media yet</h3>
+              <p className="text-gray-600">Upload your first images or videos using the forms above</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {media.map((item) => (
                 <div
                   key={item.id}
-                  className="relative group rounded-lg overflow-hidden border-2 border-gray-200 hover:border-indigo-500 transition-colors"
+                  className="relative group rounded-lg overflow-hidden border-2 border-gray-200 hover:border-indigo-500 transition-colors bg-white"
                 >
-                  <div className="aspect-square bg-white flex items-center justify-center overflow-hidden">
-                    {item.mediaType === 'video' ? (
-                      <video
-                        src={item.url}
-                        controls
-                        className="max-w-full max-h-full object-contain"
-                      >
-                        Your browser does not support the video tag.
-                      </video>
+                  {/* Media Preview Container */}
+                  <div className="aspect-square bg-gray-100 relative overflow-hidden">
+                    {item.mediaType === "video" ? (
+                      <div className="w-full h-full flex items-center justify-center bg-gray-900">
+                        <video
+                          src={item.url}
+                          controls
+                          className="w-full h-full object-contain"
+                          preload="metadata"
+                          onLoadedData={() => console.log("Video loaded:", item.url)}
+                          onError={() => console.error("Video failed:", item.url)}
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center">
+                      <div className="w-full h-full flex items-center justify-center bg-white p-2">
                         <Image
-                          // width={500}
-                          // height={500}
-                          fill
-                     src={item.url}
-                          alt={item.altText || "Product media"}
-                          className="object-contain"
-                          // style={{ maxWidth: '100%', maxHeight: '100%', height: 'auto', width: 'auto' }}
-                          onLoad={() => console.log('✅ Image loaded:', item.url)}
-                          onError={() => {
-                            console.error('❌ Image failed to load:', item.url);
-                            console.error('Full item:', item);
-                          }}
-                          unoptimized
+                          src={item.url}
+                          width={300}
+                          height={300}
+                          className="w-full h-full object-contain"
+                          alt={item.altText || "Product image"}
+                          onLoad={() => console.log("Image loaded:", item.url)}
+                          onError={() => console.error("Image failed:", item.url)}
+                          unoptimized={true}
                         />
                       </div>
                     )}
                   </div>
-                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity flex items-center justify-center">
+
+                  {/* Hover Delete Overlay */}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-opacity flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity bg-red-600 text-white p-3 rounded-lg hover:bg-red-700 flex items-center gap-2"
+                      className="bg-red-600 text-white p-3 rounded-lg hover:bg-red-700 flex items-center gap-2 transform scale-95 group-hover:scale-100 transition-transform"
                     >
                       <Trash2 className="h-5 w-5" />
                       Delete
                     </button>
                   </div>
-                  <div className="p-3 bg-white">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                        item.mediaType === 'video' 
-                          ? 'bg-purple-100 text-purple-700' 
-                          : 'bg-blue-100 text-blue-700'
-                      }`}>
-                        {item.mediaType === 'video' ? '🎥 Video' : '📸 Image'}
+
+                  {/* Media Info */}
+                  <div className="p-3 bg-white border-t border-gray-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <span
+                        className={`text-xs px-2 py-1 rounded-full font-medium ${
+                          item.mediaType === "video"
+                            ? "bg-purple-100 text-purple-700"
+                            : "bg-blue-100 text-blue-700"
+                        }`}
+                      >
+                        {item.mediaType === "video" ? "🎥 Video" : "📸 Image"}
                       </span>
-                      <p className="text-xs text-gray-500">
-                        Pos: {item.position}
-                      </p>
+                      <p className="text-xs text-gray-500">Pos: {item.position}</p>
                     </div>
+
                     {item.altText && (
-                      <p className="text-sm text-gray-700 mt-1 truncate">
+                      <p className="text-sm text-gray-700 mb-2 truncate" title={item.altText}>
                         {item.altText}
                       </p>
                     )}
+
                     <div className="mt-2 p-2 bg-gray-50 rounded text-xs">
                       <p className="text-gray-600 font-mono truncate" title={item.url}>
-                        🔗 {item.url.split('/').pop()}
+                        🔗 {item.publicId || item.url.split("/").pop()}
                       </p>
-                      <p className="text-gray-500 text-[10px] mt-1">
-                        {item.width} × {item.height}
-                      </p>
+                      <div className="flex justify-between items-center mt-1 text-gray-500">
+                        <span className="text-[10px]">
+                          {item.width} × {item.height}
+                        </span>
+                        <span className="text-[10px]">
+                          {item.size ? `${(item.size / 1024 / 1024).toFixed(1)}MB` : ''}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -420,3 +379,4 @@ export default function ProductMediaPage() {
     </div>
   );
 }
+
