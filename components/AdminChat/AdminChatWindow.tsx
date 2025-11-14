@@ -1,77 +1,54 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import MessageList from '@/components/Chat/MessageList';
-import MessageInput from '@/components/Chat/MessageInput';
+import React, { useEffect, useState } from "react";
+import MessageList from "@/components/Chat/MessageList";
+import MessageInput from "@/components/Chat/MessageInput";
 
-type Message = {
-  id: string;
-  roomId: string;
-  senderId: string;
-  type: string;
-  content: string;
-  createdAt: string;
-};
+type Message = { id: string; roomId: string; senderId: string; type: string; content: string; createdAt: string; };
 
 export default function AdminChatWindow({ socket, roomId, currentAdminId }: { socket: any; roomId: string | null; currentAdminId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
 
+  // Load room messages and subscribe to socket events
   useEffect(() => {
-    if (!roomId) return;
+    if (!roomId || !socket?.current) return;
 
-    // Fetch history (include credentials so server can authenticate)
+    // Fetch room history
     (async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/v1/chat/rooms/${roomId}/messages`, {
-          credentials: 'include',
-        });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/chat/rooms/${roomId}/messages`, { credentials: "include" });
         const data = await res.json();
         if (data?.success) setMessages(data.data || []);
       } catch (e) {
-        console.error('Failed to load messages', e);
+        console.error("[AdminChatWindow] fetch messages failed", e);
       }
     })();
 
-    // Join room via socket (so admin receives live messages)
-    socket?.current?.emit('join_room', { roomId });
-    console.log('[AdminChatWindow] emit join_room', { roomId });
+    // Join room
+    socket.current.emit("join_room", { roomId });
 
-    const onReceive = (msg: Message) => {
-      console.log('[AdminChatWindow] receive_message', msg);
-      setMessages((s) => [...s, msg]);
-    };
-
-    const onMessageSent = (payload: any) => {
-      console.log('[AdminChatWindow] message_sent ack', payload);
+    // Handlers
+    const handleReceive = (msg: Message) => setMessages((prev) => [...prev, msg]);
+    const handleSent = (payload: any) => {
       const { message, tempId } = payload;
       if (tempId) {
-        setMessages((s) => {
-          const idx = s.findIndex((x: any) => x.id === tempId);
-          if (idx !== -1) {
-            const copy = [...s];
-            copy[idx] = message;
-            return copy;
-          }
-          return [...s, message];
-        });
-      } else {
-        setMessages((s) => [...s, message]);
-      }
+        setMessages((prev) => prev.map((m) => (m.id === tempId ? message : m)).concat(!prev.some((m) => m.id === message.id) ? [message] : []));
+      } else setMessages((prev) => [...prev, message]);
     };
 
-    socket?.current?.on('receive_message', onReceive);
-    socket?.current?.on('message_sent', onMessageSent);
+    socket.current.on("receive_message", handleReceive);
+    socket.current.on("message_sent", handleSent);
 
-    return () => {
-      socket?.current?.off('receive_message', onReceive);
-      socket?.current?.off('message_sent', onMessageSent);
-      if (roomId) socket?.current?.emit('leave_room', { roomId });
-    };
+return () => {
+  if (socket.current) {
+    socket.current.off("receive_message", handleReceive);
+    socket.current.off("message_sent", handleSent);
+    socket.current.emit("leave_room", { roomId });
+  }
+};
+
   }, [roomId, socket]);
 
-  const handleSendLocal = (msg: any) => {
-    // optimistic update already handled by MessageInput; but ensure we add to list
-    setMessages((s) => [...s, { ...msg }]);
-  };
+  const handleSendLocal = (msg: any) => setMessages((prev) => [...prev, msg]);
 
   if (!roomId) return <div className="flex-1 flex items-center justify-center text-gray-500">Select a conversation</div>;
 
