@@ -20,7 +20,12 @@ export function useSocket(connectWhen = false) {
     socket.on("connect", () => console.log("[Socket] Connected", socket.id));
     socket.on("connect_error", (err) => console.error("[Socket] Connect error", err));
 
+    // Announce presence to server (optional; server can handle)
+    socket.emit("presence", { online: true });
+
     return () => {
+      // Announce offline then disconnect
+      try { socket.emit("presence", { online: false }); } catch {}
       socket.disconnect();
       socketRef.current = null;
     };

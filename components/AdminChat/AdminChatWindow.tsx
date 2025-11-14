@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MessageList from "@/components/Chat/MessageList";
 import MessageInput from "@/components/Chat/MessageInput";
 
@@ -7,12 +7,21 @@ type Message = { id: string; roomId: string; senderId: string; type: string; con
 
 export default function AdminChatWindow({ socket, roomId, currentAdminId }: { socket: any; roomId: string | null; currentAdminId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
+  const prevRoom = useRef<string | null>(null);
 
-  // Load room messages and subscribe to socket events
   useEffect(() => {
-    if (!roomId || !socket?.current) return;
+    const socketRef = socket?.current;
+    if (!roomId || !socketRef) return;
 
-    // Fetch room history
+    // leave previous room if any
+    if (prevRoom.current && prevRoom.current !== roomId) {
+      socketRef.emit("leave_room", { roomId: prevRoom.current });
+    }
+    prevRoom.current = roomId;
+
+    socketRef.emit("join_room", { roomId });
+
+    // load history
     (async () => {
       try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/chat/rooms/${roomId}/messages`, { credentials: "include" });
@@ -23,39 +32,38 @@ export default function AdminChatWindow({ socket, roomId, currentAdminId }: { so
       }
     })();
 
-    // Join room
-    socket.current.emit("join_room", { roomId });
-
-    // Handlers
-    const handleReceive = (msg: Message) => setMessages((prev) => [...prev, msg]);
-    const handleSent = (payload: any) => {
-      const { message, tempId } = payload;
-      if (tempId) {
-        setMessages((prev) => prev.map((m) => (m.id === tempId ? message : m)).concat(!prev.some((m) => m.id === message.id) ? [message] : []));
-      } else setMessages((prev) => [...prev, message]);
+    const handleReceive = (msg: Message) => {
+      setMessages(prev => (prev.some(m => m.id === msg.id) ? prev : [...prev, msg]));
+    };
+    const handleMessageSent = ({ message, tempId }: any) => {
+      setMessages(prev => {
+        if (tempId) {
+          const mapped = prev.map(m => (m.id === tempId ? message : m));
+          if (!mapped.some(m => m.id === message.id)) mapped.push(message);
+          return mapped;
+        }
+        if (prev.some(m => m.id === message.id)) return prev;
+        return [...prev, message];
+      });
     };
 
-    socket.current.on("receive_message", handleReceive);
-    socket.current.on("message_sent", handleSent);
+    socketRef.on("receive_message", handleReceive);
+    socketRef.on("message_sent", handleMessageSent);
 
-return () => {
-  if (socket.current) {
-    socket.current.off("receive_message", handleReceive);
-    socket.current.off("message_sent", handleSent);
-    socket.current.emit("leave_room", { roomId });
-  }
-};
-
+    return () => {
+      if (!socket?.current) return;
+      socket.current.off("receive_message", handleReceive);
+      socket.current.off("message_sent", handleMessageSent);
+      socket.current.emit("leave_room", { roomId });
+    };
   }, [roomId, socket]);
-
-  const handleSendLocal = (msg: any) => setMessages((prev) => [...prev, msg]);
 
   if (!roomId) return <div className="flex-1 flex items-center justify-center text-gray-500">Select a conversation</div>;
 
   return (
     <div className="flex-1 flex flex-col">
       <MessageList messages={messages} currentUserId={currentAdminId} />
-      <MessageInput socket={socket} roomId={roomId} onSend={handleSendLocal} />
+      <MessageInput socket={socket} roomId={roomId} />
     </div>
   );
 }

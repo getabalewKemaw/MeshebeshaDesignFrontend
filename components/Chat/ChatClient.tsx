@@ -22,7 +22,7 @@ export default function ChatClient({ productId }: { productId: string }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
 
-  // Create or get room
+  // Create/get room as soon as user available
   useEffect(() => {
     if (!user) return;
     (async () => {
@@ -39,36 +39,46 @@ export default function ChatClient({ productId }: { productId: string }) {
     })();
   }, [user, productId]);
 
-  // Handle socket events
+  // Socket events
   useEffect(() => {
     const socket = socketRef.current;
     if (!socket || !roomId) return;
 
+    // join
     socket.emit("join_room", { roomId });
-    console.log("[ChatClient] join_room", { roomId });
 
-    const handleReceive = (msg: Message) => setMessages((prev) => [...prev, msg]);
-    const handleSent = (payload: any) => {
+    // handlers
+    const handleReceive = (msg: Message) => {
+      setMessages(prev => (prev.some(m => m.id === msg.id) ? prev : [...prev, msg]));
+    };
+
+    const handleMessageSent = (payload: any) => {
+      // payload: { message, tempId }
       const { message, tempId } = payload;
-      if (tempId) {
-        setMessages((prev) =>
-          prev.map((m) => (m.id === tempId ? message : m)).concat(!prev.some((m) => m.id === message.id) ? [message] : [])
-        );
-      } else setMessages((prev) => [...prev, message]);
+      setMessages(prev => {
+        // replace temp or add if not present
+        if (tempId) {
+          const replaced = prev.map(m => (m.id === tempId ? message : m));
+          if (!replaced.some(m => m.id === message.id)) replaced.push(message);
+          return replaced;
+        }
+        if (prev.some(m => m.id === message.id)) return prev;
+        return [...prev, message];
+      });
     };
 
     const handleTyping = (data: { userId: string; isTyping: boolean }) => {
-      setTypingUsers((prev) => {
-        if (data.isTyping) return [...new Set([...prev, data.userId])];
-        return prev.filter((id) => id !== data.userId);
+      setTypingUsers(prev => {
+        if (data.isTyping) return Array.from(new Set([...prev, data.userId]));
+        return prev.filter(id => id !== data.userId);
       });
     };
 
     socket.on("receive_message", handleReceive);
-    socket.on("message_sent", handleSent);
+    socket.on("message_sent", handleMessageSent);
     socket.on("typing", handleTyping);
 
-    // Load initial messages
+    // load history
     (async () => {
       try {
         const res = await axios.get(
@@ -82,22 +92,20 @@ export default function ChatClient({ productId }: { productId: string }) {
     })();
 
     return () => {
-      socket.off("receive_message", handleReceive);
-      socket.off("message_sent", handleSent);
-      socket.off("typing", handleTyping);
+      if (!socketRef.current) return;
+      socketRef.current.off("receive_message", handleReceive);
+      socketRef.current.off("message_sent", handleMessageSent);
+      socketRef.current.off("typing", handleTyping);
+      socketRef.current.emit("leave_room", { roomId });
     };
   }, [socketRef, roomId]);
-
-  const sendLocal = (msg: Message) => setMessages((prev) => [...prev, msg]);
-
-  const MessageListAny = MessageList as any;
 
   return (
     <div className="h-full flex flex-col">
       <div className="flex-1">
-        <MessageListAny messages={messages} currentUserId={user?.id || "me"} typingUsers={typingUsers} />
+        <MessageList messages={messages} currentUserId={user?.id || "me"} typingUsers={typingUsers} />
       </div>
-      {roomId && <MessageInput socket={socketRef} roomId={roomId} onSend={sendLocal} />}
+      {roomId && <MessageInput socket={socketRef} roomId={roomId} />}
     </div>
   );
 }
