@@ -4,15 +4,15 @@ import { useState } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import Navbar from "@/components/NavBar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { authClient } from "@/lib/auth-client";
-
+import Image from "next/image";
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  
+  const [uploadingImage, setUploadingImage] = useState(false);
+
   const [formData, setFormData] = useState({
     name: user?.name || "",
     phone: user?.phone || "",
@@ -26,7 +26,6 @@ export default function ProfilePage() {
     setSuccess("");
 
     try {
-      // Update user profile
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/update-user`, {
         method: "POST",
         headers: {
@@ -39,23 +38,52 @@ export default function ProfilePage() {
       if (response.ok) {
         setSuccess("Profile updated successfully!");
         setIsEditing(false);
+        refreshUser?.(); // Refresh user info
         setTimeout(() => setSuccess(""), 3000);
       } else {
-        setError("Failed to update profile");
+        const data = await response.json();
+        setError(data.error || "Failed to update profile");
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred");
     } finally {
       setLoading(false);
     }
   };
 
+  const handleImageUpload = async (file: File) => {
+    setUploadingImage(true);
+    setError("");
+    setSuccess("");
+
+    const body = new FormData();
+    body.append("image", file);
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/upload-profile-image`, {
+        method: "POST",
+        credentials: "include",
+        body,
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess("Profile image updated!");
+        refreshUser?.(); // Refresh user data so new image is shown
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        setError(data.error || "Upload failed");
+      }
+    } catch {
+      setError("Upload failed");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const getUserInitials = () => {
     if (!user?.name) return "U";
     const names = user.name.split(" ");
-    if (names.length >= 2) {
-      return `${names[0][0]}${names[1][0]}`.toUpperCase();
-    }
+    if (names.length >= 2) return `${names[0][0]}${names[1][0]}`.toUpperCase();
     return user.name[0].toUpperCase();
   };
 
@@ -63,25 +91,55 @@ export default function ProfilePage() {
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        
+
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Profile Header */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
             <div className="h-32 bg-gradient-to-r from-purple-500 to-pink-500"></div>
             <div className="px-8 pb-8">
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-16">
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl font-bold shadow-xl border-4 border-white">
-                  {getUserInitials()}
+                {/* Profile Image */}
+                <div className="relative w-32 h-32">
+                  {user?.image ? (
+                    <Image
+                    width={128}
+                    height={128}
+                      src={user.image}
+                      alt="Profile"
+                      className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-xl"
+                    />
+                  ) : (
+                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl font-bold shadow-xl border-4 border-white">
+                      {getUserInitials()}
+                    </div>
+                  )}
+
+                  {isEditing && (
+                    <label className="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full cursor-pointer hover:bg-purple-700">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleImageUpload(file);
+                        }}
+                      />
+                      📷
+                    </label>
+                  )}
                 </div>
+
+                {/* User Info */}
                 <div className="text-center sm:text-left mb-4 sm:mb-0">
                   <h1 className="text-3xl font-bold text-gray-900">{user?.name}</h1>
                   <p className="text-gray-600 mt-1">{user?.email}</p>
                   <div className="flex items-center gap-2 mt-2 justify-center sm:justify-start">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      user?.emailVerified 
-                        ? "bg-green-100 text-green-700" 
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}>
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        user?.emailVerified ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
                       {user?.emailVerified ? "✓ Verified" : "Pending Verification"}
                     </span>
                     <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700 capitalize">
@@ -93,19 +151,15 @@ export default function ProfilePage() {
             </div>
           </div>
 
+          {/* Feedback Messages */}
           {success && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">
-              {success}
-            </div>
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6">{success}</div>
           )}
-
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
-              {error}
-            </div>
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">{error}</div>
           )}
 
-          {/* Profile Information */}
+          {/* Profile Form */}
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Profile Information</h2>
@@ -121,9 +175,7 @@ export default function ProfilePage() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -135,24 +187,18 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                 <input
                   type="email"
                   value={user?.email}
                   disabled
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  Email cannot be changed
-                </p>
+                <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                 <input
                   type="tel"
                   value={formData.phone}
@@ -164,9 +210,7 @@ export default function ProfilePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Country
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
                 <input
                   type="text"
                   value={formData.country}
@@ -203,51 +247,6 @@ export default function ProfilePage() {
                 </div>
               )}
             </form>
-          </div>
-
-          {/* Account Security */}
-          <div className="mt-8 bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Account Security</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center py-4 border-b border-gray-200">
-                <div>
-                  <h3 className="font-semibold text-gray-900">Password</h3>
-                  <p className="text-sm text-gray-600">Last changed 30 days ago</p>
-                </div>
-                <a
-                  href="/settings/change-password"
-                  className="px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors font-medium"
-                >
-                  Change
-                </a>
-              </div>
-
-              <div className="flex justify-between items-center py-4 border-b border-gray-200">
-                <div>
-                  <h3 className="font-semibold text-gray-900">Two-Factor Authentication</h3>
-                  <p className="text-sm text-gray-600">Add an extra layer of security</p>
-                </div>
-                <a
-                  href="/settings/2fa"
-                  className="px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors font-medium"
-                >
-                  Setup
-                </a>
-              </div>
-
-              <div className="flex justify-between items-center py-4">
-                <div>
-                  <h3 className="font-semibold text-gray-900">Active Sessions</h3>
-                  <p className="text-sm text-gray-600">Manage your active sessions</p>
-                </div>
-                <a
-                  href="/settings/sessions"
-                  className="px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors font-medium"
-                >
-                  View
-                </a>
-              </div>
-            </div>
           </div>
         </main>
       </div>
