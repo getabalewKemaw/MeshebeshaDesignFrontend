@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Navbar from "@/components/NavBar";
 import { Package, Plus, Search, Edit, Trash2, Image, Copy, Archive, RotateCcw, Layers } from "lucide-react";
-
 import { Product } from "@/types/product";
 import * as productApi from "@/lib/api/products";
 import { formatCurrency, getStatusBadge } from "@/lib/utils/product-utils";
@@ -147,7 +146,7 @@ export default function ProductsPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-black"
             />
           </div>
         </div>
@@ -188,7 +187,7 @@ export default function ProductsPage() {
                 }`}
               >
                 <div className="h-48 bg-gray-200 flex items-center justify-center">
-                  <Image className="h-16 w-16 text-gray-400" />
+                  <Image className="h-16 w-16 text-gray-400"  width={280} height={280} />
                 </div>
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-2">
