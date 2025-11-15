@@ -66,7 +66,7 @@ export function UserMenu() {
             <>
               <div className="border-t border-gray-200 my-1"></div>
               <a
-                href="/admin/dashboard"
+                href="/admin"
                 className="block px-4 py-2 text-sm text-purple-600 hover:bg-gray-100 font-medium"
               >
                 👑 Admin Panel

@@ -103,7 +103,7 @@ export default function MessageInput({ socket, roomId }: Props) {
           className="hidden"
           onChange={(e) => { if (e.target.files?.[0]) onFileSelected(e.target.files[0]); }}
         />
-        <button className="px-3 py-1 bg-gray-200 rounded" onClick={() => fileRef.current?.click()} disabled={loading}>Attach</button>
+        <button className="px-3 py-1 bg-black rounded" onClick={() => fileRef.current?.click()} disabled={loading}>Attach</button>
         <button className="px-3 py-1 bg-blue-600 text-white rounded" onClick={sendText} disabled={!text.trim() || loading}>Send</button>
       </div>
     </div>

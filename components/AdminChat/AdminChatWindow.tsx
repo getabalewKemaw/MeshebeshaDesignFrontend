@@ -60,10 +60,19 @@ export default function AdminChatWindow({ socket, roomId, currentAdminId }: { so
 
   if (!roomId) return <div className="flex-1 flex items-center justify-center text-gray-500">Select a conversation</div>;
 
-  return (
-    <div className="flex-1 flex flex-col">
+return (
+  <div className="flex-1 flex flex-col ml-80 relative">
+
+    <div className="flex-1 overflow-auto p-4 pb-28 bg-gray-50">
       <MessageList messages={messages} currentUserId={currentAdminId} />
-      <MessageInput socket={socket} roomId={roomId} />
     </div>
-  );
+
+<div className="fixed bottom-20 right-0 left-80 bg-black border-t p-2 z-50">
+  <MessageInput socket={socket} roomId={roomId} />
+</div>
+
+
+  </div>
+);
+
 }

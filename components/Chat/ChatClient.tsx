@@ -5,7 +5,6 @@ import { useSocket } from "./useSocket";
 import MessageList from "./MessageList";
 import MessageInput from "./MessageInput";
 import axios from "axios";
-
 type Message = {
   id: string;
   roomId: string;
@@ -100,12 +99,25 @@ export default function ChatClient({ productId }: { productId: string }) {
     };
   }, [socketRef, roomId]);
 
-  return (
-    <div className="h-full flex flex-col">
-      <div className="flex-1">
-        <MessageList messages={messages} currentUserId={user?.id || "me"} typingUsers={typingUsers} />
-      </div>
-      {roomId && <MessageInput socket={socketRef} roomId={roomId} />}
+return (
+  <div className="h-full flex flex-col relative">
+
+    {/* Scrollable messages */}
+    <div className="flex-1 overflow-y-auto p-4 pb-28 bg-gray-50">
+      <MessageList
+        messages={messages}
+        currentUserId={user?.id || "me"}
+        typingUsers={typingUsers}
+      />
     </div>
-  );
+
+    {/* Fixed Message Input */}
+    {roomId && (
+      <div className="fixed bottom-20 left-0 w-full bg-gray-900 shadow-md border-t p-2 z-50">
+        <MessageInput socket={socketRef} roomId={roomId} />
+      </div>
+    )}
+  </div>
+);
+
 }
