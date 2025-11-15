@@ -77,7 +77,7 @@ export default function AdminSignInPage() {
         // First time admin login - redirect to enable 2FA
         setSuccess("Login successful! Please set up 2FA for security.");
         setTimeout(() => {
-          router.push("/admin/dashboard");
+          router.push("/admin");
         }, 1500);
       }
     } catch (err) {
@@ -132,7 +132,7 @@ export default function AdminSignInPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-slate-600 transition-colors"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-slate-600 transition-colors text-black"
                   placeholder="admin@meshebeshadesign.com"
                   required
                 />
@@ -174,7 +174,7 @@ export default function AdminSignInPage() {
                   type="text"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  className="w-full pl-10 pr-4 py-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-center text-3xl tracking-[0.5em] font-bold transition-colors"
+                  className="w-full pl-10 pr-4 py-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-center text-3xl tracking-[0.5em] font-bold transition-colors text-black"
                   placeholder="000000"
                   maxLength={6}
                   required

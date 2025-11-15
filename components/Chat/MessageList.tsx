@@ -28,7 +28,7 @@ export default function MessageList({
   }, [messages, typingUsers]);
 
   return (
-    <div className="flex flex-col gap-2 p-2 overflow-y-auto h-full bg-gray-50">
+<div className="flex flex-col gap-2 overflow-y-auto h-full bg-gray-50 p-2">
 
       {messages.map((msg) => {
         const isMine = msg.senderId === currentUserId;

@@ -115,7 +115,7 @@ export default function VerifyEmailPage() {
                   setOtp(value);
                 }
               }}
-              className="w-full px-4 py-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-center text-3xl tracking-[0.5em] font-bold"
+              className="w-full px-4 py-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-green-600 focus:border-transparent text-center text-3xl tracking-[0.5em] font-bold text-black"
               placeholder="000000"
               maxLength={6}
               required
