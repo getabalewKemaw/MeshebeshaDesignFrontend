@@ -7,6 +7,7 @@ import { navLinks } from "@/constants/navlinks";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
+import { useCartStore } from "@/stores/cart";
 
 import Image from "next/image";
 
@@ -14,6 +15,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const { user, isAuthenticated, isAdmin } = useAuth();
+  const { itemCount: cartItems, hasHydrated: cartHydrated } = useCartStore();
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
@@ -78,8 +80,20 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* Desktop Auth Section */}
-          <div className="hidden md:block">
+          {/* Desktop Cart + Auth */}
+          <div className="hidden md:flex items-center gap-4">
+            <Link
+              href="/cart"
+              className="relative inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 hover:border-purple-500 hover:text-purple-600"
+            >
+              🛒
+              <span>Cart</span>
+              {cartHydrated && cartItems > 0 && (
+                <span className="ml-1 inline-flex min-w-[1.5rem] justify-center rounded-full bg-purple-600 px-1 text-xs font-bold text-white">
+                  {cartItems > 99 ? "99+" : cartItems}
+                </span>
+              )}
+            </Link>
             {isAuthenticated && user ? (
               <div className="relative" ref={dropdownRef}>
                 <button
@@ -239,6 +253,15 @@ const Navbar = () => {
                   </Link>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/cart"
+                  onClick={() => setOpen(false)}
+                  className="block hover:text-purple-600 text-purple-700"
+                >
+                  🛒 Cart {cartHydrated && cartItems > 0 ? `(${cartItems})` : ""}
+                </Link>
+              </li>
               {isAuthenticated && user ? (
                 <div className="space-y-2">
                   <div className="flex items-center justify-center gap-2 pb-2 border-b border-gray-200">
