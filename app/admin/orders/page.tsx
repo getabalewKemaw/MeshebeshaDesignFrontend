@@ -10,6 +10,7 @@ import {
   getAdminOrder,
   listAdminOrders,
   updateAdminOrderStatus,
+  bulkUpdateAdminOrderStatus,
 } from "@/lib/api/admin/orders";
 import type { AdminOrder, PaginationMeta, ShippingInfo } from "@/types/order";
 
@@ -78,6 +79,9 @@ export default function AdminOrdersPage() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const selectedOrderIdRef = useRef<string | null>(null);
+  const [selectedOrderIds, setSelectedOrderIds] = useState<Set<string>>(new Set());
+  const [bulkStatus, setBulkStatus] = useState<string>("");
+  const [bulkUpdating, setBulkUpdating] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAdmin) {
@@ -96,6 +100,7 @@ export default function AdminOrdersPage() {
       setStatusMessage(null);
     }
     setStatusNote("");
+    setErrorMessage(null); // Clear any previous errors when selecting a new order
   };
 
   useEffect(() => {
@@ -182,6 +187,64 @@ export default function AdminOrdersPage() {
     setStatusFilter("all");
     setSearchTerm("");
     setPage(1);
+    setSelectedOrderIds(new Set());
+  };
+
+  const handleToggleOrderSelection = (orderId: string) => {
+    setSelectedOrderIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(orderId)) {
+        next.delete(orderId);
+      } else {
+        next.add(orderId);
+      }
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedOrderIds.size === orders.length) {
+      setSelectedOrderIds(new Set());
+    } else {
+      setSelectedOrderIds(new Set(orders.map((o) => o.id)));
+    }
+  };
+
+  const handleBulkStatusUpdate = async () => {
+    if (selectedOrderIds.size === 0 || !bulkStatus) {
+      setErrorMessage("Please select orders and choose a status");
+      return;
+    }
+
+    setBulkUpdating(true);
+    setErrorMessage(null);
+    setStatusMessage(null);
+
+    const response = await bulkUpdateAdminOrderStatus(
+      Array.from(selectedOrderIds),
+      bulkStatus
+    );
+
+    if (response.success && response.data) {
+      setStatusMessage(
+        `Updated ${response.data.successful} of ${selectedOrderIds.size} orders`
+      );
+      setSelectedOrderIds(new Set());
+      setBulkStatus("");
+      // Reload orders
+      const reloadResponse = await listAdminOrders({
+        status: statusFilter !== "all" ? statusFilter : undefined,
+        page,
+        search: deferredSearch || undefined,
+      });
+      if (reloadResponse.success && reloadResponse.data) {
+        setOrders(reloadResponse.data);
+      }
+    } else {
+      setErrorMessage(response.error || "Failed to update orders");
+    }
+
+    setBulkUpdating(false);
   };
 
   const currencyFormatter = useMemo(
@@ -219,6 +282,47 @@ export default function AdminOrdersPage() {
         </header>
 
         <section className="bg-white rounded-2xl shadow p-4 sm:p-6 space-y-4">
+          {/* Bulk Actions */}
+          {selectedOrderIds.size > 0 && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-blue-900">
+                  {selectedOrderIds.size} order{selectedOrderIds.size !== 1 ? "s" : ""} selected
+                </span>
+                <select
+                  value={bulkStatus}
+                  onChange={(e) => setBulkStatus(e.target.value)}
+                  className="rounded-lg border border-blue-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+                >
+                  <option value="">Select status...</option>
+                  {STATUS_OPTIONS.filter((option) => option.value !== "all").map(
+                    (option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    )
+                  )}
+                </select>
+                <button
+                  onClick={handleBulkStatusUpdate}
+                  disabled={!bulkStatus || bulkUpdating}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {bulkUpdating ? "Updating..." : "Update Selected"}
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedOrderIds(new Set());
+                    setBulkStatus("");
+                  }}
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-1 gap-3">
               <div className="relative flex-1">
@@ -323,34 +427,68 @@ export default function AdminOrdersPage() {
                 </div>
               ) : (
                 <ul className="divide-y divide-gray-100">
+                  {orders.length > 0 && (
+                    <li className="px-4 sm:px-6 py-3 bg-gray-50 border-b border-gray-200">
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={selectedOrderIds.size === orders.length && orders.length > 0}
+                          onChange={handleSelectAll}
+                          className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                        />
+                        <span className="text-sm font-medium text-gray-700">Select All</span>
+                      </label>
+                    </li>
+                  )}
                   {orders.map((order) => (
                     <li
                       key={order.id}
-                      className="px-4 sm:px-6 py-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between hover:bg-gray-50"
+                      className={`px-4 sm:px-6 py-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between ${
+                        selectedOrder?.id === order.id
+                          ? "bg-indigo-50 border-l-4 border-indigo-500"
+                          : selectedOrderIds.has(order.id)
+                          ? "bg-blue-50"
+                          : "hover:bg-gray-50"
+                      } transition-colors`}
                     >
-                      <div>
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
-                          <span className="font-semibold text-gray-900">
-                            {order.orderNumber}
-                          </span>
-                          <span>•</span>
-                          <span>
-                            {new Date(order.createdAt).toLocaleDateString("en-US", {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
-                          </span>
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {order.user?.name ?? "Unknown customer"}
-                          {order.user?.email ? ` • ${order.user.email}` : ""}
-                        </div>
-                        <div className="text-base font-semibold text-gray-900 mt-1">
-                          {new Intl.NumberFormat("en-US", {
-                            style: "currency",
-                            currency: order.currency,
-                          }).format(order.total)}
+                      <div className="flex items-center gap-3 flex-1">
+                        <input
+                          type="checkbox"
+                          checked={selectedOrderIds.has(order.id)}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            handleToggleOrderSelection(order.id);
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                          className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                        />
+                        <div
+                          className="flex-1 cursor-pointer"
+                          onClick={() => handleViewOrder(order.id)}
+                        >
+                          <div className="flex items-center gap-3 text-sm text-gray-500">
+                            <span className="font-semibold text-gray-900">
+                              {order.orderNumber}
+                            </span>
+                            <span>•</span>
+                            <span>
+                              {new Date(order.createdAt).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {order.user?.name ?? "Unknown customer"}
+                            {order.user?.email ? ` • ${order.user.email}` : ""}
+                          </div>
+                          <div className="text-base font-semibold text-gray-900 mt-1">
+                            {new Intl.NumberFormat("en-US", {
+                              style: "currency",
+                              currency: order.currency,
+                            }).format(order.total)}
+                          </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
@@ -363,10 +501,17 @@ export default function AdminOrdersPage() {
                         </span>
                         <button
                           type="button"
-                          onClick={() => handleViewOrder(order.id)}
-                          className="text-sm font-semibold text-indigo-600 hover:text-indigo-700"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewOrder(order.id);
+                          }}
+                          className={`text-sm font-semibold ${
+                            selectedOrder?.id === order.id
+                              ? "text-indigo-700"
+                              : "text-indigo-600 hover:text-indigo-700"
+                          }`}
                         >
-                          View
+                          {selectedOrder?.id === order.id ? "Viewing" : "View"}
                         </button>
                       </div>
                     </li>
@@ -519,26 +664,46 @@ export default function AdminOrdersPage() {
 
                   <div className="border-t border-gray-100 pt-4 space-y-3">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold text-gray-900">Line Items</p>
+                      <p className="text-sm font-semibold text-gray-900">Order Items</p>
                       <span className="text-xs text-gray-500">
-                        {selectedOrder.items.length} products
+                        {selectedOrder.items.length} item{selectedOrder.items.length !== 1 ? "s" : ""}
                       </span>
                     </div>
-                    <div className="space-y-3">
-                      {selectedOrder.items.map((item) => (
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {selectedOrder.items.map((item, index) => (
                         <div
-                          key={item.variantId}
-                          className="rounded-xl border border-gray-100 p-3 text-sm"
+                          key={item.variantId || index}
+                          className="rounded-xl border border-gray-100 p-3 text-sm bg-gray-50"
                         >
-                          <div className="flex items-center justify-between text-gray-900">
-                            <span className="font-medium">{item.title}</span>
-                            <span>{currencyFormatter.format(item.unitPrice * item.quantity)}</span>
-                          </div>
-                          <div className="text-xs text-gray-500 flex justify-between">
-                            <span>
-                              {item.quantity} × {currencyFormatter.format(item.unitPrice)}
-                            </span>
-                            {item.product?.title && <span>{item.product.title}</span>}
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1">
+                              <div className="font-medium text-gray-900 mb-1">
+                                {item.title}
+                              </div>
+                              <div className="text-xs text-gray-500 space-y-1">
+                                <div>
+                                  Quantity: <span className="font-medium">{item.quantity}</span>
+                                </div>
+                                {item.size && (
+                                  <div>
+                                    Size: <span className="font-medium">{item.size}</span>
+                                  </div>
+                                )}
+                                {item.product?.title && (
+                                  <div className="text-gray-400">
+                                    Product: {item.product.title}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-semibold text-gray-900">
+                                {currencyFormatter.format(item.unitPrice * item.quantity)}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {currencyFormatter.format(item.unitPrice)} each
+                              </div>
+                            </div>
                           </div>
                         </div>
                       ))}

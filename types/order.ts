@@ -49,6 +49,7 @@ export interface OrderSummary {
     title: string;
     quantity: number;
     unitPrice: number;
+    size?: string | null;
     product?: {
       id: string;
       title: string;

@@ -59,6 +59,7 @@ export interface ShippingAddress {
 export interface CartSyncItem {
   variantId: string;
   quantity: number;
+  size?: string | null;
 }
 
 export interface ServerCartItem {
