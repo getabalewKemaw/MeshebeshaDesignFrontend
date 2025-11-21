@@ -111,14 +111,16 @@ export default function ProductDetailPage() {
 
   const sizeOptions = useMemo(() => {
     if (!selectedVariant) return [];
-    if (selectedVariant.availableSizes && selectedVariant.availableSizes.length > 0) {
-      return selectedVariant.availableSizes;
-    }
-    if (selectedVariant.size) {
-      return [selectedVariant.size];
-    }
-    return [];
-  }, [selectedVariant]);
+    const key = selectedColor ?? selectedVariant.color ?? "Default";
+    const tiedVariants = variantsByColor.get(key) ?? (selectedVariant ? [selectedVariant] : []);
+    const collected = tiedVariants.flatMap((variant) => {
+      if (variant.availableSizes && variant.availableSizes.length > 0) {
+        return variant.availableSizes;
+      }
+      return variant.size ? [variant.size] : [];
+    });
+    return Array.from(new Set(collected.filter(Boolean)));
+  }, [selectedVariant, selectedColor, variantsByColor]);
 
   useEffect(() => {
     if (!selectedVariant) {
