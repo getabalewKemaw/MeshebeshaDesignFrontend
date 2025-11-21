@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import Navbar from "@/components/NavBar";
 import { getPublicProductById, recordProductView } from "@/lib/api/products";
 import type { ProductWithDetails, ProductMedia, ProductVariant } from "@/types/product";
+import { useCartStore } from "@/stores/cart";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
@@ -17,6 +18,9 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [quantity, setQuantity] = useState<number>(1);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const addItemToCart = useCartStore((state) => state.addItem);
 
   useEffect(() => {
     const run = async () => {
@@ -156,6 +160,29 @@ export default function ProductDetailPage() {
     selectedVariant?.priceOverride ?? product?.price ?? 0;
   const isOutOfStock = (selectedVariant?.stock ?? 0) <= 0;
 
+  useEffect(() => {
+    if (feedback) {
+      const timer = setTimeout(() => setFeedback(null), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [feedback]);
+
+  useEffect(() => {
+    setQuantity(1);
+  }, [selectedVariant?.id, selectedSize]);
+
+  const clampQuantity = (value: number) => {
+    const stock = selectedVariant?.stock;
+    if (typeof stock === "number" && stock > 0) {
+      return Math.min(Math.max(1, value), stock);
+    }
+    return Math.max(1, value);
+  };
+
+  const handleQuantityChange = (value: number) => {
+    setQuantity(clampQuantity(value));
+  };
+
   const handleAddToCart = async () => {
     if (!product) return;
     if (!selectedVariant && variants.length === 0) {
@@ -172,11 +199,26 @@ export default function ProductDetailPage() {
     }
     setIsAdding(true);
     try {
-      const colorLabel = selectedVariant?.color || "Default";
-      const sizeLabel = selectedSize ? ` / ${selectedSize}` : "";
-      alert(
-        `Added "${product.title}" (${colorLabel}${sizeLabel}) to your cart.`
+      addItemToCart(
+        {
+          productId: product.id,
+          variantId: selectedVariant?.id ?? null,
+          title: product.title,
+          subtitle: selectedVariant?.sku,
+          color: selectedVariant?.color ?? selectedColor,
+          size: selectedSize,
+          image:
+            selectedVariant?.media?.[0]?.url ??
+            product.media?.[0]?.url ??
+            displayMedia?.[0]?.url ??
+            null,
+          currency: product.currency,
+          unitPrice: currentPrice,
+          stock: selectedVariant?.stock ?? null,
+        },
+        quantity
       );
+      setFeedback("Added to cart");
     } finally {
       setIsAdding(false);
     }
@@ -316,34 +358,67 @@ export default function ProductDetailPage() {
 
                 {sizeOptions.length > 0 && (
                   <div className="space-y-2">
-                    <span className="text-sm font-medium text-gray-700">
+                    <label className="text-sm font-medium text-gray-700" htmlFor="size-select">
                       Size
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {sizeOptions.map((size) => {
-                        const isActive = selectedSize === size;
-                        const disabled = isOutOfStock;
-                        return (
-                          <button
-                            type="button"
-                            key={size}
-                            onClick={() => !disabled && setSelectedSize(size)}
-                            className={`px-3 py-1 rounded-full border text-sm ${
-                              isActive
-                                ? "bg-purple-600 text-white border-purple-600"
-                                : "border-gray-300 text-gray-700 hover:border-purple-400 hover:text-purple-600"
-                            } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
-                            disabled={disabled}
-                          >
-                            {size}
-                          </button>
-                        );
-                      })}
-                    </div>
+                    </label>
+                    <select
+                      id="size-select"
+                      value={selectedSize ?? ""}
+                      onChange={(event) => setSelectedSize(event.target.value)}
+                      disabled={isOutOfStock}
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 disabled:opacity-50"
+                    >
+                      {sizeOptions.map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 )}
 
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-medium text-gray-700">Quantity</span>
+                    <div className="inline-flex items-center border border-gray-300 rounded-full overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => handleQuantityChange(quantity - 1)}
+                        className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                        disabled={quantity <= 1}
+                        aria-label="Decrease quantity"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        min={1}
+                        value={quantity}
+                        onChange={(event) =>
+                          handleQuantityChange(Number(event.target.value))
+                        }
+                        className="w-16 text-center border-x border-gray-200 py-1 text-sm focus:outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleQuantityChange(quantity + 1)}
+                        className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50"
+                        disabled={
+                          !!selectedVariant?.stock &&
+                          quantity >= selectedVariant.stock
+                        }
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
+                    {typeof selectedVariant?.stock === "number" && selectedVariant.stock > 0 && (
+                      <span className="text-xs text-gray-500">
+                        {selectedVariant.stock} available
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                   <button
                     type="button"
                     onClick={handleAddToCart}
@@ -365,6 +440,10 @@ export default function ProductDetailPage() {
                       ? "We'll notify you when it's back."
                       : "Ready to ship within 2 business days."}
                   </span>
+                  {feedback && (
+                    <span className="text-sm text-green-600">{feedback}</span>
+                  )}
+                </div>
                 </div>
               </div>
             </div>
