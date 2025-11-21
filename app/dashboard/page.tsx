@@ -3,6 +3,7 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import Navbar from "@/components/NavBar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import NotificationList from "@/components/NotificationList";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -122,6 +123,11 @@ export default function DashboardPage() {
                 <span className="font-semibold text-gray-900">Contact Us</span>
               </a>
             </div>
+          </div>
+
+          {/* Notifications */}
+          <div className="mt-8">
+            <NotificationList />
           </div>
 
           {/* Account Info */}

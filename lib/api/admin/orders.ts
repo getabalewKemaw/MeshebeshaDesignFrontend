@@ -85,3 +85,20 @@ export const updateAdminOrderStatus = (
     }),
   });
 
+export const bulkUpdateAdminOrderStatus = (
+  orderIds: string[],
+  status: string,
+  note?: string
+) =>
+  adminOrdersRequest<ApiResponse<{ successful: number; failed: number; orders: AdminOrder[] }>>(
+    `/bulk/status`,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        orderIds,
+        status,
+        ...(note ? { note } : {}),
+      }),
+    }
+  );
+

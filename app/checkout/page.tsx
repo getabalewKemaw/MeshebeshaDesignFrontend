@@ -86,6 +86,7 @@ export default function CheckoutPage() {
       .map((item) => ({
         variantId: item.variantId as string,
         quantity: item.quantity,
+        size: item.size || null,
       }));
 
     if (orderItems.length === 0) {

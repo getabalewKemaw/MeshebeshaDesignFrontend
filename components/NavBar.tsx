@@ -8,6 +8,7 @@ import Button from "@/components/ui/Button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
 import { useCartStore } from "@/stores/cart";
+import NotificationBell from "@/components/NotificationBell";
 
 import Image from "next/image";
 
@@ -82,6 +83,7 @@ const Navbar = () => {
 
           {/* Desktop Cart + Auth */}
           <div className="hidden md:flex items-center gap-4">
+            <NotificationBell />
             <Link
               href="/cart"
               className="relative inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 text-sm font-semibold text-gray-700 hover:border-purple-500 hover:text-purple-600"
@@ -254,13 +256,18 @@ const Navbar = () => {
                 </li>
               ))}
               <li>
-                <Link
-                  href="/cart"
-                  onClick={() => setOpen(false)}
-                  className="block hover:text-purple-600 text-purple-700"
-                >
-                  🛒 Cart {cartHydrated && cartItems > 0 ? `(${cartItems})` : ""}
-                </Link>
+                <div className="flex items-center justify-between">
+                  <Link
+                    href="/cart"
+                    onClick={() => setOpen(false)}
+                    className="block hover:text-purple-600 text-purple-700"
+                  >
+                    🛒 Cart {cartHydrated && cartItems > 0 ? `(${cartItems})` : ""}
+                  </Link>
+                  <div onClick={() => setOpen(false)}>
+                    <NotificationBell />
+                  </div>
+                </div>
               </li>
               {isAuthenticated && user ? (
                 <div className="space-y-2">
