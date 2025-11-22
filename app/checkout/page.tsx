@@ -9,6 +9,7 @@ import GoogleMapPicker from "@/components/GoogleMapPicker";
 import { useCartStore } from "@/stores/cart";
 import { useCheckoutStore } from "@/stores/checkout";
 import { createOrder } from "@/lib/api/orders";
+import { createPayment } from "@/lib/api/payments";
 import type { CreateOrderPayload, OrderSummary } from "@/types/order";
 
 const formatCurrency = (currency: string) =>
@@ -63,9 +64,7 @@ export default function CheckoutPage() {
   const [googleMethod, setGoogleMethod] = useState<"search" | "map">("search");
   const currency = items[0]?.currency ?? "USD";
   const priceFormatter = useMemo(() => formatCurrency(currency), [currency]);
-
   const cartEmpty = cartHydrated && items.length === 0;
-
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (cartEmpty) {
@@ -114,17 +113,32 @@ export default function CheckoutPage() {
     setSubmissionMessage(null);
     setOrderSummary(null);
     try {
-      const response = await createOrder(payload);
-      if (!response.success || !response.data) {
-        throw new Error(response.error || "Failed to place order. Please try again.");
+      // Create order first
+      const orderResponse = await createOrder(payload);
+      if (!orderResponse.success || !orderResponse.data) {
+        throw new Error(orderResponse.error || "Failed to place order. Please try again.");
       }
 
-      setOrderSummary(response.data);
-      setSubmissionMessage(
-        `Order ${response.data.orderNumber} placed. We'll confirm it shortly.`
-      );
-      clearCart();
-      resetCheckout();
+      const order = orderResponse.data;
+      setOrderSummary(order);
+
+      // If payment note is provided, use fake payment (legacy)
+      if (paymentNote) {
+        setSubmissionMessage(
+          `Order ${order.orderNumber} placed. We'll confirm it shortly.`
+        );
+        clearCart();
+        resetCheckout();
+      } else {
+        // Create Chapa payment session
+        const paymentResponse = await createPayment(order.id);
+        if (!paymentResponse.success || !paymentResponse.data) {
+          throw new Error(paymentResponse.error || "Failed to create payment session. Please try again.");
+        }
+
+        // Redirect to Chapa checkout
+        window.location.href = paymentResponse.data.checkoutUrl;
+      }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Failed to place order. Please try again.";
@@ -459,18 +473,21 @@ export default function CheckoutPage() {
 
               <section className="border border-gray-200 rounded-2xl p-6 bg-white space-y-3">
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">Fake payment</h2>
+                  <h2 className="text-xl font-semibold text-gray-900">Payment</h2>
                   <p className="text-sm text-gray-500">
-                    While the real gateway is coming, leave a note to confirm how you paid.
+                    You will be redirected to Chapa secure payment page after placing your order.
                   </p>
                 </div>
+                <div className="text-xs text-gray-400">
+                  <p>For testing purposes, you can leave a payment note to use the legacy fake payment method instead.</p>
+                </div>
                 <label className="flex flex-col gap-1 text-sm">
-                  Payment note
+                  Payment note (optional - for testing only)
                   <input
                     type="text"
                     value={paymentNote}
                     onChange={(event) => setPaymentNote(event.target.value)}
-                    placeholder="e.g., Paid via mock wallet, txn 12345"
+                    placeholder="Leave empty to use Chapa payment, or enter note for fake payment"
                     className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   />
                 </label>
