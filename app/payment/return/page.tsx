@@ -45,15 +45,15 @@ export default function PaymentReturnPage() {
     // Initial fetch
     pollPaymentStatus();
 
-    // Poll every 2 seconds for up to 30 seconds
-    const pollInterval = setInterval(pollPaymentStatus, 2000);
+    // Poll every 5 seconds for up to 60 seconds (less frequent to avoid rate limits)
+    const pollInterval = setInterval(pollPaymentStatus, 5000);
     const timeout = setTimeout(() => {
       clearInterval(pollInterval);
       setIsLoading(false);
       if (!paymentStatus) {
         setError("Payment status check timed out. Please check your order status.");
       }
-    }, 30000);
+    }, 60000); // Increased to 60 seconds
 
     return () => {
       clearInterval(pollInterval);
@@ -275,4 +275,5 @@ export default function PaymentReturnPage() {
     </>
   );
 }
+
 
