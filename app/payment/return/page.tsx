@@ -23,22 +23,54 @@ export default function PaymentReturnPage() {
     }
 
     // Poll for payment status
+    let pollCount = 0;
+    const maxPollAttempts = 12; // Max 12 attempts (60 seconds / 5 seconds)
+    let shouldStopPolling = false;
+
     const pollPaymentStatus = async () => {
+      if (shouldStopPolling) return;
+      
+      pollCount++;
+      
+      // Stop if we've exceeded max attempts
+      if (pollCount > maxPollAttempts) {
+        shouldStopPolling = true;
+        setIsLoading(false);
+        if (!paymentStatus) {
+          setError("Payment status check timed out. Please check your order status.");
+        }
+        return;
+      }
+
       try {
         const response = await getOrderPayments(orderId);
         if (response.success && response.data && response.data.length > 0) {
           const latestPayment = response.data[0]; // Most recent payment
           setPaymentStatus(latestPayment);
 
-          // If payment is paid or failed, stop polling
+          // If payment is paid or failed, stop polling immediately
           if (latestPayment.status === "paid" || latestPayment.status === "failed") {
+            shouldStopPolling = true;
             setIsLoading(false);
             return;
           }
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Error fetching payment status:", err);
-        setError("Failed to fetch payment status");
+        
+        // If we get a 429 error, stop polling to avoid more rate limit errors
+        if (err?.response?.status === 429 || err?.status === 429) {
+          console.warn("Rate limit reached, stopping polling");
+          shouldStopPolling = true;
+          setIsLoading(false);
+          setError("Too many requests. Please refresh the page to check payment status.");
+          return;
+        }
+        
+        // For other errors, continue polling but log them
+        if (pollCount >= maxPollAttempts) {
+          setError("Failed to fetch payment status. Please check your order status.");
+        }
       }
     };
 
@@ -46,16 +78,25 @@ export default function PaymentReturnPage() {
     pollPaymentStatus();
 
     // Poll every 5 seconds for up to 60 seconds (less frequent to avoid rate limits)
-    const pollInterval = setInterval(pollPaymentStatus, 5000);
+    const pollInterval = setInterval(() => {
+      if (!shouldStopPolling) {
+        pollPaymentStatus();
+      } else {
+        clearInterval(pollInterval);
+      }
+    }, 5000);
+    
     const timeout = setTimeout(() => {
+      shouldStopPolling = true;
       clearInterval(pollInterval);
       setIsLoading(false);
       if (!paymentStatus) {
         setError("Payment status check timed out. Please check your order status.");
       }
-    }, 60000); // Increased to 60 seconds
+    }, 60000); // 60 seconds timeout
 
     return () => {
+      shouldStopPolling = true;
       clearInterval(pollInterval);
       clearTimeout(timeout);
     };

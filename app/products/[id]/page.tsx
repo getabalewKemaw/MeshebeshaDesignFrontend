@@ -7,6 +7,9 @@ import Navbar from "@/components/NavBar";
 import { getPublicProductById, recordProductView } from "@/lib/api/products";
 import type { ProductWithDetails, ProductMedia, ProductVariant } from "@/types/product";
 import { useCartStore } from "@/stores/cart";
+import ReviewSummary from "@/components/reviews/ReviewSummary";
+import ReviewList from "@/components/reviews/ReviewList";
+import ReviewForm from "@/components/reviews/ReviewForm";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
@@ -20,6 +23,9 @@ export default function ProductDetailPage() {
   const [isAdding, setIsAdding] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<number>(1);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewOrderId, setReviewOrderId] = useState<string | null>(null);
+  const [reviewsKey, setReviewsKey] = useState(0); // Force re-render after review creation
   const addItemToCart = useCartStore((state) => state.addItem);
 
   useEffect(() => {
@@ -303,6 +309,15 @@ export default function ProductDetailPage() {
                 <h1 className="text-3xl font-semibold text-gray-900">
                   {product.title}
                 </h1>
+                
+                {/* Rating Summary */}
+                {(product.averageRating !== null || product.totalReviews > 0) && (
+                  <ReviewSummary
+                    averageRating={product.averageRating}
+                    totalReviews={product.totalReviews}
+                  />
+                )}
+                
                 <div className="flex items-end gap-3">
                   <span className="text-3xl font-semibold text-purple-600">
                     {product.currency} {currentPrice.toFixed(2)}
@@ -522,9 +537,65 @@ export default function ProductDetailPage() {
                 </div>
               </div>
             )}
+
+            {/* Reviews Section */}
+            <div className="mt-12">
+              <ReviewList
+                key={reviewsKey}
+                productId={product.id}
+                showWriteReview={!!reviewOrderId}
+                orderId={reviewOrderId || undefined}
+                variantSize={selectedSize}
+                variantColor={selectedColor}
+                onWriteReview={() => setShowReviewForm(true)}
+              />
+            </div>
           </div>
         ) : null}
       </div>
+
+      {/* Review Form Modal */}
+      {showReviewForm && reviewOrderId && product && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <h2 className="text-xl font-semibold text-gray-900">Write a Review</h2>
+              <button
+                onClick={() => setShowReviewForm(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6">
+              <ReviewForm
+                orderId={reviewOrderId}
+                productId={product.id}
+                variantSize={selectedSize}
+                variantColor={selectedColor}
+                onSuccess={() => {
+                  setShowReviewForm(false);
+                  setReviewsKey((k) => k + 1); // Refresh reviews list
+                }}
+                onCancel={() => setShowReviewForm(false)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
