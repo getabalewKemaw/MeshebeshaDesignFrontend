@@ -15,6 +15,8 @@ export interface Product {
   isFeatured: boolean;
   status: 'active' | 'archived' | 'draft';
   categoryId: string | null;
+  averageRating: number | null;
+  totalReviews: number;
   createdAt: string;
   updatedAt: string;
   createdById: string;
