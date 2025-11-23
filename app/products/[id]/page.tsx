@@ -10,6 +10,8 @@ import { useCartStore } from "@/stores/cart";
 import ReviewSummary from "@/components/reviews/ReviewSummary";
 import ReviewList from "@/components/reviews/ReviewList";
 import ReviewForm from "@/components/reviews/ReviewForm";
+import { checkReviewEligibility } from "@/lib/api/reviews";
+import { useAuth } from "@/lib/hooks/useAuth";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
@@ -27,6 +29,7 @@ export default function ProductDetailPage() {
   const [reviewOrderId, setReviewOrderId] = useState<string | null>(null);
   const [reviewsKey, setReviewsKey] = useState(0); // Force re-render after review creation
   const addItemToCart = useCartStore((state) => state.addItem);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const run = async () => {
@@ -39,13 +42,33 @@ export default function ProductDetailPage() {
         setActiveMediaIndex(0);
         // fire-and-forget view record
         recordProductView(id).catch(() => {});
+        
+        // Check if user can review this product (only if authenticated)
+        if (isAuthenticated) {
+          try {
+            const eligibilityRes = await checkReviewEligibility(id);
+            if (eligibilityRes.success && eligibilityRes.data?.canReview && eligibilityRes.data.orderId) {
+              setReviewOrderId(eligibilityRes.data.orderId);
+            } else {
+              // User is authenticated but not eligible - clear any previous orderId
+              setReviewOrderId(null);
+            }
+          } catch (err) {
+            console.error('Failed to check review eligibility:', err);
+            // Silently fail - don't show review button if check fails
+            setReviewOrderId(null);
+          }
+        } else {
+          // User not authenticated - clear orderId
+          setReviewOrderId(null);
+        }
       } else {
         setError(res.error || "Failed to load product");
       }
       setLoading(false);
     };
     run();
-  }, [id]);
+  }, [id, isAuthenticated]);
 
   const renderMedia = (media: ProductMedia, className = "w-full rounded") => {
     if (media.mediaType === "video") {

@@ -105,6 +105,16 @@ export async function createReview(
 }
 
 /**
+ * Check if current user can review a product
+ * GET /reviews/eligibility/:productId
+ */
+export async function checkReviewEligibility(productId: string): Promise<ApiResponse<{ canReview: boolean; orderId?: string; message?: string }>> {
+  return apiCall<{ canReview: boolean; orderId?: string; message?: string }>(`/api/v1/reviews/eligibility/${productId}`, {
+    method: 'GET',
+  });
+}
+
+/**
  * Get reviews for a product
  */
 export async function getProductReviews(
@@ -197,4 +207,5 @@ export async function deleteReview(
     method: 'DELETE',
   });
 }
+
 
