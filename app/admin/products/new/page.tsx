@@ -144,7 +144,7 @@ export default function NewProductPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-black"
+                className="form-input-base"
                 placeholder="e.g., Handwoven Ethiopian Scarf"
                 required
               />
@@ -161,7 +161,7 @@ export default function NewProductPage() {
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={4}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500  text-black"
+                className="form-input-base"
                 placeholder="Describe your product..."
               />
             </div>
@@ -176,7 +176,7 @@ export default function NewProductPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, categoryId: e.target.value })
                 }
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-black"
+                className="form-input-base"
               >
                 <option value="">No Category</option>
                 {categories.map((category) => (
@@ -208,7 +208,7 @@ export default function NewProductPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, price: e.target.value })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500  text-black"
+                  className="form-input-base"
                   placeholder="0.00"
                   required
                 />
@@ -222,7 +222,7 @@ export default function NewProductPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, currency: e.target.value })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500  text-black"
+                  className="form-input-base"
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -268,7 +268,7 @@ export default function NewProductPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-indigo-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="form-button-primary flex-1 gap-2"
             >
               {loading ? (
                 <>
@@ -284,7 +284,7 @@ export default function NewProductPage() {
             </button>
             <a
               href="/admin/products"
-              className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="form-button-secondary"
             >
               Cancel
             </a>

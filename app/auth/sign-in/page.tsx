@@ -1,9 +1,10 @@
 "use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, ArrowRight, Loader2 } from "lucide-react";
+import FormField from "@/components/forms/FormField";
+import OtpInput from "@/components/forms/OtpInput";
 
 export default function SignInPage() {
   const router = useRouter();
@@ -11,14 +12,30 @@ export default function SignInPage() {
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [errors, setErrors] = useState({
+    email: "",
+    otp: "",
+    general: "",
+  });
+
+  const validateEmail = (val: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? "" : "Enter a valid email address";
+  const validateOtp = (val: string) =>
+    val.length === 6 ? "" : "Enter the 6-digit code we sent you";
 
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
+    e.preventDefault();
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setErrors((prev) => ({ ...prev, email: emailError }));
+      return;
+    }
+
     setLoading(true);
-    setError("");
+    setErrors((prev) => ({ ...prev, general: "", email: "" }));
     setSuccess("");
 
     try {
@@ -34,7 +51,10 @@ export default function SignInPage() {
       const checkData = await checkResponse.json();
 
       if (!checkData.exists) {
-        setError("No account found with this email. Please sign up first.");
+        setErrors((prev) => ({
+          ...prev,
+          general: "No account found with this email. Please sign up first.",
+        }));
         setLoading(false);
         return;
       }
@@ -46,13 +66,19 @@ export default function SignInPage() {
       });
 
       if (error) {
-        setError(error.message || "Failed to send OTP");
+        setErrors((prev) => ({
+          ...prev,
+          general: error.message || "Failed to send OTP",
+        }));
       } else {
         setOtpSent(true);
         setSuccess("OTP sent to your email!");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setErrors((prev) => ({
+        ...prev,
+        general: err instanceof Error ? err.message : "An error occurred",
+      }));
     } finally {
       setLoading(false);
     }
@@ -60,8 +86,14 @@ export default function SignInPage() {
 
   const handleOTPSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    const otpError = validateOtp(otp);
+    if (otpError) {
+      setErrors((prev) => ({ ...prev, otp: otpError }));
+      return;
+    }
+
     setLoading(true);
-    setError("");
+    setErrors((prev) => ({ ...prev, general: "", otp: "" }));
 
     try {
       const { error } = await authClient.signIn.emailOtp({
@@ -70,12 +102,18 @@ export default function SignInPage() {
       });
 
       if (error) {
-        setError(error.message || "Invalid OTP");
+        setErrors((prev) => ({
+          ...prev,
+          general: error.message || "Invalid OTP",
+        }));
       } else {
         router.push("/dashboard");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setErrors((prev) => ({
+        ...prev,
+        general: err instanceof Error ? err.message : "An error occurred",
+      }));
     } finally {
       setLoading(false);
     }
@@ -103,9 +141,9 @@ export default function SignInPage() {
           </div>
 
           {/* Error Message */}
-          {error && (
+          {errors.general && (
             <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
-              <p className="text-sm">{error}</p>
+              <p className="text-sm">{errors.general}</p>
             </div>
           )}
 
@@ -119,29 +157,25 @@ export default function SignInPage() {
           {/* Email + OTP Form */}
           {!otpSent ? (
             <form onSubmit={handleSendOTP} className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-black"
-                    placeholder="you@example.com"
-                    required
-                  />
-                </div>
-              </div>
+              <FormField
+                label="Email Address"
+                type="email"
+                value={email}
+                onChange={(val) => {
+                  setEmail(val);
+                  setErrors((prev) => ({ ...prev, email: validateEmail(val), general: "" }));
+                }}
+                placeholder="you@example.com"
+                icon={Mail}
+                error={errors.email}
+                required
+                autoComplete="email"
+              />
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="form-button-primary w-full gap-2"
               >
                 {loading ? (
                   <>
@@ -158,33 +192,23 @@ export default function SignInPage() {
             </form>
           ) : (
             <form onSubmit={handleOTPSignIn} className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Enter 6-Digit OTP
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    type="text"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-center text-2xl tracking-[0.5em] font-bold transition-colors"
-                    placeholder="000000"
-                    maxLength={6}
-                    required
-                  />
-                </div>
-                <p className="text-sm text-gray-500 mt-2 text-center">
-                  Check your email for the verification code
-                </p>
-              </div>
+              <OtpInput
+                label="Enter 6-digit OTP"
+                value={otp}
+                onChange={(val) => {
+                  const digitsOnly = val.replace(/\D/g, "");
+                  setOtp(digitsOnly);
+                  setErrors((prev) => ({ ...prev, otp: "", general: "" }));
+                }}
+                helperText="Check your email for the verification code"
+                error={errors.otp}
+                autoFocus
+              />
 
               <button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="w-full bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="form-button-primary w-full gap-2"
               >
                 {loading ? (
                   <>
@@ -226,7 +250,7 @@ export default function SignInPage() {
           <button
             onClick={handleGoogleSignIn}
             type="button"
-            className="mt-6 w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all font-medium text-gray-700"
+            className="form-button-secondary w-full mt-6 gap-3"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -263,3 +287,5 @@ export default function SignInPage() {
     </div>
   );
 }
+
+

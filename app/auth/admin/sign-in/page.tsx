@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { Mail, Lock, Shield, Loader2, ArrowRight } from "lucide-react";
+import { Mail, Shield, Loader2, ArrowRight } from "lucide-react";
+import FormField from "@/components/forms/FormField";
+import OtpInput from "@/components/forms/OtpInput";
 
 export default function AdminSignInPage() {
   const router = useRouter();
@@ -11,13 +13,28 @@ export default function AdminSignInPage() {
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [errors, setErrors] = useState({
+    email: "",
+    otp: "",
+    general: "",
+  });
+
+  const validateEmail = (val: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val) ? "" : "Enter a valid admin email address";
+  const validateOtp = (val: string) =>
+    val.length === 6 ? "" : "Enter the 6-digit verification code";
 
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setErrors((prev) => ({ ...prev, email: emailError }));
+      return;
+    }
+
     setLoading(true);
-    setError("");
+    setErrors((prev) => ({ ...prev, general: "", email: "" }));
     setSuccess("");
 
     try {
@@ -27,13 +44,19 @@ export default function AdminSignInPage() {
       });
 
       if (error) {
-        setError(error.message || "Failed to send OTP. Please check if this is an admin email.");
+        setErrors((prev) => ({
+          ...prev,
+          general: error.message || "Failed to send OTP. Please confirm this is an admin email.",
+        }));
       } else {
         setOtpSent(true);
         setSuccess("Verification code sent to your email!");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setErrors((prev) => ({
+        ...prev,
+        general: err instanceof Error ? err.message : "An error occurred",
+      }));
     } finally {
       setLoading(false);
     }
@@ -41,8 +64,14 @@ export default function AdminSignInPage() {
 
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
+    const otpError = validateOtp(otp);
+    if (otpError) {
+      setErrors((prev) => ({ ...prev, otp: otpError }));
+      return;
+    }
+
     setLoading(true);
-    setError("");
+    setErrors((prev) => ({ ...prev, general: "", otp: "" }));
 
     try {
       const { error } = await authClient.signIn.emailOtp({
@@ -51,7 +80,10 @@ export default function AdminSignInPage() {
       });
 
       if (error) {
-        setError(error.message || "Invalid OTP code");
+        setErrors((prev) => ({
+          ...prev,
+          general: error.message || "Invalid OTP code",
+        }));
         return;
       }
 
@@ -59,12 +91,12 @@ export default function AdminSignInPage() {
       const session = await authClient.getSession();
       
       if (!session.data?.user) {
-        setError("Failed to verify session");
+        setErrors((prev) => ({ ...prev, general: "Failed to verify session" }));
         return;
       }
 
       if (session.data.user.role !== "admin") {
-        setError("Access denied. Admin privileges required.");
+        setErrors((prev) => ({ ...prev, general: "Access denied. Admin privileges required." }));
         await authClient.signOut();
         return;
       }
@@ -81,7 +113,10 @@ export default function AdminSignInPage() {
         }, 1500);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setErrors((prev) => ({
+        ...prev,
+        general: err instanceof Error ? err.message : "An error occurred",
+      }));
     } finally {
       setLoading(false);
     }
@@ -104,9 +139,9 @@ export default function AdminSignInPage() {
         </div>
 
         {/* Error Message */}
-        {error && (
+        {errors.general && (
           <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
-            <p className="text-sm font-medium">{error}</p>
+            <p className="text-sm font-medium">{errors.general}</p>
           </div>
         )}
 
@@ -120,32 +155,26 @@ export default function AdminSignInPage() {
         {/* Email Form */}
         {!otpSent ? (
           <form onSubmit={handleSendOTP} className="space-y-5">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Admin Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-slate-600 transition-colors text-black"
-                  placeholder="admin@meshebeshadesign.com"
-                  required
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-2">
-                Only admin accounts can access this portal
-              </p>
-            </div>
+            <FormField
+              label="Admin Email Address"
+              type="email"
+              value={email}
+              onChange={(val) => {
+                setEmail(val);
+                setErrors((prev) => ({ ...prev, email: validateEmail(val), general: "" }));
+              }}
+              placeholder="admin@meshebeshadesign.com"
+              icon={Mail}
+              error={errors.email}
+              helperText="Only admin accounts can access this portal"
+              required
+              autoComplete="email"
+            />
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="form-button-primary w-full gap-2"
             >
               {loading ? (
                 <>
@@ -162,34 +191,23 @@ export default function AdminSignInPage() {
           </form>
         ) : (
           <form onSubmit={handleVerifyOTP} className="space-y-5">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2 text-center">
-                Enter 6-Digit Verification Code
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  className="w-full pl-10 pr-4 py-4 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-slate-600 focus:border-slate-600 text-center text-3xl tracking-[0.5em] font-bold transition-colors text-black"
-                  placeholder="000000"
-                  maxLength={6}
-                  required
-                  autoFocus
-                />
-              </div>
-              <p className="text-sm text-gray-500 mt-2 text-center">
-                Check your email for the verification code
-              </p>
-            </div>
+            <OtpInput
+              label="Enter 6-digit verification code"
+              value={otp}
+              onChange={(val) => {
+                const digitsOnly = val.replace(/\D/g, "");
+                setOtp(digitsOnly);
+                setErrors((prev) => ({ ...prev, otp: "", general: "" }));
+              }}
+              helperText="Check your email for the verification code"
+              error={errors.otp}
+              autoFocus
+            />
 
             <button
               type="submit"
               disabled={loading || otp.length !== 6}
-              className="w-full bg-slate-800 text-white py-3 px-4 rounded-lg font-semibold hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-600 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="form-button-primary w-full gap-2"
             >
               {loading ? (
                 <>
