@@ -3,7 +3,6 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Navbar from "@/components/NavBar";
 import { MessageSquare, Eye } from "lucide-react";
 
 interface CustomRequest {
@@ -79,7 +78,7 @@ export default function CustomRequestsPage() {
 
   if (isLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center py-16">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
       </div>
     );
@@ -90,10 +89,7 @@ export default function CustomRequestsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Custom Requests</h1>
@@ -213,7 +209,6 @@ export default function CustomRequestsPage() {
             ))}
           </div>
         )}
-      </main>
     </div>
   );
 }

@@ -2,7 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Package, FolderTree, Truck, CreditCard, MessageSquare, Star, Layers, TrendingUp } from "lucide-react";
+import {
+  Package,
+  FolderTree,
+  Truck,
+  CreditCard,
+  MessageSquare,
+  Star,
+  Layers,
+  TrendingUp,
+  Bell,
+  User,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
 
@@ -38,6 +49,13 @@ const NAV_SECTIONS: AdminNavSection[] = [
     items: [
       { href: "/admin/custom-requests", label: "Custom Requests", icon: MessageSquare },
       { href: "/admin/chat", label: "Live Chat", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Account",
+    items: [
+      { href: "/admin/notifications", label: "Notifications", icon: Bell },
+      { href: "/admin/profile", label: "Profile Settings", icon: User },
     ],
   },
 ];

@@ -3,7 +3,6 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Navbar from "@/components/NavBar";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import Link from "next/link";
 
@@ -151,7 +150,7 @@ export default function EditProductPage() {
 
   if (isLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="flex items-center justify-center py-16 bg-gradient-to-br from-gray-50 to-gray-100">
         <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
       </div>
     );
@@ -163,7 +162,6 @@ export default function EditProductPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <Navbar />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">

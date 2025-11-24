@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, CreditCard, CheckCircle, XCircle, RefreshCw, DollarSign } from "lucide-react";
 
-import Navbar from "@/components/NavBar";
 import { useAuth } from "@/lib/hooks/useAuth";
 import {
   listAdminPayments,
@@ -177,8 +176,6 @@ export default function AdminPaymentsPage() {
   });
 
   return (
-    <>
-      <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -447,7 +444,6 @@ export default function AdminPaymentsPage() {
           </div>
         )}
       </div>
-    </>
   );
 }
 
