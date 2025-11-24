@@ -1,9 +1,10 @@
 "use client";
-/* eslint-disable @next/next/no-img-element */
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import Navbar from "@/components/NavBar";
+import ProductMediaSlider from "@/components/products/ProductMediaSlider";
+import ColorSelect from "@/components/products/ColorSelect";
 import { getPublicProductById, recordProductView } from "@/lib/api/products";
 import type { ProductWithDetails, ProductMedia, ProductVariant } from "@/types/product";
 import { useCartStore } from "@/stores/cart";
@@ -69,19 +70,6 @@ export default function ProductDetailPage() {
     };
     run();
   }, [id, isAuthenticated]);
-
-  const renderMedia = (media: ProductMedia, className = "w-full rounded") => {
-    if (media.mediaType === "video") {
-      return <video src={media.url} controls className={className} />;
-    }
-    return (
-      <img
-        src={media.url}
-        alt={media.altText || product?.title || "Product media"}
-        className={className}
-      />
-    );
-  };
 
   const variants: ProductVariant[] = useMemo(
     () => product?.variants ?? [],
@@ -165,12 +153,28 @@ export default function ProductDetailPage() {
     }
   }, [selectedVariant, sizeOptions, selectedSize]);
 
-  const displayMedia = useMemo(() => {
-    if (selectedVariant?.media && selectedVariant.media.length > 0) {
-      return selectedVariant.media;
+  const displayMedia: ProductMedia[] = useMemo(() => {
+    const baseMedia = product?.media ?? [];
+    const variantMedia = selectedVariant?.media ?? [];
+
+    if (variantMedia.length === 0) {
+      return baseMedia;
     }
-    return product?.media ?? [];
-  }, [selectedVariant?.media, product?.media]);
+
+    const byId = new Map<string, ProductMedia>();
+
+    variantMedia.forEach((item) => {
+      byId.set(item.id, item);
+    });
+
+    baseMedia.forEach((item) => {
+      if (!byId.has(item.id)) {
+        byId.set(item.id, item);
+      }
+    });
+
+    return Array.from(byId.values());
+  }, [product?.media, selectedVariant?.media]);
 
   useEffect(() => {
     setActiveMediaIndex(0);
@@ -186,7 +190,6 @@ export default function ProductDetailPage() {
     }
   }, [displayMedia.length]);
 
-  const activeMedia = displayMedia[activeMediaIndex];
   const currentPrice =
     selectedVariant?.priceOverride ?? product?.price ?? 0;
   const isOutOfStock = (selectedVariant?.stock ?? 0) <= 0;
@@ -267,56 +270,26 @@ export default function ProductDetailPage() {
           <div className="space-y-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
-                {activeMedia ? (
-                  <div className="border border-gray-200 rounded-xl overflow-hidden mb-4 bg-white">
-                    {renderMedia(activeMedia)}
-                  </div>
-                ) : (
-                  <div className="w-full h-72 bg-gray-100 rounded-xl flex items-center justify-center text-gray-500">
-                    No media available yet.
-                  </div>
-                )}
-                {displayMedia.length > 1 && (
-                  <div className="flex gap-3 overflow-x-auto pb-2">
-                    {displayMedia.map((media, index) => (
-                      <button
-                        key={media.id}
-                        type="button"
-                        onClick={() => setActiveMediaIndex(index)}
-                        className={`w-20 h-20 rounded-lg border overflow-hidden shrink-0 ${
-                          index === activeMediaIndex
-                            ? "border-purple-500 ring-2 ring-purple-200"
-                            : "border-transparent"
-                        }`}
-                      >
-                        {media.mediaType === "video" ? (
-                          <video
-                            src={media.url}
-                            className="w-full h-full object-cover"
-                            muted
-                          />
-                        ) : (
-                          <img
-                            src={media.url}
-                            alt={media.altText || product.title}
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {selectedVariant?.media &&
-                  selectedVariant.media.length > 0 &&
-                  product.media &&
-                  product.media.length > 0 && (
-                    <p className="text-xs text-gray-400 mt-2">
-                      Showing media for <span className="font-medium">
-                        {selectedVariant.color || "Default"}
-                      </span>{" "}
-                      variant.
-                    </p>
-                  )}
+                <ProductMediaSlider
+                  media={displayMedia}
+                  activeIndex={activeMediaIndex}
+                  onChangeActiveIndex={setActiveMediaIndex}
+                  fallbackAlt={product.title}
+                  contextNote={
+                    selectedVariant?.media &&
+                    selectedVariant.media.length > 0 &&
+                    product.media &&
+                    product.media.length > 0 ? (
+                      <p className="mt-2 text-xs text-gray-400">
+                        Showing media for{" "}
+                        <span className="font-medium">
+                          {selectedVariant.color || "Default"}
+                        </span>{" "}
+                        variant.
+                      </p>
+                    ) : null
+                  }
+                />
               </div>
               <div className="space-y-6">
                 <div className="flex items-center gap-3">
@@ -369,31 +342,12 @@ export default function ProductDetailPage() {
                 </p>
 
                 {colorOptions.length > 0 && (
-                  <div className="space-y-2">
-                    <span className="text-sm font-medium text-gray-700">
-                      Color
-                    </span>
-                    <div className="flex flex-wrap gap-2">
-                      {colorOptions.map((color) => {
-                        const isActive =
-                          (selectedColor ?? colorOptions[0]) === color;
-                        return (
-                          <button
-                            type="button"
-                            key={color}
-                            onClick={() => setSelectedColor(color)}
-                            className={`px-3 py-1 rounded-full border text-sm ${
-                              isActive
-                                ? "bg-purple-600 text-white border-purple-600"
-                                : "border-gray-300 text-gray-700 hover:border-purple-400 hover:text-purple-600"
-                            }`}
-                          >
-                            {color}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+                  <ColorSelect
+                    colors={colorOptions}
+                    value={selectedColor}
+                    onChange={setSelectedColor}
+                    disabled={isOutOfStock}
+                  />
                 )}
 
                 {sizeOptions.length > 0 && (
@@ -544,22 +498,6 @@ export default function ProductDetailPage() {
                 </div>
               )}
             </div>
-
-            {product.media && product.media.length > 0 && (
-              <div className="space-y-3">
-                <h2 className="text-lg font-semibold">Base Gallery</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {product.media.map((media) => (
-                    <div
-                      key={media.id}
-                      className="border border-gray-200 rounded-lg overflow-hidden"
-                    >
-                      {renderMedia(media)}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Reviews Section */}
             <div className="mt-12">
