@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Trash2, Star } from "lucide-react";
-import Navbar from "@/components/NavBar";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { getAllReviews, deleteReview, type Review } from "@/lib/api/reviews";
 import StarRating from "@/components/reviews/StarRating";
@@ -90,18 +89,13 @@ export default function AdminReviewsPage() {
 
   if (isLoading || !isAdmin) {
     return (
-      <>
-        <Navbar />
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center">Loading...</div>
-        </div>
-      </>
+      <div className="flex items-center justify-center py-16">
+        <div className="text-center">Loading...</div>
+      </div>
     );
   }
 
   return (
-    <>
-      <Navbar />
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Reviews Management</h1>
@@ -267,7 +261,6 @@ export default function AdminReviewsPage() {
           </div>
         )}
       </div>
-    </>
   );
 }
 

@@ -11,6 +11,7 @@ interface AdminLayoutShellProps {
 
 export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
 
   return (
     <div className="flex min-h-screen bg-gray-50 text-gray-900">
@@ -38,12 +39,18 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
       </div>
 
       {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:z-30">
-        <AdminSidebar />
-      </div>
+      {desktopSidebarOpen && (
+        <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col lg:z-30">
+          <AdminSidebar />
+        </div>
+      )}
 
       {/* Main content column */}
-      <div className="flex min-h-screen flex-1 flex-col lg:pl-64">
+      <div
+        className={`flex min-h-screen flex-1 flex-col transition-[padding-left] duration-200 ${
+          desktopSidebarOpen ? "lg:pl-64" : "lg:pl-0"
+        }`}
+      >
         {/* Top bar */}
         <header className="sticky top-0 z-20 border-b border-gray-200 bg-white/90 backdrop-blur-md">
           <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
@@ -55,6 +62,14 @@ export default function AdminLayoutShell({ children }: AdminLayoutShellProps) {
                 onClick={() => setMobileSidebarOpen(true)}
               >
                 <Menu className="h-5 w-5" />
+              </button>
+              <button
+                type="button"
+                aria-label={desktopSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
+                className="hidden lg:inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2 text-gray-700 hover:bg-gray-100"
+                onClick={() => setDesktopSidebarOpen((open) => !open)}
+              >
+                {desktopSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
               <div className="flex flex-col">
                 <span className="text-xs font-semibold uppercase tracking-wide text-gray-400">

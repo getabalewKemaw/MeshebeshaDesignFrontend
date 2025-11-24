@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Navbar from "@/components/NavBar";
 import { useAuth } from "@/lib/hooks/useAuth";
 import AdminChatList from "@/components/AdminChat/AdminChatList";
 import AdminChatWindow from "@/components/AdminChat/AdminChatWindow";
@@ -54,14 +53,11 @@ useEffect(() => {
     return <div className="min-h-screen flex items-center justify-center">Access denied</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex gap-6">
-        <AdminChatList rooms={rooms} onSelect={(id) => setSelectedRoom(id)} />
-        <div className="flex-1 bg-white rounded shadow-md flex flex-col">
-          <AdminChatWindow socket={socket} roomId={selectedRoom} currentAdminId={user?.id ?? ""} />
-        </div>
-      </main>
+    <div className="flex gap-6">
+      <AdminChatList rooms={rooms} onSelect={(id) => setSelectedRoom(id)} />
+      <div className="flex-1 bg-white rounded shadow-md flex flex-col">
+        <AdminChatWindow socket={socket} roomId={selectedRoom} currentAdminId={user?.id ?? ""} />
+      </div>
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Package, RefreshCw, ClipboardList, Truck } from "lucide-react";
 
-import Navbar from "@/components/NavBar";
 import { useAuth } from "@/lib/hooks/useAuth";
 import {
   getAdminOrder,
@@ -258,7 +257,7 @@ export default function AdminOrdersPage() {
 
   if (isLoading || !isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex items-center justify-center py-16 bg-gray-50">
         <div className="flex flex-col items-center gap-3 text-gray-600">
           <RefreshCw className="h-8 w-8 animate-spin" />
           <p>Checking admin access...</p>
@@ -746,7 +745,6 @@ export default function AdminOrdersPage() {
           </aside>
         </section>
       </div>
-    // </div>
   );
 }
 
