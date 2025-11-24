@@ -179,7 +179,7 @@ export default function ProfilePage() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   disabled={!isEditing}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="form-input-base"
                   required
                 />
               </div>
@@ -190,7 +190,7 @@ export default function ProfilePage() {
                   type="email"
                   value={user?.email}
                   disabled
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                  className="form-input-base"
                 />
                 <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
               </div>
@@ -202,7 +202,7 @@ export default function ProfilePage() {
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   disabled={!isEditing}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="form-input-base"
                   placeholder="+1 (555) 000-0000"
                 />
               </div>
@@ -214,7 +214,7 @@ export default function ProfilePage() {
                   value={formData.country}
                   onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                   disabled={!isEditing}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-600 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  className="form-input-base"
                   placeholder="United States"
                 />
               </div>
@@ -224,7 +224,7 @@ export default function ProfilePage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="form-button-primary flex-1"
                   >
                     {loading ? "Saving..." : "Save Changes"}
                   </button>
@@ -238,7 +238,7 @@ export default function ProfilePage() {
                         country: user?.country || "",
                       });
                     }}
-                    className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                    className="form-button-secondary flex-1"
                   >
                     Cancel
                   </button>

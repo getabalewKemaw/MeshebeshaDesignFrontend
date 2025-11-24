@@ -98,7 +98,7 @@ export default function ReviewForm({
             onChange={(e) => setComment(e.target.value)}
             rows={4}
             maxLength={2000}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="form-input-base"
             placeholder="Share your experience with this product..."
           />
           <p className="mt-1 text-xs text-gray-500">
@@ -120,7 +120,7 @@ export default function ReviewForm({
           <button
             type="submit"
             disabled={isSubmitting || rating === 0}
-            className="flex-1 px-6 py-3 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="form-button-primary flex-1"
           >
             {isSubmitting ? "Submitting..." : "Submit Review"}
           </button>
@@ -129,7 +129,7 @@ export default function ReviewForm({
               type="button"
               onClick={onCancel}
               disabled={isSubmitting}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition disabled:opacity-50"
+              className="form-button-secondary"
             >
               Cancel
             </button>

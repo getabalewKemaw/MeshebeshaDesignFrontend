@@ -210,7 +210,7 @@ export default function EditProductPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, title: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="form-input-base"
                 required
               />
             </div>
@@ -230,7 +230,7 @@ export default function EditProductPage() {
                   setFormData({ ...formData, description: e.target.value })
                 }
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="form-input-base"
               />
             </div>
 
@@ -248,7 +248,7 @@ export default function EditProductPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, categoryId: e.target.value })
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="form-input-base"
               >
                 <option value="">No Category</option>
                 {categories.map((category) => (
@@ -287,7 +287,7 @@ export default function EditProductPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, price: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="form-input-base"
                   required
                 />
               </div>
@@ -305,7 +305,7 @@ export default function EditProductPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, currency: e.target.value })
                   }
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="form-input-base"
                 >
                   <option value="USD">USD</option>
                   <option value="EUR">EUR</option>
@@ -358,7 +358,7 @@ export default function EditProductPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="form-button-primary flex-1 gap-2"
               >
                 {saving ? (
                   <>
@@ -374,7 +374,7 @@ export default function EditProductPage() {
               </button>
               <Link
                 href="/admin/products"
-                className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-center"
+                className="form-button-secondary text-center"
               >
                 Cancel
               </Link>

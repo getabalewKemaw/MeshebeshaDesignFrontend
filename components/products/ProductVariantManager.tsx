@@ -290,7 +290,7 @@ export default function ProductVariantManager({
         </div>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2"
+          className="form-button-primary gap-2"
         >
           <Plus className="h-5 w-5" />
           Add Variant
@@ -336,7 +336,7 @@ export default function ProductVariantManager({
                     setFormData({ ...formData, sku: e.target.value })
                   }
                   placeholder="e.g., SHIRT-BLU-M"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="form-input-base"
                 />
               </div>
 
@@ -381,7 +381,7 @@ export default function ProductVariantManager({
                   onChange={(e) =>
                     setFormData({ ...formData, color: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="form-input-base"
                 >
                   <option value="">Select color</option>
                   {COMMON_COLORS.map((color) => (
@@ -405,7 +405,7 @@ export default function ProductVariantManager({
                     setFormData({ ...formData, priceOverride: e.target.value })
                   }
                   placeholder="Leave empty to use base price"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="form-input-base"
                 />
               </div>
 
@@ -423,7 +423,7 @@ export default function ProductVariantManager({
                   required
                   min="0"
                   placeholder="0"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                  className="form-input-base"
                 />
               </div>
             </div>
@@ -432,7 +432,7 @@ export default function ProductVariantManager({
               <button
                 type="submit"
                 disabled={submitting}
-                className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="form-button-primary"
               >
                 {submitting
                   ? "Saving..."
@@ -443,7 +443,7 @@ export default function ProductVariantManager({
               <button
                 type="button"
                 onClick={resetForm}
-                className="bg-gray-100 text-gray-700 px-6 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+                className="form-button-secondary"
               >
                 Cancel
               </button>
@@ -464,7 +464,7 @@ export default function ProductVariantManager({
           </p>
           <button
             onClick={() => setShowAddForm(true)}
-            className="inline-flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
+            className="form-button-primary gap-2"
           >
             <Plus className="h-5 w-5" />
             Add First Variant

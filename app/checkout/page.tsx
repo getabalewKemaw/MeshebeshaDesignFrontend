@@ -196,7 +196,7 @@ export default function CheckoutPage() {
                       type="text"
                       value={contactInfo.fullName}
                       onChange={(event) => setContactInfo({ fullName: event.target.value })}
-                      className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="form-input-base"
                       required
                     />
                   </label>
@@ -206,7 +206,7 @@ export default function CheckoutPage() {
                       type="email"
                       value={contactInfo.email}
                       onChange={(event) => setContactInfo({ email: event.target.value })}
-                      className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="form-input-base"
                       required
                     />
                   </label>
@@ -216,7 +216,7 @@ export default function CheckoutPage() {
                       type="tel"
                       value={contactInfo.phone ?? ""}
                       onChange={(event) => setContactInfo({ phone: event.target.value })}
-                      className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="form-input-base"
                       placeholder="+1 202-555-0183"
                     />
                   </label>
@@ -348,7 +348,7 @@ export default function CheckoutPage() {
                         type="text"
                         value={shippingAddress.line1}
                         onChange={(event) => setShippingAddress({ line1: event.target.value })}
-                        className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="form-input-base"
                         required
                       />
                     </label>
@@ -358,7 +358,7 @@ export default function CheckoutPage() {
                         type="text"
                         value={shippingAddress.line2 ?? ""}
                         onChange={(event) => setShippingAddress({ line2: event.target.value })}
-                        className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="form-input-base"
                       />
                     </label>
                     <label className="flex flex-col gap-1 text-sm">
@@ -367,7 +367,7 @@ export default function CheckoutPage() {
                         type="text"
                         value={shippingAddress.city}
                         onChange={(event) => setShippingAddress({ city: event.target.value })}
-                        className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="form-input-base"
                         required
                       />
                     </label>
@@ -377,7 +377,7 @@ export default function CheckoutPage() {
                         type="text"
                         value={shippingAddress.state ?? ""}
                         onChange={(event) => setShippingAddress({ state: event.target.value })}
-                        className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="form-input-base"
                       />
                     </label>
                     <label className="flex flex-col gap-1 text-sm">
@@ -388,7 +388,7 @@ export default function CheckoutPage() {
                         onChange={(event) =>
                           setShippingAddress({ postalCode: event.target.value })
                         }
-                        className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="form-input-base"
                       />
                     </label>
                     <label className="flex flex-col gap-1 text-sm">
@@ -397,7 +397,7 @@ export default function CheckoutPage() {
                         type="text"
                         value={shippingAddress.country}
                         onChange={(event) => setShippingAddress({ country: event.target.value })}
-                        className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="form-input-base"
                         required
                       />
                     </label>
@@ -441,7 +441,7 @@ export default function CheckoutPage() {
                       onChange={(event) =>
                         setDeliveryPreference({ preferredDate: event.target.value })
                       }
-                      className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="form-input-base"
                     />
                   </label>
                   <label className="flex flex-col gap-1 text-sm">
@@ -452,7 +452,7 @@ export default function CheckoutPage() {
                       onChange={(event) =>
                         setDeliveryPreference({ preferredWindow: event.target.value })
                       }
-                      className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="form-input-base"
                       placeholder="e.g., 2-4 PM"
                     />
                   </label>
@@ -464,7 +464,7 @@ export default function CheckoutPage() {
                         setDeliveryPreference({ instructions: event.target.value })
                       }
                       rows={3}
-                      className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      className="form-input-base"
                       placeholder="Gate code, contact preferences, building notes..."
                     />
                   </label>
@@ -488,7 +488,7 @@ export default function CheckoutPage() {
                     value={paymentNote}
                     onChange={(event) => setPaymentNote(event.target.value)}
                     placeholder="Leave empty to use Chapa payment, or enter note for fake payment"
-                    className="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="form-input-base"
                   />
                 </label>
               </section>
@@ -521,7 +521,7 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full inline-flex items-center justify-center px-6 py-4 rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 disabled:opacity-50"
+                className="form-button-primary w-full"
               >
                 {isSubmitting ? "Processing..." : `Place order (${priceFormatter.format(subtotal)})`}
               </button>

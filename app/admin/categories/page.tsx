@@ -343,7 +343,7 @@ export default function CategoriesPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-black transition-colors"
+                  className="form-input-base"
                   placeholder="e.g., Traditional Scarves"
                   required
                 />
@@ -358,7 +358,7 @@ export default function CategoriesPage() {
                     setFormData({ ...formData, description: e.target.value })
                   }
                   rows={3}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-black transition-colors resize-none"
+                  className="form-input-base resize-none"
                   placeholder="Describe this category..."
                 />
               </div>
@@ -385,7 +385,7 @@ export default function CategoriesPage() {
                 <button
                   type="submit"
                   disabled={submitting || !formData.name.trim()}
-                  className="flex-1 bg-indigo-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+                  className="form-button-primary flex-1 gap-2"
                 >
                   {submitting ? (
                     <>
@@ -403,7 +403,7 @@ export default function CategoriesPage() {
                   type="button"
                   onClick={closeModal}
                   disabled={submitting}
-                  className="px-6 py-3 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                  className="form-button-secondary"
                 >
                   Cancel
                 </button>
