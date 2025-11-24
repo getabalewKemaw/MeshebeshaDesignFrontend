@@ -3,7 +3,6 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import Navbar from "@/components/NavBar";
 import { Package, FolderTree, MessageSquare, TrendingUp } from "lucide-react";
 export default function AdminDashboard() {
   const { user, isAdmin, isLoading } = useAuth();
@@ -28,22 +27,19 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-lg p-8 mb-8 text-white">
-          <h1 className="text-3xl font-bold mb-2">
-            Admin Dashboard 👋
-          </h1>
-          <p className="text-indigo-100">
-            Welcome back, {user?.name}! Manage your store from here.
-          </p>
-        </div>
+    <div className="max-w-7xl mx-auto">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-lg p-8 mb-8 text-white">
+        <h1 className="text-3xl font-bold mb-2">
+          Admin Dashboard 👋
+        </h1>
+        <p className="text-indigo-100">
+          Welcome back, {user?.name}! Manage your store from here.
+        </p>
+      </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-500">
             <div className="flex items-center justify-between">
               <div>
@@ -146,7 +142,7 @@ export default function AdminDashboard() {
             </span>
           </a>
         </div>
-      </main>
-    </div>
+      </div>
+    // </div>
   );
 }

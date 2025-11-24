@@ -3,7 +3,6 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Navbar from "@/components/NavBar";
 import { Package, Plus, Search, Edit, Trash2, Image, Copy, Archive, RotateCcw, Layers } from "lucide-react";
 import { Product } from "@/types/product";
 import * as productApi from "@/lib/api/products";
@@ -118,12 +117,9 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
+    <div className="max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Products</h1>
             <p className="text-gray-600 mt-1">Manage your product catalog</p>
@@ -289,7 +285,7 @@ export default function ProductsPage() {
             );})}
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    // </div>
   );
 }

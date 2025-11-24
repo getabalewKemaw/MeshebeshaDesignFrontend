@@ -46,7 +46,7 @@ export default function FormField({
   const isPasswordField = type === "password";
   const resolvedType = canTogglePassword && isPasswordField ? (showPassword ? "text" : "password") : type;
 
-  const baseInputClasses = "form-input-base";
+  const baseInputClasses = "form-input-base left-10";
 
   return (
     <div className={`space-y-2 ${className}`}>
@@ -55,7 +55,7 @@ export default function FormField({
       </label>
       <div className="relative">
         {Icon && (
-          <Icon className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+          <Icon className="pointer-events-none absolute left-1 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
         )}
         <input
           id={name}
@@ -69,7 +69,7 @@ export default function FormField({
           disabled={disabled}
           maxLength={maxLength}
           inputMode={inputMode}
-          className={`${baseInputClasses} ${Icon ? "pl-11" : "pl-4"} ${
+          className={`${baseInputClasses} ${Icon ? "pl-13" : "pl-10"} ${
             canTogglePassword && isPasswordField ? "pr-12" : "pr-4"
           } ${error ? "form-input-error" : ""} ${inputClassName}`}
         />
@@ -89,3 +89,5 @@ export default function FormField({
     </div>
   );
 }
+
+

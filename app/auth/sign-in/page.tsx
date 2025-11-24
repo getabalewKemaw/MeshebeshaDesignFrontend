@@ -170,6 +170,7 @@ export default function SignInPage() {
                 error={errors.email}
                 required
                 autoComplete="email"
+                // className="pl-10"
               />
 
               <button
