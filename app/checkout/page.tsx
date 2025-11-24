@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 import Navbar from "@/components/NavBar";
 import GooglePlacesAutocomplete from "@/components/GooglePlacesAutocomplete";
@@ -539,7 +540,9 @@ export default function CheckoutPage() {
                     <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-50">
                       {item.image ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
+                          width={64}
+                          height={64} 
                           src={item.image}
                           alt={item.title}
                           className="w-full h-full object-cover"
