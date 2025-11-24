@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-
 import Navbar from "@/components/NavBar";
 import { useCartStore } from "@/stores/cart";
 
