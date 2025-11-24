@@ -1,17 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lato, Montserrat } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { CartSyncProvider } from "@/providers/CartSyncProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const lato = Lato({
   subsets: ["latin"],
+  weight: ["300", "400", "700"],
+  variable: "--font-body",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const montserrat = Montserrat({
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-heading",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -26,9 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${lato.variable} ${montserrat.variable} font-body antialiased`}>
         <AuthProvider>
           <CartSyncProvider>{children}</CartSyncProvider>
         </AuthProvider>
