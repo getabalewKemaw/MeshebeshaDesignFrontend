@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Navbar from "@/components/NavBar";
 import ProductMediaSlider from "@/components/products/ProductMediaSlider";
 import ColorSelect from "@/components/products/ColorSelect";
@@ -13,9 +13,12 @@ import ReviewList from "@/components/reviews/ReviewList";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import { checkReviewEligibility } from "@/lib/api/reviews";
 import { useAuth } from "@/lib/hooks/useAuth";
+import QuantitySelector from "@/components/ui/QuantitySelector";
+import { ShoppingCart, Zap } from "lucide-react";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
+  const router = useRouter();
   const id = params?.id;
   const [product, setProduct] = useState<ProductWithDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -24,6 +27,7 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState<boolean>(false);
+  const [isBuyingNow, setIsBuyingNow] = useState<boolean>(false);
   const [quantity, setQuantity] = useState<number>(1);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -42,8 +46,8 @@ export default function ProductDetailPage() {
         setProduct(res.data);
         setActiveMediaIndex(0);
         // fire-and-forget view record
-        recordProductView(id).catch(() => {});
-        
+        recordProductView(id).catch(() => { });
+
         // Check if user can review this product (only if authenticated)
         if (isAuthenticated) {
           try {
@@ -102,8 +106,8 @@ export default function ProductDetailPage() {
         initialVariant.availableSizes && initialVariant.availableSizes.length > 0
           ? initialVariant.availableSizes
           : initialVariant.size
-          ? [initialVariant.size]
-          : [];
+            ? [initialVariant.size]
+            : [];
       setSelectedSize((prev) => prev ?? (initialSizes[0] ?? null));
     } else {
       setSelectedColor(null);
@@ -205,18 +209,6 @@ export default function ProductDetailPage() {
     setQuantity(1);
   }, [selectedVariant?.id, selectedSize]);
 
-  const clampQuantity = (value: number) => {
-    const stock = selectedVariant?.stock;
-    if (typeof stock === "number" && stock > 0) {
-      return Math.min(Math.max(1, value), stock);
-    }
-    return Math.max(1, value);
-  };
-
-  const handleQuantityChange = (value: number) => {
-    setQuantity(clampQuantity(value));
-  };
-
   const handleAddToCart = async () => {
     if (!product) return;
     if (!selectedVariant && variants.length === 0) {
@@ -258,6 +250,47 @@ export default function ProductDetailPage() {
     }
   };
 
+  const handleBuyNow = async () => {
+    if (!product) return;
+    if (!selectedVariant && variants.length === 0) {
+      alert("This product is currently unavailable.");
+      return;
+    }
+    if (sizeOptions.length > 0 && !selectedSize) {
+      alert("Please select a size.");
+      return;
+    }
+    if (isOutOfStock) {
+      alert("This variant is currently out of stock.");
+      return;
+    }
+    setIsBuyingNow(true);
+    try {
+      addItemToCart(
+        {
+          productId: product.id,
+          variantId: selectedVariant?.id ?? null,
+          title: product.title,
+          subtitle: selectedVariant?.sku,
+          color: selectedVariant?.color ?? selectedColor,
+          size: selectedSize,
+          image:
+            selectedVariant?.media?.[0]?.url ??
+            product.media?.[0]?.url ??
+            displayMedia?.[0]?.url ??
+            null,
+          currency: product.currency,
+          unitPrice: currentPrice,
+          stock: selectedVariant?.stock ?? null,
+        },
+        quantity
+      );
+      router.push("/checkout");
+    } finally {
+      setIsBuyingNow(false);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -277,9 +310,9 @@ export default function ProductDetailPage() {
                   fallbackAlt={product.title}
                   contextNote={
                     selectedVariant?.media &&
-                    selectedVariant.media.length > 0 &&
-                    product.media &&
-                    product.media.length > 0 ? (
+                      selectedVariant.media.length > 0 &&
+                      product.media &&
+                      product.media.length > 0 ? (
                       <p className="mt-2 text-xs text-gray-400">
                         Showing media for{" "}
                         <span className="font-medium">
@@ -305,7 +338,7 @@ export default function ProductDetailPage() {
                 <h1 className="text-3xl font-semibold text-gray-900">
                   {product.title}
                 </h1>
-                
+
                 {/* Rating Summary */}
                 {(product.averageRating !== null || product.totalReviews > 0) && (
                   <ReviewSummary
@@ -313,7 +346,7 @@ export default function ProductDetailPage() {
                     totalReviews={product.totalReviews}
                   />
                 )}
-                
+
                 <div className="flex items-end gap-3">
                   <span className="text-3xl font-semibold text-purple-600">
                     {product.currency} {currentPrice.toFixed(2)}
@@ -331,9 +364,8 @@ export default function ProductDetailPage() {
                   <span>
                     Stock:{" "}
                     {selectedVariant
-                      ? `${selectedVariant.stock} ${
-                          selectedVariant.stock === 1 ? "unit" : "units"
-                        }`
+                      ? `${selectedVariant.stock} ${selectedVariant.stock === 1 ? "unit" : "units"
+                      }`
                       : "Available"}
                   </span>
                 </div>
@@ -374,70 +406,83 @@ export default function ProductDetailPage() {
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium text-gray-700">Quantity</span>
-                    <div className="inline-flex items-center border border-gray-300 rounded-full overflow-hidden">
-                      <button
-                        type="button"
-                        onClick={() => handleQuantityChange(quantity - 1)}
-                        className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                        disabled={quantity <= 1}
-                        aria-label="Decrease quantity"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        min={1}
-                        value={quantity}
-                        onChange={(event) =>
-                          handleQuantityChange(Number(event.target.value))
-                        }
-                        className="w-16 text-center border-x border-gray-200 py-1 text-sm focus:outline-none"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => handleQuantityChange(quantity + 1)}
-                        className="px-3 py-1 text-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50"
-                        disabled={
-                          !!selectedVariant?.stock &&
-                          quantity >= selectedVariant.stock
-                        }
-                        aria-label="Increase quantity"
-                      >
-                        +
-                      </button>
-                    </div>
+                    <QuantitySelector
+                      quantity={quantity}
+                      onQuantityChange={setQuantity}
+                      max={selectedVariant?.stock && selectedVariant.stock > 0 ? selectedVariant.stock : undefined}
+                    />
                     {typeof selectedVariant?.stock === "number" && selectedVariant.stock > 0 && (
                       <span className="text-xs text-gray-500">
                         {selectedVariant.stock} available
                       </span>
                     )}
                   </div>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                  <button
-                    type="button"
-                    onClick={handleAddToCart}
-                    disabled={
-                      isOutOfStock ||
-                      isAdding ||
-                      (sizeOptions.length > 0 && !selectedSize)
-                    }
-                    className="inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold border border-transparent bg-purple-600 text-white hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isOutOfStock
-                      ? "Out of Stock"
-                      : isAdding
-                      ? "Adding..."
-                      : "Add to Cart"}
-                  </button>
-                  <span className="text-sm text-gray-500">
-                    {isOutOfStock
-                      ? "We'll notify you when it's back."
-                      : "Ready to ship within 2 business days."}
-                  </span>
-                  {feedback && (
-                    <span className="text-sm text-green-600">{feedback}</span>
-                  )}
-                </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      {/* Buy Now Button - Primary CTA */}
+                      <button
+                        type="button"
+                        onClick={handleBuyNow}
+                        disabled={
+                          isOutOfStock ||
+                          isBuyingNow ||
+                          (sizeOptions.length > 0 && !selectedSize)
+                        }
+                        className="form-button-primary flex-1 gap-2"
+                      >
+                        {isOutOfStock
+                          ? "Out of Stock"
+                          : isBuyingNow
+                            ? "Processing..."
+                            : (
+                              <>
+                                <Zap size={18} />
+                                Buy Now
+                              </>
+                            )}
+                      </button>
+
+                      {/* Add to Cart Button - Secondary CTA */}
+                      <button
+                        type="button"
+                        onClick={handleAddToCart}
+                        disabled={
+                          isOutOfStock ||
+                          isAdding ||
+                          (sizeOptions.length > 0 && !selectedSize)
+                        }
+                        className="form-button-secondary flex-1 gap-2"
+                      >
+                        {isAdding ? (
+                          "Adding..."
+                        ) : (
+                          <>
+                            <ShoppingCart size={18} />
+                            Add to Cart
+                          </>
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Feedback Messages */}
+                    <div className="text-sm text-center">
+                      {feedback && (
+                        <span className="text-green-600 font-medium">{feedback}</span>
+                      )}
+                      {!feedback && !isOutOfStock && (
+                        <span className="text-gray-500">
+                          Ready to ship within 2 business days
+                        </span>
+                      )}
+                      {isOutOfStock && (
+                        <span className="text-gray-500">
+                          We'll notify you when it's back in stock
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -455,11 +500,10 @@ export default function ProductDetailPage() {
                     return (
                       <div
                         key={variant.id}
-                        className={`border rounded-lg p-4 bg-white transition ${
-                          isActive
+                        className={`border rounded-lg p-4 bg-white transition ${isActive
                             ? "border-purple-400 ring-2 ring-purple-100"
                             : "border-gray-200 hover:border-purple-300"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center justify-between mb-2">
                           <span className="font-medium text-gray-900">

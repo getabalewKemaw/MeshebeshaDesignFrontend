@@ -1,0 +1,50 @@
+"use client";
+
+import CheckoutFormSection from "./CheckoutFormSection";
+
+interface PaymentSectionProps {
+    paymentNote: string;
+    onUpdate: (note: string) => void;
+}
+
+export default function PaymentSection({
+    paymentNote,
+    onUpdate,
+}: PaymentSectionProps) {
+    return (
+        <CheckoutFormSection
+            title="Payment"
+            description="You'll be redirected to Chapa for secure payment"
+        >
+            <div className="space-y-4">
+                {/* Payment Info */}
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <p className="text-sm text-purple-900">
+                        <strong>Secure Payment via Chapa</strong>
+                    </p>
+                    <p className="text-sm text-purple-700 mt-1">
+                        After placing your order, you'll be redirected to Chapa's secure payment gateway to complete your purchase.
+                    </p>
+                </div>
+
+                {/* Payment Note */}
+                <div>
+                    <label htmlFor="paymentNote" className="form-label">
+                        Payment Note (Optional - For Special Cases Only)
+                    </label>
+                    <textarea
+                        id="paymentNote"
+                        value={paymentNote}
+                        onChange={(e) => onUpdate(e.target.value)}
+                        className="form-input-base"
+                        rows={2}
+                        placeholder="Leave empty to pay via Chapa (recommended). Only add a note for special payment arrangements."
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                        💡 <strong>Tip:</strong> Leave this field empty to proceed with Chapa payment gateway after placing your order.
+                    </p>
+                </div>
+            </div>
+        </CheckoutFormSection>
+    );
+}
