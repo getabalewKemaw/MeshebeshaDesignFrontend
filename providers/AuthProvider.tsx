@@ -13,6 +13,7 @@ const publicRoutes = [
   "/about",
   "/contact",
   "/services",
+  "/products",
 ];
 
 const authRoutes = [
@@ -35,6 +36,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const isAuthRoute = authRoutes.some((route) => pathname === route);
     const isAdminRoute = pathname.startsWith("/admin") && !pathname.startsWith("/auth/admin");
 
+    // Allow access to category pages (dynamic routes)
+    const isCategoryRoute = pathname.startsWith("/categories/");
+
+    // Allow access to individual product pages
+    const isProductDetailRoute = pathname.match(/^\/products\/[^\/]+$/);
+
     // Allow access to auth pages (sign-in, sign-up, admin sign-in, etc.)
     if (isAuthRoute) {
       return;
@@ -46,8 +53,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return;
     }
 
-    // Protect private routes
-    if (!isPublicRoute && !isAuthenticated) {
+    // Protect private routes (but allow public routes, category routes, and product detail routes)
+    if (!isPublicRoute && !isCategoryRoute && !isProductDetailRoute && !isAuthenticated) {
       router.push("/auth/sign-in");
       return;
     }
