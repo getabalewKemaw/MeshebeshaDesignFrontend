@@ -38,7 +38,7 @@ async function apiCall<T>(
     });
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       return {
         success: false,
@@ -67,7 +67,7 @@ export async function getProducts(
   const params = new URLSearchParams();
   if (filters?.page) params.append('page', filters.page.toString());
   if (filters?.limit) params.append('limit', filters.limit.toString());
-  
+
   const query = params.toString();
   return apiCall<Product[]>(
     `/api/v1/admin/products${query ? `?${query}` : ''}`
@@ -83,7 +83,6 @@ export async function getProductById(
   return apiCall<ProductWithDetails>(`/api/v1/admin/products/${id}`);
 }
 
-// ==================== PUBLIC BROWSE ====================
 /**
  * Get public product list with filters
  * Supports: categoryId, search (q), minPrice, maxPrice, page, limit
@@ -103,12 +102,31 @@ export async function getPublicProducts(params: {
   if (typeof params.maxPrice === 'number') qs.append('maxPrice', String(params.maxPrice));
   if (params.page) qs.append('page', String(params.page));
   if (params.limit) qs.append('limit', String(params.limit));
+
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/v1/products${qs.toString() ? `?${qs.toString()}` : ''}`,
-      { credentials: 'include' }
+      {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     );
-    return await response.json();
+
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.error('API returned non-JSON response:', await response.text());
+      return {
+        success: false,
+        data: [],
+        pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
+      };
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Public list failed:', error);
     return {
@@ -427,7 +445,7 @@ export async function searchProducts(
   filters: ProductSearchFilters
 ): Promise<PaginatedResponse<ProductWithDetails>> {
   const params = new URLSearchParams();
-  
+
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       params.append(key, value.toString());
@@ -437,9 +455,27 @@ export async function searchProducts(
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/v1/public/products/search?${params.toString()}`,
-      { credentials: 'include' }
+      {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     );
-    return await response.json();
+
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.error('Search API returned non-JSON response');
+      return {
+        success: false,
+        data: [],
+        pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
+      };
+    }
+
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Search failed:', error);
     return {

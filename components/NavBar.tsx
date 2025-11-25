@@ -3,13 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { navLinks } from "@/constants/navlinks";
 import Button from "@/components/ui/Button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
 import { useCartStore } from "@/stores/cart";
 import NotificationBell from "@/components/NotificationBell";
-
+import { fetchCategories, Category } from "@/lib/api/categories";
 import Image from "next/image";
 
 const Navbar = () => {
@@ -20,7 +19,20 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fetch categories on mount
+  useEffect(() => {
+    const loadCategories = async () => {
+      setLoadingCategories(true);
+      const data = await fetchCategories();
+      setCategories(data);
+      setLoadingCategories(false);
+    };
+    loadCategories();
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -67,18 +79,49 @@ const Navbar = () => {
 
           {/* Desktop Links */}
           <ul className="hidden md:flex space-x-8 text-[17px] font-semibold text-zinc-800">
-            {navLinks.map((link) => (
-              <li key={link.id}>
-                <Link
-                  href={link.href}
-                  className={`hover:text-red-600 transition ${
-                    pathname === link.href ? "text-red-700" : ""
+            {/* Home Link */}
+            <li>
+              <Link
+                href="/"
+                className={`hover:text-red-600 transition ${pathname === "/" ? "text-red-700" : ""
                   }`}
+              >
+                Home
+              </Link>
+            </li>
+
+            {/* Dynamic Category Links */}
+            {!loadingCategories && categories.map((category) => (
+              <li key={category.id}>
+                <Link
+                  href={`/categories/${category.slug}`}
+                  className={`hover:text-red-600 transition ${pathname === `/categories/${category.slug}` ? "text-red-700" : ""
+                    }`}
                 >
-                  {link.label}
+                  {category.name}
                 </Link>
               </li>
             ))}
+
+            {/* Static Links */}
+            <li>
+              <Link
+                href="/about"
+                className={`hover:text-red-600 transition ${pathname === "/about" ? "text-red-700" : ""
+                  }`}
+              >
+                About
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/contact"
+                className={`hover:text-red-600 transition ${pathname === "/contact" ? "text-red-700" : ""
+                  }`}
+              >
+                Contact
+              </Link>
+            </li>
           </ul>
 
           {/* Desktop Cart + Auth */}
@@ -120,9 +163,8 @@ const Navbar = () => {
                     <p className="text-xs text-gray-500 capitalize">{user.role || "User"}</p>
                   </div>
                   <svg
-                    className={`w-4 h-4 text-gray-600 transition-transform ${
-                      dropdownOpen ? "rotate-180" : ""
-                    }`}
+                    className={`w-4 h-4 text-gray-600 transition-transform ${dropdownOpen ? "rotate-180" : ""
+                      }`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -242,19 +284,55 @@ const Navbar = () => {
         {open && (
           <div className="md:hidden bg-white border-t border-zinc-200 shadow-inner">
             <ul className="flex flex-col items-center py-4 space-y-4 text-lg font-medium">
-              {navLinks.map((link) => (
-                <li key={link.id}>
-                  <Link
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className={`block hover:text-red-600 ${
-                      pathname === link.href ? "text-red-700" : ""
+              {/* Home Link */}
+              <li>
+                <Link
+                  href="/"
+                  onClick={() => setOpen(false)}
+                  className={`block hover:text-red-600 ${pathname === "/" ? "text-red-700" : ""
                     }`}
+                >
+                  Home
+                </Link>
+              </li>
+
+              {/* Dynamic Category Links */}
+              {!loadingCategories && categories.map((category) => (
+                <li key={category.id}>
+                  <Link
+                    href={`/categories/${category.slug}`}
+                    onClick={() => setOpen(false)}
+                    className={`block hover:text-red-600 ${pathname === `/categories/${category.slug}` ? "text-red-700" : ""
+                      }`}
                   >
-                    {link.label}
+                    {category.name}
                   </Link>
                 </li>
               ))}
+
+              {/* Static Links */}
+              <li>
+                <Link
+                  href="/about"
+                  onClick={() => setOpen(false)}
+                  className={`block hover:text-red-600 ${pathname === "/about" ? "text-red-700" : ""
+                    }`}
+                >
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  onClick={() => setOpen(false)}
+                  className={`block hover:text-red-600 ${pathname === "/contact" ? "text-red-700" : ""
+                    }`}
+                >
+                  Contact
+                </Link>
+              </li>
+
+              {/* Cart and Notifications */}
               <li>
                 <div className="flex items-center justify-between">
                   <Link
