@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import Image from "next/image";
+
 type Message = {
   id: string;
   roomId: string;
@@ -8,18 +9,18 @@ type Message = {
   type: string;
   content: string;
   createdAt: string;
+  sender?: { id: string; name: string; email: string };
 };
 
 export default function MessageList({
   messages,
   currentUserId,
-  typingUsers = []
+  typingUsers = [],
 }: {
   messages: Message[];
   currentUserId: string;
   typingUsers?: string[];
 }) {
-  
   const bottomRef = useRef<HTMLDivElement | null>(null);
 
   // Auto-scroll to bottom when new message arrives
@@ -28,61 +29,65 @@ export default function MessageList({
   }, [messages, typingUsers]);
 
   return (
-<div className="flex flex-col gap-2 overflow-y-auto h-full bg-gray-50 p-2">
-
+    <div className="flex flex-col gap-3">
       {messages.map((msg) => {
         const isMine = msg.senderId === currentUserId;
 
         return (
-          <div
-            key={msg.id}
-            className={`flex ${isMine ? "justify-end" : "justify-start"}`}
-          >
+          <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
             <div
               className={`
-                max-w-[60%] p-3 rounded-xl shadow
+                max-w-[70%] px-4 py-3 border transition-all duration-200
                 ${isMine
-                  ? "bg-blue-600 text-white rounded-br-none"
-                  : "bg-white text-gray-800 border rounded-bl-none"}
+                  ? "bg-[#1E2A55] text-white border-[#1E2A55]"
+                  : "bg-white text-gray-800 border-gray-300"
+                }
               `}
             >
+              {/* Sender name for received messages */}
+              {!isMine && msg.sender && (
+                <p className="text-xs font-semibold text-gray-600 mb-1">{msg.sender.name}</p>
+              )}
+
               {/* Message content depending on type */}
-              {msg.type === "text" && <p>{msg.content}</p>}
+              {msg.type === "text" && <p className="text-sm break-words leading-relaxed">{msg.content}</p>}
 
               {msg.type === "image" && (
-                <Image  width={200} height={200}
+                <Image
+                  width={300}
+                  height={300}
                   src={msg.content}
                   alt="Image"
-                  className="rounded-lg max-h-64 object-cover"
+                  className="max-h-64 object-cover cursor-pointer"
                 />
               )}
 
               {msg.type === "voice" && (
-                <audio controls className="w-full">
+                <audio controls className="w-full max-w-xs">
                   <source src={msg.content} />
                 </audio>
               )}
 
               {msg.type === "video" && (
-                <video controls className="rounded-lg max-h-80">
+                <video controls className="max-h-80 max-w-md">
                   <source src={msg.content} />
                 </video>
               )}
 
-              <span className="text-xs opacity-50 block text-right mt-1">
-                {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+              {/* Timestamp */}
+              <span
+                className={`text-xs mt-1.5 block text-right ${isMine ? "text-gray-300" : "text-gray-500"
+                  }`}
+              >
+                {new Date(msg.createdAt).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </span>
             </div>
           </div>
         );
       })}
-
-      {/* Typing Indicator */}
-      {typingUsers.length > 0 && (
-        <div className="text-sm text-gray-500 animate-pulse pl-2">
-          Someone is typing...
-        </div>
-      )}
 
       <div ref={bottomRef}></div>
     </div>

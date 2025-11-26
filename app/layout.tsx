@@ -3,6 +3,7 @@ import { Lato, Montserrat } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { CartSyncProvider } from "@/providers/CartSyncProvider";
+import PopupChat from "@/components/Chat/PopupChat";
 
 const lato = Lato({
   subsets: ["latin"],
@@ -32,7 +33,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${lato.variable} ${montserrat.variable} font-body antialiased`}>
         <AuthProvider>
-          <CartSyncProvider>{children}</CartSyncProvider>
+          <CartSyncProvider>
+            {children}
+            {/* Global popup chat - available on all pages */}
+            <PopupChat />
+          </CartSyncProvider>
         </AuthProvider>
       </body>
     </html>
