@@ -513,9 +513,29 @@ export async function getProductSuggestions(
 export async function recordProductView(
   productId: string
 ): Promise<ApiResponse<void>> {
-  return apiCall<void>(`/api/v1/public/products/${productId}/view`, {
-    method: 'POST',
-  });
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/v1/products/${productId}/view`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    // Don't throw errors for view tracking - it's not critical
+    if (!response.ok) {
+      console.warn(`Failed to record view for product ${productId}`);
+      return { success: false };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.warn(`Failed to record view for product ${productId}:`, error);
+    return { success: false };
+  }
 }
 
 /**
