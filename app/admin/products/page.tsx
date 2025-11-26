@@ -120,70 +120,69 @@ export default function ProductsPage() {
     <div className="max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-            <p className="text-gray-600 mt-1">Manage your product catalog</p>
-          </div>
-          <a
-            href="/admin/products/new"
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2"
-          >
-            <Plus className="h-5 w-5" />
-            Add Product
-          </a>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
+          <p className="text-gray-600 mt-1">Manage your product catalog</p>
         </div>
+        <a
+          href="/admin/products/new"
+          className="form-button-primary flex items-center gap-2"
+        >
+          <Plus className="h-5 w-5" />
+          Add Product
+        </a>
+      </div>
 
-        {/* Search Bar */}
-        <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search products..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-black"
-            />
-          </div>
+      {/* Search Bar */}
+      <div className="bg-white p-4 mb-6 shadow-sm">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search products..."
+            className="form-input-base pl-10"
+          />
         </div>
+      </div>
 
-        {/* Products Grid */}
-        {filteredProducts.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-12 text-center">
-            <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No products found
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {search
-                ? "Try adjusting your search"
-                : "Get started by adding your first product"}
-            </p>
-            {!search && (
-              <a
-                href="/admin/products/new"
-                className="inline-flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
-              >
-                <Plus className="h-5 w-5" />
-                Add Your First Product
-              </a>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => {
-              const statusBadge = getStatusBadge(product.status || 'active');
-              const isArchived = product.status === 'archived';
-              
-              return (
+      {/* Products Grid */}
+      {filteredProducts.length === 0 ? (
+        <div className="bg-white p-12 text-center shadow-sm">
+          <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No products found
+          </h3>
+          <p className="text-gray-600 mb-6">
+            {search
+              ? "Try adjusting your search"
+              : "Get started by adding your first product"}
+          </p>
+          {!search && (
+            <a
+              href="/admin/products/new"
+              className="form-button-primary inline-flex items-center gap-2"
+            >
+              <Plus className="h-5 w-5" />
+              Add Your First Product
+            </a>
+          )}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredProducts.map((product) => {
+            const statusBadge = getStatusBadge(product.status || 'active');
+            const isArchived = product.status === 'archived';
+
+            return (
               <div
                 key={product.id}
-                className={`bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow ${
-                  isArchived ? 'opacity-75' : ''
-                }`}
+                className={`bg-white shadow-sm hover:shadow-md transition-shadow ${isArchived ? 'opacity-75' : ''
+                  }`}
               >
-                <div className="h-48 bg-gray-200 flex items-center justify-center">
-                  <Image className="h-16 w-16 text-gray-400"  width={280} height={280} />
+                <div className="h-48 bg-gray-100 flex items-center justify-center">
+                  <Image className="h-16 w-16 text-gray-400" width={280} height={280} />
                 </div>
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-2">
@@ -192,16 +191,15 @@ export default function ProductsPage() {
                     </h3>
                     <div className="flex gap-1">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          product.isActive
-                            ? "bg-green-100 text-green-700"
-                            : "bg-gray-100 text-gray-700"
-                        }`}
+                        className={`px-2 py-1 text-xs font-medium ${product.isActive
+                          ? "bg-green-100 text-green-800"
+                          : "bg-gray-100 text-gray-800"
+                          }`}
                       >
                         {product.isActive ? "Active" : "Inactive"}
                       </span>
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${statusBadge.bgColor} ${statusBadge.textColor}`}
+                        className={`px-2 py-1 text-xs font-medium ${statusBadge.bgColor} ${statusBadge.textColor}`}
                       >
                         {statusBadge.label}
                       </span>
@@ -211,11 +209,11 @@ export default function ProductsPage() {
                     {product.description || "No description"}
                   </p>
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-bold text-indigo-600">
+                    <span className="text-2xl font-bold text-gray-900">
                       {formatCurrency(product.price, product.currency)}
                     </span>
                     {product.isFeatured && (
-                      <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-medium">
+                      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 font-medium">
                         ⭐ Featured
                       </span>
                     )}
@@ -224,14 +222,14 @@ export default function ProductsPage() {
                     <div className="grid grid-cols-2 gap-2">
                       <a
                         href={`/admin/products/${product.id}/edit`}
-                        className="bg-indigo-50 text-indigo-600 px-3 py-2 rounded-lg font-medium hover:bg-indigo-100 transition-colors flex items-center justify-center gap-2 text-sm"
+                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
                       >
                         <Edit className="h-4 w-4" />
                         Edit
                       </a>
                       <a
                         href={`/admin/products/${product.id}/variants`}
-                        className="bg-purple-50 text-purple-600 px-3 py-2 rounded-lg font-medium hover:bg-purple-100 transition-colors flex items-center justify-center gap-2 text-sm"
+                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
                       >
                         <Layers className="h-4 w-4" />
                         Variants
@@ -240,14 +238,14 @@ export default function ProductsPage() {
                     <div className="grid grid-cols-2 gap-2">
                       <a
                         href={`/admin/products/${product.id}/media`}
-                        className="bg-green-50 text-green-600 px-3 py-2 rounded-lg font-medium hover:bg-green-100 transition-colors flex items-center justify-center gap-2 text-sm"
+                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
                       >
                         <Image className="h-4 w-4" />
                         Media
                       </a>
                       <button
                         onClick={() => handleDuplicate(product.id)}
-                        className="bg-blue-50 text-blue-600 px-3 py-2 rounded-lg font-medium hover:bg-blue-100 transition-colors flex items-center justify-center gap-2 text-sm"
+                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
                       >
                         <Copy className="h-4 w-4" />
                         Duplicate
@@ -257,7 +255,7 @@ export default function ProductsPage() {
                       {!isArchived ? (
                         <button
                           onClick={() => handleArchive(product.id)}
-                          className="bg-gray-50 text-gray-600 px-3 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors flex items-center justify-center gap-2 text-sm"
+                          className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
                         >
                           <Archive className="h-4 w-4" />
                           Archive
@@ -265,7 +263,7 @@ export default function ProductsPage() {
                       ) : (
                         <button
                           onClick={() => handleRestore(product.id)}
-                          className="bg-green-50 text-green-600 px-3 py-2 rounded-lg font-medium hover:bg-green-100 transition-colors flex items-center justify-center gap-2 text-sm"
+                          className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
                         >
                           <RotateCcw className="h-4 w-4" />
                           Restore
@@ -273,7 +271,7 @@ export default function ProductsPage() {
                       )}
                       <button
                         onClick={() => handleDelete(product.id)}
-                        className="bg-red-50 text-red-600 px-3 py-2 rounded-lg font-medium hover:bg-red-100 transition-colors flex items-center justify-center gap-2 text-sm"
+                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2 text-red-600 hover:text-red-700 hover:border-red-600"
                       >
                         <Trash2 className="h-4 w-4" />
                         Delete
@@ -282,10 +280,11 @@ export default function ProductsPage() {
                   </div>
                 </div>
               </div>
-            );})}
-          </div>
-        )}
-      </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
     // </div>
   );
 }

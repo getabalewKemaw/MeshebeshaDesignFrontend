@@ -90,125 +90,120 @@ export default function CustomRequestsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Custom Requests</h1>
-          <p className="text-gray-600 mt-1">Manage customer design requests</p>
-        </div>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">Custom Requests</h1>
+        <p className="text-gray-600 mt-1">Manage customer design requests</p>
+      </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === "all"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+      {/* Filters */}
+      <div className="bg-white shadow-sm p-4 mb-6">
+        <div className="flex gap-2 flex-wrap">
+          <button
+            onClick={() => setFilter("all")}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "all"
+                ? "bg-black text-white"
+                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setFilter("submitted")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === "submitted"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          >
+            All
+          </button>
+          <button
+            onClick={() => setFilter("submitted")}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "submitted"
+                ? "bg-black text-white"
+                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
-            >
-              Submitted
-            </button>
-            <button
-              onClick={() => setFilter("in_progress")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === "in_progress"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          >
+            Submitted
+          </button>
+          <button
+            onClick={() => setFilter("in_progress")}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "in_progress"
+                ? "bg-black text-white"
+                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
-            >
-              In Progress
-            </button>
-            <button
-              onClick={() => setFilter("completed")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === "completed"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          >
+            In Progress
+          </button>
+          <button
+            onClick={() => setFilter("completed")}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "completed"
+                ? "bg-black text-white"
+                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
-            >
-              Completed
-            </button>
-            <button
-              onClick={() => setFilter("rejected")}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                filter === "rejected"
-                  ? "bg-indigo-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          >
+            Completed
+          </button>
+          <button
+            onClick={() => setFilter("rejected")}
+            className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "rejected"
+                ? "bg-black text-white"
+                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
-            >
-              Rejected
-            </button>
-          </div>
+          >
+            Rejected
+          </button>
         </div>
+      </div>
 
-        {/* Requests List */}
-        {filteredRequests.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-12 text-center">
-            <MessageSquare className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No requests found
-            </h3>
-            <p className="text-gray-600">
-              {filter === "all"
-                ? "No custom requests yet"
-                : `No ${filter} requests`}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredRequests.map((request) => (
-              <div
-                key={request.id}
-                className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
-                      {request.title}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      From: {request.user.name} ({request.user.email})
-                    </p>
-                  </div>
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                      request.status
-                    )}`}
-                  >
-                    {request.status.replace("_", " ").toUpperCase()}
-                  </span>
+      {/* Requests List */}
+      {filteredRequests.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-md p-12 text-center">
+          <MessageSquare className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No requests found
+          </h3>
+          <p className="text-gray-600">
+            {filter === "all"
+              ? "No custom requests yet"
+              : `No ${filter} requests`}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {filteredRequests.map((request) => (
+            <div
+              key={request.id}
+              className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">
+                    {request.title}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    From: {request.user.name} ({request.user.email})
+                  </p>
                 </div>
-                <p className="text-gray-700 mb-4 line-clamp-2">
-                  {request.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-500">
-                    {new Date(request.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
-                  <button className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium">
-                    <Eye className="h-4 w-4" />
-                    View Details
-                  </button>
-                </div>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
+                    request.status
+                  )}`}
+                >
+                  {request.status.replace("_", " ").toUpperCase()}
+                </span>
               </div>
-            ))}
-          </div>
-        )}
+              <p className="text-gray-700 mb-4 line-clamp-2">
+                {request.description}
+              </p>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">
+                  {new Date(request.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </span>
+                <button className="flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium">
+                  <Eye className="h-4 w-4" />
+                  View Details
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

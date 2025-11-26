@@ -83,7 +83,7 @@ export default function CategoriesPage() {
     try {
       const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/categories`;
       const method = editingCategory ? 'PUT' : 'POST';
-      const body = editingCategory 
+      const body = editingCategory
         ? { name: formData.name, description: formData.description }
         : { name: formData.name, description: formData.description };
 
@@ -179,132 +179,132 @@ export default function CategoriesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
-            <p className="text-gray-600 mt-1">Organize your products</p>
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
+          <p className="text-gray-600 mt-1">Organize your products</p>
+        </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="form-button-primary flex items-center gap-2"
+        >
+          <Plus className="h-5 w-5" />
+          Add Category
+        </button>
+      </div>
+
+      {/* Messages */}
+      {error && (
+        <div className="mb-6 bg-red-50 text-red-700 px-4 py-3 rounded-lg shadow-sm">
+          <div className="flex items-center">
+            <div className="py-1">
+              <p className="text-sm font-medium">{error}</p>
+            </div>
           </div>
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-6 bg-green-50 text-green-700 px-4 py-3 rounded-lg shadow-sm">
+          <div className="flex items-center">
+            <div className="py-1">
+              <p className="text-sm font-medium">{success}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Categories List */}
+      {categories.length === 0 ? (
+        <div className="bg-white rounded-xl shadow-md p-12 text-center">
+          <FolderTree className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            No categories yet
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Create your first category to organize products
+          </p>
           <button
             onClick={() => setShowModal(true)}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2 shadow-sm hover:shadow-md"
+            className="form-button-primary inline-flex items-center gap-2"
           >
             <Plus className="h-5 w-5" />
-            Add Category
+            Add Your First Category
           </button>
         </div>
-
-        {/* Messages */}
-        {error && (
-          <div className="mb-6 bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded">
-            <div className="flex items-center">
-              <div className="py-1">
-                <p className="text-sm font-medium">{error}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {success && (
-          <div className="mb-6 bg-green-50 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded">
-            <div className="flex items-center">
-              <div className="py-1">
-                <p className="text-sm font-medium">{success}</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Categories List */}
-        {categories.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-md p-12 text-center">
-            <FolderTree className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No categories yet
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Create your first category to organize products
-            </p>
-            <button
-              onClick={() => setShowModal(true)}
-              className="inline-flex items-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-sm hover:shadow-md"
-            >
-              <Plus className="h-5 w-5" />
-              Add Your First Category
-            </button>
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl shadow-md overflow-hidden">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Slug
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Description
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+      ) : (
+        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Slug
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Description
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Created
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {categories.map((category) => (
+                <tr key={category.id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {category.name}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
+                      {category.slug}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-500 line-clamp-2 max-w-md">
+                      {category.description || (
+                        <span className="text-gray-400 italic">No description</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-500">
+                      {new Date(category.createdAt).toLocaleDateString()}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <div className="flex justify-end gap-3">
+                      <button
+                        onClick={() => handleEdit(category)}
+                        className="text-indigo-600 hover:text-indigo-900 transition-colors p-1 rounded hover:bg-indigo-50"
+                        title="Edit category"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(category.id)}
+                        className="text-red-600 hover:text-red-900 transition-colors p-1 rounded hover:bg-red-50"
+                        title="Delete category"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {categories.map((category) => (
-                  <tr key={category.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {category.name}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
-                        {category.slug}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-sm text-gray-500 line-clamp-2 max-w-md">
-                        {category.description || (
-                          <span className="text-gray-400 italic">No description</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {new Date(category.createdAt).toLocaleDateString()}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end gap-3">
-                        <button 
-                          onClick={() => handleEdit(category)}
-                          className="text-indigo-600 hover:text-indigo-900 transition-colors p-1 rounded hover:bg-indigo-50"
-                          title="Edit category"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(category.id)}
-                          className="text-red-600 hover:text-red-900 transition-colors p-1 rounded hover:bg-red-50"
-                          title="Delete category"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       {/* Add/Edit Category Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -357,7 +357,7 @@ export default function CategoriesPage() {
                   placeholder="Describe this category..."
                 />
               </div>
-              
+
               {editingCategory && (
                 <div className="bg-gray-50 p-3 rounded-lg">
                   <h4 className="text-sm font-semibold text-gray-700 mb-2">Category Info</h4>
