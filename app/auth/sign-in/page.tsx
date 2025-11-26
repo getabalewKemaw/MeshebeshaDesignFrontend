@@ -45,7 +45,12 @@ export default function SignInPage() {
       if (error) {
         setPasswordError(error.message || "Invalid email or password");
       } else {
-        router.push("/dashboard");
+        const user = data?.user as any;
+        if (user?.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
       }
     } catch (err: any) {
       setPasswordError(err.message || "An error occurred");

@@ -28,6 +28,8 @@ export default function ProductsPage() {
     totalPages: 0,
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [tempMinPrice, setTempMinPrice] = useState("");
+  const [tempMaxPrice, setTempMaxPrice] = useState("");
 
   useEffect(() => {
     const run = async () => {
@@ -55,7 +57,7 @@ export default function ProductsPage() {
   }, [filters]);
 
   const categoryOptions = useMemo(() => options?.categories ?? [], [options]);
-  const priceRange = useMemo(() => options?.priceRange ?? { min: 0, max: 0 }, [options]);
+  const priceRange = useMemo(() => options?.priceRange ?? { min: 0, max: 10000 }, [options]);
   const appliedFilters = useMemo(() => {
     const active: string[] = [];
     if (filters.q) active.push("Search");
@@ -66,11 +68,22 @@ export default function ProductsPage() {
 
   const handleResetFilters = () => {
     setFilters({ ...DEFAULT_FILTERS, page: 1 });
+    setTempMinPrice("");
+    setTempMaxPrice("");
   };
 
   const handlePageChange = (newPage: number) => {
     setFilters((prev) => ({ ...prev, page: newPage }));
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleApplyPriceFilter = () => {
+    setFilters((prev) => ({
+      ...prev,
+      minPrice: tempMinPrice ? parseFloat(tempMinPrice) : undefined,
+      maxPrice: tempMaxPrice ? parseFloat(tempMaxPrice) : undefined,
+      page: 1,
+    }));
   };
 
   return (
@@ -82,7 +95,7 @@ export default function ProductsPage() {
           {/* Header */}
           <div className="mb-12 text-center">
             <div className="inline-block mb-4">
-              <span className="px-4 py-2 bg-[#CFAE56]/10 text-[#CFAE56] rounded-full text-sm font-semibold uppercase tracking-wider">
+              <span className="px-4 py-2 bg-[#CFAE56]/10 text-[#CFAE56] text-sm font-semibold uppercase tracking-wider border-2 border-[#CFAE56]">
                 Shop
               </span>
             </div>
@@ -95,7 +108,7 @@ export default function ProductsPage() {
           </div>
 
           {/* Filters Bar */}
-          <div className="mb-8 bg-white rounded-2xl shadow-md p-6">
+          <div className="mb-8 bg-white border-2 border-[#1E2A55] shadow-lg p-6">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               {/* Search */}
               <div className="flex-1 max-w-md">
@@ -113,7 +126,7 @@ export default function ProductsPage() {
                     placeholder="Search products..."
                     value={filters.q}
                     onChange={(e) => setFilters((prev) => ({ ...prev, q: e.target.value, page: 1 }))}
-                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-full focus:border-[#CFAE56] focus:outline-none transition-colors"
+                    className="w-full pl-12 pr-4 py-3 border-2 border-gray-300 focus:border-[#CFAE56] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -121,12 +134,12 @@ export default function ProductsPage() {
               {/* Filter Toggle Button (Mobile) */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="lg:hidden flex items-center justify-center gap-2 px-6 py-3 bg-[#1E2A55] text-white rounded-full font-semibold hover:bg-[#2A3A65] transition-colors"
+                className="lg:hidden flex items-center justify-center gap-2 px-6 py-3 bg-[#1E2A55] text-white font-semibold hover:bg-[#2A3A65] transition-colors border-2 border-[#1E2A55]"
               >
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
-                Filters
+                Filters {appliedFilters.length > 0 && `(${appliedFilters.length})`}
               </button>
 
               {/* Desktop Filters */}
@@ -135,7 +148,7 @@ export default function ProductsPage() {
                 <select
                   value={filters.categoryId}
                   onChange={(e) => setFilters((prev) => ({ ...prev, categoryId: e.target.value, page: 1 }))}
-                  className="px-4 py-3 border-2 border-gray-200 rounded-full focus:border-[#CFAE56] focus:outline-none transition-colors"
+                  className="px-4 py-3 border-2 border-gray-300 focus:border-[#CFAE56] focus:outline-none transition-colors min-w-[200px]"
                 >
                   <option value="">All Categories</option>
                   {categoryOptions.map((cat) => (
@@ -149,7 +162,7 @@ export default function ProductsPage() {
                 {appliedFilters.length > 0 && (
                   <button
                     onClick={handleResetFilters}
-                    className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:border-red-500 hover:text-red-500 transition-colors"
+                    className="px-6 py-3 border-2 border-[#1E2A55] text-[#1E2A55] font-semibold hover:bg-[#1E2A55] hover:text-white transition-colors"
                   >
                     Clear All
                   </button>
@@ -164,11 +177,11 @@ export default function ProductsPage() {
 
             {/* Mobile Filters Dropdown */}
             {showFilters && (
-              <div className="lg:hidden mt-6 pt-6 border-t border-gray-200 space-y-4">
+              <div className="lg:hidden mt-6 pt-6 border-t-2 border-gray-200 space-y-4">
                 <select
                   value={filters.categoryId}
                   onChange={(e) => setFilters((prev) => ({ ...prev, categoryId: e.target.value, page: 1 }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-full focus:border-[#CFAE56] focus:outline-none"
+                  className="w-full px-4 py-3 border-2 border-gray-300 focus:border-[#CFAE56] focus:outline-none"
                 >
                   <option value="">All Categories</option>
                   {categoryOptions.map((cat) => (
@@ -178,16 +191,74 @@ export default function ProductsPage() {
                   ))}
                 </select>
 
+                {/* Price Range Filter */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-semibold text-[#1E2A55]">Price Range (ETB)</label>
+                  <div className="flex gap-3">
+                    <input
+                      type="number"
+                      placeholder={`Min (${priceRange.min})`}
+                      value={tempMinPrice}
+                      onChange={(e) => setTempMinPrice(e.target.value)}
+                      className="flex-1 px-4 py-2 border-2 border-gray-300 focus:border-[#CFAE56] focus:outline-none"
+                    />
+                    <input
+                      type="number"
+                      placeholder={`Max (${priceRange.max})`}
+                      value={tempMaxPrice}
+                      onChange={(e) => setTempMaxPrice(e.target.value)}
+                      className="flex-1 px-4 py-2 border-2 border-gray-300 focus:border-[#CFAE56] focus:outline-none"
+                    />
+                  </div>
+                  <button
+                    onClick={handleApplyPriceFilter}
+                    className="w-full px-4 py-2 bg-[#CFAE56] text-white font-semibold hover:bg-[#B89846] transition-colors"
+                  >
+                    Apply Price Filter
+                  </button>
+                </div>
+
                 {appliedFilters.length > 0 && (
                   <button
                     onClick={handleResetFilters}
-                    className="w-full px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-full font-semibold hover:border-red-500 hover:text-red-500 transition-colors"
+                    className="w-full px-6 py-3 border-2 border-[#1E2A55] text-[#1E2A55] font-semibold hover:bg-[#1E2A55] hover:text-white transition-colors"
                   >
                     Clear All Filters
                   </button>
                 )}
               </div>
             )}
+
+            {/* Desktop Price Filter */}
+            <div className="hidden lg:block mt-6 pt-6 border-t-2 border-gray-200">
+              <div className="flex items-end gap-4">
+                <div className="flex-1 max-w-sm">
+                  <label className="block text-sm font-semibold text-[#1E2A55] mb-2">Price Range (ETB)</label>
+                  <div className="flex gap-3">
+                    <input
+                      type="number"
+                      placeholder={`Min (${priceRange.min})`}
+                      value={tempMinPrice}
+                      onChange={(e) => setTempMinPrice(e.target.value)}
+                      className="flex-1 px-4 py-2 border-2 border-gray-300 focus:border-[#CFAE56] focus:outline-none"
+                    />
+                    <input
+                      type="number"
+                      placeholder={`Max (${priceRange.max})`}
+                      value={tempMaxPrice}
+                      onChange={(e) => setTempMaxPrice(e.target.value)}
+                      className="flex-1 px-4 py-2 border-2 border-gray-300 focus:border-[#CFAE56] focus:outline-none"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={handleApplyPriceFilter}
+                  className="px-6 py-2 bg-[#CFAE56] text-white font-semibold hover:bg-[#B89846] transition-colors"
+                >
+                  Apply
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Products Grid */}
@@ -196,8 +267,8 @@ export default function ProductsPage() {
             <div className="py-20">
               <div className="flex flex-col items-center justify-center">
                 <div className="relative">
-                  <div className="h-16 w-16 rounded-full border-4 border-gray-200"></div>
-                  <div className="absolute top-0 left-0 h-16 w-16 rounded-full border-4 border-[#CFAE56] border-t-transparent animate-spin"></div>
+                  <div className="h-16 w-16 border-4 border-gray-200"></div>
+                  <div className="absolute top-0 left-0 h-16 w-16 border-4 border-[#CFAE56] border-t-transparent animate-spin"></div>
                 </div>
                 <p className="mt-6 text-lg text-gray-600 font-medium">Loading products...</p>
               </div>
@@ -206,11 +277,11 @@ export default function ProductsPage() {
               <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[...Array(8)].map((_, i) => (
                   <div key={i} className="animate-pulse">
-                    <div className="aspect-square w-full bg-gray-200"></div>
+                    <div className="aspect-[3/4] w-full bg-gray-200"></div>
                     <div className="mt-3 space-y-2">
-                      <div className="h-5 bg-gray-200 rounded w-3/4"></div>
-                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                      <div className="h-6 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-5 bg-gray-200 w-3/4"></div>
+                      <div className="h-4 bg-gray-200 w-1/2"></div>
+                      <div className="h-6 bg-gray-200 w-1/3"></div>
                     </div>
                   </div>
                 ))}
@@ -219,7 +290,7 @@ export default function ProductsPage() {
           ) : error ? (
             // Error State
             <div className="py-20 text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-red-100 mb-6 border-2 border-red-600">
                 <svg className="h-10 w-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -228,7 +299,7 @@ export default function ProductsPage() {
               <p className="text-gray-600 mb-6">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center justify-center px-6 py-3 bg-[#1E2A55] text-white rounded-full font-semibold hover:bg-[#2A3A65] transition-colors"
+                className="inline-flex items-center justify-center px-6 py-3 bg-[#1E2A55] text-white font-semibold hover:bg-[#2A3A65] transition-colors"
               >
                 Try Again
               </button>
@@ -236,7 +307,7 @@ export default function ProductsPage() {
           ) : products.length === 0 ? (
             // Empty State
             <div className="py-20 text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gray-100 mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 mb-6 border-2 border-gray-300">
                 <svg className="h-10 w-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
                 </svg>
@@ -247,7 +318,7 @@ export default function ProductsPage() {
               </p>
               <button
                 onClick={handleResetFilters}
-                className="inline-flex items-center justify-center px-6 py-3 bg-[#1E2A55] text-white rounded-full font-semibold hover:bg-[#2A3A65] transition-colors"
+                className="inline-flex items-center justify-center px-6 py-3 bg-[#1E2A55] text-white font-semibold hover:bg-[#2A3A65] transition-colors"
               >
                 Clear Filters
               </button>
@@ -278,7 +349,7 @@ export default function ProductsPage() {
               {pagination.totalPages > 1 && (
                 <div className="mt-16 flex items-center justify-center gap-4">
                   <button
-                    className="px-6 py-3 border-2 border-gray-300 rounded-full font-semibold text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed hover:border-[#CFAE56] hover:text-[#CFAE56] transition-all"
+                    className="px-6 py-3 border-2 border-[#1E2A55] font-semibold text-[#1E2A55] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#1E2A55] hover:text-white transition-all"
                     disabled={pagination.page <= 1}
                     onClick={() => handlePageChange(pagination.page - 1)}
                   >
@@ -300,9 +371,9 @@ export default function ProductsPage() {
                           <button
                             key={pageNum}
                             onClick={() => handlePageChange(pageNum)}
-                            className={`w-12 h-12 rounded-full font-semibold transition-all ${pagination.page === pageNum
-                                ? "bg-[#1E2A55] text-white"
-                                : "bg-white border-2 border-gray-300 text-gray-700 hover:border-[#CFAE56] hover:text-[#CFAE56]"
+                            className={`w-12 h-12 font-semibold transition-all border-2 ${pagination.page === pageNum
+                              ? "bg-[#1E2A55] text-white border-[#1E2A55]"
+                              : "bg-white border-gray-300 text-gray-700 hover:border-[#CFAE56] hover:text-[#CFAE56]"
                               }`}
                           >
                             {pageNum}
@@ -323,7 +394,7 @@ export default function ProductsPage() {
                   </div>
 
                   <button
-                    className="px-6 py-3 border-2 border-gray-300 rounded-full font-semibold text-gray-700 disabled:opacity-30 disabled:cursor-not-allowed hover:border-[#CFAE56] hover:text-[#CFAE56] transition-all"
+                    className="px-6 py-3 border-2 border-[#1E2A55] font-semibold text-[#1E2A55] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#1E2A55] hover:text-white transition-all"
                     disabled={pagination.page >= pagination.totalPages}
                     onClick={() => handlePageChange(pagination.page + 1)}
                   >

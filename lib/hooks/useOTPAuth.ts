@@ -69,11 +69,16 @@ export function useOTPAuth() {
     setLoading(true);
 
     try {
-      const { error } = await verifyOtp(authClient, email, otp);
+      const { data, error } = await verifyOtp(authClient, email, otp);
       if (error) {
         setErrors(prev => ({ ...prev, general: error.message || "Invalid OTP" }));
       } else {
-        router.push("/dashboard");
+        const user = data?.user as any;
+        if (user?.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
       }
     } finally {
       setLoading(false);

@@ -157,8 +157,12 @@ export default function CheckoutPage() {
           throw new Error(paymentResponse.error || "Failed to create payment session. Please try again.");
         }
 
-        // Redirect to Chapa checkout
-        window.location.href = paymentResponse.data.checkoutUrl;
+        // Redirect to Chapa checkout with a small delay
+        const checkoutUrl = paymentResponse.data.checkoutUrl;
+        setSubmissionMessage("Redirecting to payment...");
+        setTimeout(() => {
+          window.location.href = checkoutUrl;
+        }, 2000);
       }
     } catch (error) {
       const message =

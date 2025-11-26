@@ -32,13 +32,12 @@ export default function ProductCard({
         maximumFractionDigits: 2,
     }).format(price);
 
-    // Render star rating
+    // Render star rating - always show even if 0 reviews
     const renderStars = () => {
-        if (!averageRating) return null;
-
+        const rating = averageRating || 0;
         const stars = [];
-        const fullStars = Math.floor(averageRating);
-        const hasHalfStar = averageRating % 1 >= 0.5;
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
 
         for (let i = 0; i < 5; i++) {
             if (i < fullStars) {
@@ -65,9 +64,9 @@ export default function ProductCard({
         return (
             <div className="flex items-center gap-1.5">
                 <div className="flex text-sm">{stars}</div>
-                {totalReviews && totalReviews > 0 && (
-                    <span className="text-xs text-gray-500">({totalReviews})</span>
-                )}
+                <span className="text-xs text-gray-500">
+                    ({totalReviews || 0} {totalReviews === 1 ? 'review' : 'reviews'})
+                </span>
             </div>
         );
     };
@@ -77,8 +76,8 @@ export default function ProductCard({
             href={`/products/${id}`}
             className="group block overflow-hidden transition-all duration-300 hover:scale-[1.02]"
         >
-            {/* Full Image Container - No borders, no rounded corners */}
-            <div className="relative aspect-square w-full overflow-hidden bg-gray-100">
+            {/* Full Image Container - Taller aspect ratio to show more content */}
+            <div className="relative aspect-[3/4] w-full overflow-hidden bg-gray-100">
                 {image && !imageError ? (
                     <Image
                         src={image}
@@ -118,7 +117,7 @@ export default function ProductCard({
                     {title}
                 </h3>
 
-                {/* Rating */}
+                {/* Rating - Always displayed */}
                 {renderStars()}
 
                 {/* Price */}
