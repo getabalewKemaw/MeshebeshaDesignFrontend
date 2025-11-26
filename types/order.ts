@@ -54,6 +54,7 @@ export interface OrderSummary {
       id: string;
       title: string;
       slug?: string;
+      image?: string | null;
     };
   }>;
   payments?: PaymentRecord[];

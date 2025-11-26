@@ -49,3 +49,8 @@ export const submitFakePayment = (orderId: string, reference: string, note?: str
     body: JSON.stringify({ reference, note }),
   });
 
+export const getUserOrders = () =>
+  ordersRequest<OrderSummary[]>("/api/v1/orders", {
+    method: "GET",
+  });
+
