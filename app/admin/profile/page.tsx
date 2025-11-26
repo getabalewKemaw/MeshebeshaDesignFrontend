@@ -161,11 +161,10 @@ export default function AdminProfilePage() {
               <p className="text-gray-600 mt-1">{user?.email}</p>
               <div className="flex items-center gap-2 mt-2 justify-center sm:justify-start">
                 <span
-                  className={`px-3 py-1 rounded-full text-sm font-medium ${
-                    user?.emailVerified
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${user?.emailVerified
                       ? "bg-green-100 text-green-700"
                       : "bg-yellow-100 text-yellow-700"
-                  }`}
+                    }`}
                 >
                   {user?.emailVerified ? "✓ Verified" : "Pending Verification"}
                 </span>
@@ -197,7 +196,7 @@ export default function AdminProfilePage() {
           {!isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              className="form-button-primary"
             >
               Edit Profile
             </button>
