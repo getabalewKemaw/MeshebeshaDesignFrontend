@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import Button from "@/components/ui/Button";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
 import { useCartStore } from "@/stores/cart";
@@ -33,7 +32,7 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Fetch categories on mount
+  // fetch categories on mount
   useEffect(() => {
     const loadCategories = async () => {
       setLoadingCategories(true);
@@ -44,7 +43,7 @@ const Navbar = () => {
     loadCategories();
   }, []);
 
-  // Close dropdown when clicking outside
+  // close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -56,6 +55,8 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
+  //  handle sign out
   const handleSignOut = async () => {
     setSigningOut(true);
     await authClient.signOut();
@@ -79,9 +80,9 @@ const Navbar = () => {
       }`}>
       <nav className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4">
-          {/* Logo - Simplified */}
+          {/* logo - Simplified */}
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#1E2A55] to-[#CFAE56] group-hover:scale-110 transition-transform">
+            <div className="flex items-center justify-center w-10 h-10 rounded-full bg-linear-to-br from-[#1E2A55] to-[#CFAE56] group-hover:scale-110 transition-transform">
               <span className="text-white font-bold text-xl">M</span>
             </div>
             <span className="text-xl font-bold text-[#1E2A55] hidden sm:block">
@@ -304,5 +305,4 @@ const Navbar = () => {
     </header>
   );
 };
-
 export default Navbar;
