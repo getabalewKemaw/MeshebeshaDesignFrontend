@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 
 import { useAuth } from "@/lib/hooks/useAuth";
 import Navbar from "@/components/NavBar";
@@ -7,6 +8,15 @@ import NotificationList from "@/components/NotificationList";
 
 export default function DashboardPage() {
   const { user } = useAuth();
+
+
+const memberSince = useMemo(() => {
+  if (!user) return "";
+  const timestamp = new Date(user.createdAt ?? Date.now());
+  return timestamp.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+}, [user]);
+
+
 
   return (
     <ProtectedRoute>
@@ -25,7 +35,7 @@ export default function DashboardPage() {
                   Welcome back, {user?.name?.split(" ")[0]}! 👋
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  Here's what's happening with your account today
+                  Here is what  happening with your account today
                 </p>
               </div>
             </div>
@@ -52,10 +62,7 @@ export default function DashboardPage() {
                 <div>
                   <p className="text-gray-600 text-sm font-medium">Member Since</p>
                   <p className="text-2xl font-bold text-gray-900 mt-2">
-                    {new Date(user?.createdAt || Date.now()).toLocaleDateString('en-US', { 
-                      month: 'short', 
-                      year: 'numeric' 
-                    })}
+                   {memberSince}
                   </p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">

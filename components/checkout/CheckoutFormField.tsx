@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { validateField } from "@/utils/validation/checkoutValidation";
 import type { ValidationError } from "@/utils/validation/checkoutValidation";
 
@@ -41,14 +41,6 @@ export default function CheckoutFormField({
     // Get server-side validation error
     const serverError = validationErrors.find((err) => err.field === id)?.message || null;
 
-    // Perform live validation on blur or value change (if touched)
-    useEffect(() => {
-        if (touched && value !== undefined) {
-            const error = validateField(id, value, fieldType);
-            setLiveError(error);
-        }
-    }, [value, touched, id, fieldType]);
-
     const handleBlur = () => {
         setTouched(true);
         const error = validateField(id, value, fieldType);
@@ -64,7 +56,7 @@ export default function CheckoutFormField({
             onErrorClear(id);
         }
 
-        // Clear live error if field becomes valid
+        // Validate immediately if field has been touched
         if (touched) {
             const error = validateField(id, newValue, fieldType);
             setLiveError(error);
