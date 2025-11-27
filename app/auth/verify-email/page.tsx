@@ -36,8 +36,9 @@ export default function VerifyEmailPage() {
 
       if (error) setGeneralError(error.message || "Invalid OTP code");
       else if (data) router.push("/");
-    } catch (err: any) {
-      setGeneralError(err.message || "An error occurred");
+    } catch (err: unknown) {
+      const errMsg=err instanceof Error ? err.message : "An unexpected error occurred";
+      setGeneralError(errMsg || "An error occurred");
     } finally {
       setLoading(false);
     }
@@ -59,8 +60,9 @@ export default function VerifyEmailPage() {
         setResendSuccess(true);
         setTimeout(() => setResendSuccess(false), 3000);
       }
-    } catch (err: any) {
-      setGeneralError(err.message || "An error occurred");
+    } catch (err: unknown) {
+      const msg= err instanceof Error ? err.message :"an expecetd error occured";
+      setGeneralError(msg || "An error occurred");
     } finally {
       setResending(false);
     }
@@ -129,7 +131,7 @@ export default function VerifyEmailPage() {
 
         {/* Resend */}
         <div className="text-center mt-6">
-          <p className="text-sm text-gray-600">Didn't receive the code?</p>
+          <p className="text-sm text-gray-600">Did n&apos;t receive the code?</p>
           <button
             onClick={handleResendOTP}
             disabled={resending}

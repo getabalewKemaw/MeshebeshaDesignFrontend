@@ -5,8 +5,11 @@ import FormField from "@/components/forms/FormField";
 import { authClient } from "@/lib/auth-client";
 import OtpInput from "@/components/forms/OtpInput";
 import { useOTPAuth } from "@/lib/hooks/useOTPAuth";
-import { useRouter } from "next/navigation";
+import { validateEmail ,validatePassword} from "@/utils/validator";
+// the useotp auth custom hook that manages the otp flows
+import type { User } from "@/types/auth";
 
+import { useRouter } from "next/navigation";
 export default function SignInPage() {
   const router = useRouter();
   const [loginMethod, setLoginMethod] = useState<'password' | 'otp'>('password');
@@ -31,33 +34,53 @@ export default function SignInPage() {
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordError, setPasswordError] = useState("");
 
+
+
+  // handle  the password sign in flow the  ayncy the authclient  signin using email and password and redirects according to the  roles .
   const handlePasswordSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordLoading(true);
     setPasswordError("");
-
     try {
       const { data, error } = await authClient.signIn.email({
         email,
         password,
       });
 
+      const emailErrorMsg=validateEmail(email);
+      if (emailErrorMsg) {
+        setPasswordError(emailErrorMsg);
+        return;
+      }
+      const passwordErrorMsg = validatePassword(password);
+      if (passwordErrorMsg) {
+        setPasswordError(passwordErrorMsg);
+        return;
+      }
       if (error) {
         setPasswordError(error.message || "Invalid email or password");
       } else {
-        router.push("/dashboard");
+        const user = data?.user as  User;
+        if (user?.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
       }
-    } catch (err: any) {
-      setPasswordError(err.message || "An error occurred");
+    } catch (err: unknown) {
+      const msg= err instanceof Error ? err.message :"an expecetd error occured";
+      setPasswordError(msg);
     } finally {
       setPasswordLoading(false);
     }
   };
 
+
+  // handle the swich mode  between the password and the otp
+  // if otp is selectd  then otp  sent is set to true and the same is true  if passsword is selected
   const switchMethod = (method: 'password' | 'otp') => {
     setLoginMethod(method);
     setPasswordError("");
-    // Reset OTP state if switching back
     if (method === 'password') {
       setOtpSent(false);
       setOtp("");
@@ -65,7 +88,7 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-8">
 
@@ -73,9 +96,10 @@ export default function SignInPage() {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
             <p className="text-gray-600">
+              {/* make the header of the sign condition changed */}
               {loginMethod === 'password'
                 ? "Sign in with your password"
-                : "Sign in with a verification code"}
+                : "Sign in with a verification code if you don't remember your password instead."}
             </p>
           </div>
 
@@ -104,6 +128,7 @@ export default function SignInPage() {
                 icon={Mail}
                 required
                 autoComplete="email"
+
               />
 
               <div className="space-y-1">
@@ -116,12 +141,14 @@ export default function SignInPage() {
                   icon={Lock}
                   required
                   autoComplete="current-password"
+                  canTogglePassword ={true}
+
                 />
                 <div className="flex justify-end">
                   <button
                     type="button"
                     onClick={() => switchMethod('otp')}
-                    className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
+                    className="text-sm text-indigo-600 hover:text-indigo-700 font-medium underline"
                   >
                     Forgot password?
                   </button>
@@ -147,7 +174,7 @@ export default function SignInPage() {
                   className="text-sm text-gray-600 hover:text-gray-900 flex items-center justify-center gap-2 w-full"
                 >
                   <KeyRound className="w-4 h-4" />
-                  Login with OTP instead
+                  Login with OTP instead if you do not remember your password
                 </button>
               </div>
             </form>
@@ -180,9 +207,9 @@ export default function SignInPage() {
                   <button
                     type="button"
                     onClick={() => switchMethod('password')}
-                    className="w-full text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-4"
+                    className="w-full text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-4 underline"
                   >
-                    ← Back to Password Login
+                    ←Back to Password Login
                   </button>
                 </form>
               ) : (
@@ -205,7 +232,7 @@ export default function SignInPage() {
                   <button
                     type="button"
                     onClick={() => { setOtpSent(false); setOtp(""); }}
-                    className="w-full text-indigo-600 hover:text-indigo-700 text-sm font-medium"
+                    className="w-full text-indigo-600 hover:text-indigo-700 text-sm font-medium underline"
                   >
                     ← Back to email
                   </button>
@@ -224,7 +251,7 @@ export default function SignInPage() {
 
           {/* Google Sign-In */}
           <button
-            onClick={async () => await authClient.signIn.social({ provider: "google", callbackURL: `${window.location.origin}/dashboard` })}
+            onClick={async () => await authClient.signIn.social({ provider: "google", callbackURL: `${window.location.origin}/` })}
             type="button"
             className="form-button-secondary w-full mt-6 gap-3"
           >
@@ -239,7 +266,8 @@ export default function SignInPage() {
 
           <div className="mt-8 text-center">
             <a href="/auth/sign-up" className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-              Don’t have an account? Sign up
+              Don’t have an account? 
+              <span className="underline">Sign up</span>
             </a>
           </div>
         </div>

@@ -2,7 +2,8 @@ import { useReducer } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { validateEmail, validateOtp } from "@/utils/validator";
-import type { AuthState } from "@/types/auth";
+import type { AuthState  } from "@/types/auth";
+
 
 const initialState: AuthState = {
   email: "",

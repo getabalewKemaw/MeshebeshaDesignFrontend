@@ -12,3 +12,14 @@ export interface AuthState {
     general: string;
   };
 }
+export interface User{
+  id:string;
+  email:string;
+  role:"admin" | "user";
+  name:string;
+  image?:string | null;
+  emailVerified:boolean;
+  createdAt:Date;
+  updatedAt:Date;
+
+}

@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { validateEmail, validateOtp } from "@/utils/validator";
 import { checkEmail, sendOtp, verifyOtp } from "@/services/authServices";
+// how to import interfaces
+import type { User } from "@/types/auth";
 
 export function useOTPAuth() {
   const router = useRouter();
@@ -69,11 +71,16 @@ export function useOTPAuth() {
     setLoading(true);
 
     try {
-      const { error } = await verifyOtp(authClient, email, otp);
+      const { data, error } = await verifyOtp(authClient, email, otp);
       if (error) {
         setErrors(prev => ({ ...prev, general: error.message || "Invalid OTP" }));
       } else {
-        router.push("/dashboard");
+        const user = data?.user as User;
+        if (user?.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
       }
     } finally {
       setLoading(false);

@@ -36,8 +36,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
 
-    // Don't show chat for admin users
-    if (user?.role === "admin") return null;
+
 
     // Auto-scroll to bottom
     const scrollToBottom = () => {
@@ -50,7 +49,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
 
     // Create/get room when user is available
     useEffect(() => {
-        if (!user) return;
+        if (!user || user.role === "admin") return;
         (async () => {
             try {
                 const res = await axios.post(
@@ -247,7 +246,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
         setIsRecording(false);
     };
 
-    if (!user) return null;
+    if (!user || user.role === "admin") return null;
 
     return (
         <>
