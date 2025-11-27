@@ -24,7 +24,7 @@ export default function PaymentSection({
                         <strong>Secure Payment via Chapa</strong>
                     </p>
                     <p className="text-sm text-purple-700 mt-1">
-                        After placing your order, you'll be redirected to Chapa's secure payment gateway to complete your purchase.
+                        After placing your order, you will be redirected to Chapa s secure payment gateway to complete your purchase.
                     </p>
                 </div>
 
