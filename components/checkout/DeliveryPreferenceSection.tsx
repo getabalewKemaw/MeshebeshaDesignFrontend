@@ -2,6 +2,8 @@
 
 import type { DeliveryPreference } from "@/types/cart";
 import CheckoutFormSection from "./CheckoutFormSection";
+import CheckoutFormField from "./CheckoutFormField";
+import CheckoutTextArea from "./CheckoutTextArea";
 
 interface DeliveryPreferenceSectionProps {
     deliveryPreference: DeliveryPreference;
@@ -26,10 +28,10 @@ export default function DeliveryPreferenceSection({
                 <div className="grid grid-cols-2 gap-3">
                     <button
                         type="button"
-                        onClick={() => handleChange("type", "standard")}
-                        className={`p-4 border-2 rounded-lg transition-all ${deliveryPreference.type === "standard"
-                                ? "border-purple-600 bg-purple-50"
-                                : "border-gray-200 hover:border-gray-300"
+                        onClick={() => handleChange("speed", "standard")}
+                        className={`p-4 border-2 rounded-lg transition-all ${deliveryPreference.speed === "standard"
+                            ? "border-purple-600 bg-purple-50"
+                            : "border-gray-200 hover:border-gray-300"
                             }`}
                     >
                         <div className="text-left">
@@ -39,10 +41,10 @@ export default function DeliveryPreferenceSection({
                     </button>
                     <button
                         type="button"
-                        onClick={() => handleChange("type", "express")}
-                        className={`p-4 border-2 rounded-lg transition-all ${deliveryPreference.type === "express"
-                                ? "border-purple-600 bg-purple-50"
-                                : "border-gray-200 hover:border-gray-300"
+                        onClick={() => handleChange("speed", "express")}
+                        className={`p-4 border-2 rounded-lg transition-all ${deliveryPreference.speed === "express"
+                            ? "border-purple-600 bg-purple-50"
+                            : "border-gray-200 hover:border-gray-300"
                             }`}
                     >
                         <div className="text-left">
@@ -53,29 +55,25 @@ export default function DeliveryPreferenceSection({
                 </div>
 
                 {/* Preferred Date */}
-                <div>
-                    <label htmlFor="preferredDate" className="form-label">
-                        Preferred Delivery Date
-                    </label>
-                    <input
-                        type="date"
-                        id="preferredDate"
-                        value={deliveryPreference.preferredDate || ""}
-                        onChange={(e) => handleChange("preferredDate", e.target.value)}
-                        className="form-input-base"
-                        min={new Date().toISOString().split("T")[0]}
-                    />
-                </div>
+                <CheckoutFormField
+                    label="Preferred Delivery Date"
+                    id="preferredDate"
+                    type="date"
+                    value={deliveryPreference.preferredDate || ""}
+                    onChange={(value) => handleChange("preferredDate", value)}
+                    min={new Date().toISOString().split("T")[0]}
+                    helperText="Optional - Select your preferred delivery date"
+                />
 
                 {/* Preferred Time */}
                 <div>
-                    <label htmlFor="preferredTime" className="form-label">
+                    <label htmlFor="preferredWindow" className="form-label">
                         Preferred Time Window
                     </label>
                     <select
-                        id="preferredTime"
-                        value={deliveryPreference.preferredTime || ""}
-                        onChange={(e) => handleChange("preferredTime", e.target.value)}
+                        id="preferredWindow"
+                        value={deliveryPreference.preferredWindow || ""}
+                        onChange={(e) => handleChange("preferredWindow", e.target.value)}
                         className="form-input-base"
                     >
                         <option value="">Any time</option>
@@ -86,19 +84,15 @@ export default function DeliveryPreferenceSection({
                 </div>
 
                 {/* Delivery Instructions */}
-                <div>
-                    <label htmlFor="instructions" className="form-label">
-                        Delivery Instructions
-                    </label>
-                    <textarea
-                        id="instructions"
-                        value={deliveryPreference.instructions || ""}
-                        onChange={(e) => handleChange("instructions", e.target.value)}
-                        className="form-input-base"
-                        rows={3}
-                        placeholder="e.g., Leave at front door, Ring doorbell twice"
-                    />
-                </div>
+                <CheckoutTextArea
+                    label="Delivery Instructions"
+                    id="instructions"
+                    value={deliveryPreference.instructions || ""}
+                    onChange={(value) => handleChange("instructions", value)}
+                    placeholder="e.g., Leave at front door, Ring doorbell twice"
+                    rows={3}
+                    helperText="Optional - Any special instructions for the delivery person"
+                />
             </div>
         </CheckoutFormSection>
     );

@@ -11,11 +11,14 @@ import { useState } from "react";
 import type { ToastType } from "@/components/ui/Toast";
 import Link from "next/link";
 
+
+// to prevent unnnessary computation on evert rende
 const currencyFormatter = (currency: string) =>
   new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
   });
+
 
 interface ToastState {
   message: string;
