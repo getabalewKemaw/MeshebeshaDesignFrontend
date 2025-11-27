@@ -7,6 +7,7 @@
 export interface Product {
   id: string;
   title: string;
+  media?: ProductMedia[];
   slug: string;
   description: string | null;
   price: number;

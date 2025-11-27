@@ -1,6 +1,7 @@
 "use client";
 
 import CheckoutFormSection from "./CheckoutFormSection";
+import CheckoutTextArea from "./CheckoutTextArea";
 
 interface PaymentSectionProps {
     paymentNote: string;
@@ -28,22 +29,15 @@ export default function PaymentSection({
                 </div>
 
                 {/* Payment Note */}
-                <div>
-                    <label htmlFor="paymentNote" className="form-label">
-                        Payment Note (Optional - For Special Cases Only)
-                    </label>
-                    <textarea
-                        id="paymentNote"
-                        value={paymentNote}
-                        onChange={(e) => onUpdate(e.target.value)}
-                        className="form-input-base"
-                        rows={2}
-                        placeholder="Leave empty to pay via Chapa (recommended). Only add a note for special payment arrangements."
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                        💡 <strong>Tip:</strong> Leave this field empty to proceed with Chapa payment gateway after placing your order.
-                    </p>
-                </div>
+                <CheckoutTextArea
+                    label="Payment Note (Optional - For Special Cases Only)"
+                    id="paymentNote"
+                    value={paymentNote}
+                    onChange={onUpdate}
+                    placeholder="Leave empty to pay via Chapa (recommended). Only add a note for special payment arrangements."
+                    rows={2}
+                    helperText="💡 Tip: Leave this field empty to proceed with Chapa payment gateway after placing your order."
+                />
             </div>
         </CheckoutFormSection>
     );

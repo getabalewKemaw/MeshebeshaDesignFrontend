@@ -1,9 +1,9 @@
 "use client";
 
-import { getFieldError } from "@/utils/validation/checkoutValidation";
 import type { ContactInformation } from "@/types/cart";
 import type { ValidationError } from "@/utils/validation/checkoutValidation";
 import CheckoutFormSection from "./CheckoutFormSection";
+import CheckoutFormField from "./CheckoutFormField";
 
 interface ContactInfoSectionProps {
     contactInfo: ContactInformation;
@@ -20,7 +20,6 @@ export default function ContactInfoSection({
 }: ContactInfoSectionProps) {
     const handleChange = (field: keyof ContactInformation, value: string) => {
         onUpdate({ ...contactInfo, [field]: value });
-        onErrorClear(field);
     };
 
     return (
@@ -29,76 +28,44 @@ export default function ContactInfoSection({
             description="We'll use this to keep you updated about your order"
         >
             <div className="grid grid-cols-1 gap-4">
-                {/* Full Name */}
-                <div>
-                    <label htmlFor="fullName" className="form-label">
-                        Full Name *
-                    </label>
-                    <input
-                        type="text"
-                        id="fullName"
-                        value={contactInfo.fullName}
-                        onChange={(e) => handleChange("fullName", e.target.value)}
-                        className={`form-input-base ${getFieldError(validationErrors, "fullName")
-                                ? "form-input-error"
-                                : ""
-                            }`}
-                        placeholder="John Doe"
-                        required
-                    />
-                    {getFieldError(validationErrors, "fullName") && (
-                        <p className="form-error-text">
-                            {getFieldError(validationErrors, "fullName")}
-                        </p>
-                    )}
-                </div>
+                <CheckoutFormField
+                    label="Full Name"
+                    id="fullName"
+                    type="text"
+                    value={contactInfo.fullName}
+                    onChange={(value) => handleChange("fullName", value)}
+                    placeholder="John Doe"
+                    required
+                    validationErrors={validationErrors}
+                    onErrorClear={onErrorClear}
+                    fieldType="required"
+                />
 
-                {/* Email */}
-                <div>
-                    <label htmlFor="email" className="form-label">
-                        Email Address *
-                    </label>
-                    <input
-                        type="email"
-                        id="email"
-                        value={contactInfo.email}
-                        onChange={(e) => handleChange("email", e.target.value)}
-                        className={`form-input-base ${getFieldError(validationErrors, "email")
-                                ? "form-input-error"
-                                : ""
-                            }`}
-                        placeholder="john@example.com"
-                        required
-                    />
-                    {getFieldError(validationErrors, "email") && (
-                        <p className="form-error-text">
-                            {getFieldError(validationErrors, "email")}
-                        </p>
-                    )}
-                </div>
+                <CheckoutFormField
+                    label="Email Address"
+                    id="email"
+                    type="email"
+                    value={contactInfo.email}
+                    onChange={(value) => handleChange("email", value)}
+                    placeholder="john@example.com"
+                    required
+                    validationErrors={validationErrors}
+                    onErrorClear={onErrorClear}
+                    fieldType="email"
+                />
 
-                {/* Phone */}
-                <div>
-                    <label htmlFor="phone" className="form-label">
-                        Phone Number
-                    </label>
-                    <input
-                        type="tel"
-                        id="phone"
-                        value={contactInfo.phone || ""}
-                        onChange={(e) => handleChange("phone", e.target.value)}
-                        className={`form-input-base ${getFieldError(validationErrors, "phone")
-                                ? "form-input-error"
-                                : ""
-                            }`}
-                        placeholder="+1 (555) 123-4567"
-                    />
-                    {getFieldError(validationErrors, "phone") && (
-                        <p className="form-error-text">
-                            {getFieldError(validationErrors, "phone")}
-                        </p>
-                    )}
-                </div>
+                <CheckoutFormField
+                    label="Phone Number"
+                    id="phone"
+                    type="tel"
+                    value={contactInfo.phone || ""}
+                    onChange={(value) => handleChange("phone", value)}
+                    placeholder="+1 (555) 123-4567"
+                    validationErrors={validationErrors}
+                    onErrorClear={onErrorClear}
+                    fieldType="phone"
+                    helperText="Optional - We'll use this for delivery updates"
+                />
             </div>
         </CheckoutFormSection>
     );
