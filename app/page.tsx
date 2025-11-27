@@ -3,10 +3,11 @@ import Hero from "@/components/landing/Hero";
 import FeaturedCollections from "@/components/landing/FeaturedCollections";
 import Benefits from "@/components/landing/Benefits";
 import TrendingProducts from "@/components/landing/TrendingProducts";
+import HowItWorks from "@/components/landing/HowItWorks";
+import FAQ from "@/components/landing/FAQ";
 import Testimonials from "@/components/landing/Testimonials";
 import Newsletter from "@/components/landing/Newsletter";
 import Footer from "@/components/landing/Footer";
-
 export default function HomePage() {
   return (
     <>
@@ -16,6 +17,8 @@ export default function HomePage() {
         <FeaturedCollections />
         <Benefits />
         <TrendingProducts />
+        <HowItWorks />
+        <FAQ />
         <Testimonials />
         <Newsletter />
       </main>
