@@ -8,7 +8,6 @@ import PaymentError from "@/components/payment/return/PaymentError";
 import PaymentSuccess from "@/components/payment/return/PaymentSuccess";
 import PaymentFailed from "@/components/payment/return/PaymentFailed";
 import PaymentPending from "@/components/payment/return/PaymentPending";
-
 export default function PaymentReturnPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");

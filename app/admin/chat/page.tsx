@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useSocket } from "@/components/Chat/useSocket";
 import AdminChatList from "@/components/AdminChat/AdminChatList";
 import AdminChatWindow from "@/components/AdminChat/AdminChatWindow";
+import type { User } from "@/types/auth";
 import axios from "axios";
 
 type RoomSummary = {
@@ -19,7 +20,7 @@ export default function AdminChatPage() {
   const socketRef = useSocket(!!user && user.role === "admin");
   const [rooms, setRooms] = useState<RoomSummary[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
-  const [selectedUserInfo, setSelectedUserInfo] = useState<any>(null);
+  const [selectedUserInfo, setSelectedUserInfo] = useState<any>();
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
 
@@ -69,7 +70,7 @@ export default function AdminChatPage() {
     };
   }, [socketRef]);
 
-  const handleSelectRoom = (roomId: string, userInfo: any) => {
+  const handleSelectRoom = (roomId: string, userInfo: User | null) => {
     setSelectedRoomId(roomId);
     setSelectedUserInfo(userInfo);
   };

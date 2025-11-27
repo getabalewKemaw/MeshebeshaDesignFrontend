@@ -1,0 +1,88 @@
+import type { ProductWithDetails, ProductVariant } from "@/types/product";
+import ColorSelect from "@/components/products/ColorSelect";
+
+interface ProductInfoProps {
+    product: ProductWithDetails;
+    selectedVariant: ProductVariant | null;
+    currentPrice: number;
+    colorOptions: string[];
+    selectedColor: string | null;
+    onColorChange: (color: string) => void;
+    sizeOptions: string[];
+    selectedSize: string | null;
+    onSizeChange: (size: string) => void;
+    isOutOfStock: boolean;
+}
+
+export default function ProductInfo({
+    product,
+    selectedVariant,
+    currentPrice,
+    colorOptions,
+    selectedColor,
+    onColorChange,
+    sizeOptions,
+    selectedSize,
+    onSizeChange,
+    isOutOfStock,
+}: ProductInfoProps) {
+    return (
+        <div className="space-y-6">
+            <div className="flex items-end gap-3">
+                <span className="text-3xl font-semibold text-purple-600">
+                    {product.currency} {currentPrice.toFixed(2)}
+                </span>
+                {selectedVariant?.priceOverride && (
+                    <span className="text-sm text-gray-500 line-through">
+                        {product.currency} {product.price.toFixed(2)}
+                    </span>
+                )}
+            </div>
+            <div className="flex flex-wrap gap-4 text-sm text-gray-500">
+                {selectedVariant?.sku && (
+                    <span>SKU: {selectedVariant.sku}</span>
+                )}
+                <span>
+                    Stock:{" "}
+                    {selectedVariant
+                        ? `${selectedVariant.stock} ${selectedVariant.stock === 1 ? "unit" : "units"
+                        }`
+                        : "Available"}
+                </span>
+            </div>
+            <p className="text-gray-600 whitespace-pre-line leading-relaxed">
+                {product.description || "No description."}
+            </p>
+
+            {colorOptions.length > 0 && (
+                <ColorSelect
+                    colors={colorOptions}
+                    value={selectedColor}
+                    onChange={onColorChange}
+                    disabled={isOutOfStock}
+                />
+            )}
+
+            {sizeOptions.length > 0 && (
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-gray-700" htmlFor="size-select">
+                        Size
+                    </label>
+                    <select
+                        id="size-select"
+                        value={selectedSize ?? ""}
+                        onChange={(event) => onSizeChange(event.target.value)}
+                        disabled={isOutOfStock}
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 disabled:opacity-50"
+                    >
+                        {sizeOptions.map((size) => (
+                            <option key={size} value={size}>
+                                {size}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
+        </div>
+    );
+}
