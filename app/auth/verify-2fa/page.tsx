@@ -13,6 +13,7 @@ export default function Verify2FAPage() {
   const [generalError, setGeneralError] = useState("");
   const [otpError, setOtpError] = useState("");
 
+  // handle the otp length is 6 digits long
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (code.length !== 6) {
@@ -43,7 +44,7 @@ export default function Verify2FAPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-500 to-purple-600 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-pink-500 to-purple-600 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
@@ -102,7 +103,7 @@ export default function Verify2FAPage() {
         <div className="mt-6 text-center">
           <a
             href="/auth/sign-in"
-            className="text-sm text-purple-600 hover:text-purple-700"
+            className="text-sm text-purple-600 hover:text-purple-700 underline"
           >
             Back to sign in
           </a>

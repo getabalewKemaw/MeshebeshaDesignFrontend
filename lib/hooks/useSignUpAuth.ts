@@ -91,6 +91,7 @@ export function useSignUpAuth() {
     confirmPassword,
     setConfirmPassword,
     errors,
+    setErrors,
     loading,
     isFormValid,
     handleSubmit,
