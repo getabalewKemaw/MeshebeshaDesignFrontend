@@ -6,7 +6,7 @@ import Navbar from "@/components/NavBar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 export default function ProfilePage() {
-  const { user, refreshUser } = useAuth();
+  const { user,refreshUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
@@ -38,7 +38,7 @@ export default function ProfilePage() {
       if (response.ok) {
         setSuccess("Profile updated successfully!");
         setIsEditing(false);
-        refreshUser?.(); // Refresh user info
+        // refreshUser?.(); // Refresh user info
         setTimeout(() => setSuccess(""), 3000);
       } else {
         const data = await response.json();

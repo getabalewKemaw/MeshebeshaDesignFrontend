@@ -81,7 +81,49 @@ export default function Footer() {
           </Link>
         </div>
       </div>
-      <div className="mx-auto mt-12 max-w-7xl border-t border-white/10 pt-6 text-center text-xs text-white/50">
+
+      {/* Payment Methods Section */}
+      <div className="mx-auto max-w-7xl mt-12 pt-8 border-t border-white/10">
+        <div className="text-center">
+          <h4 className="font-heading text-sm uppercase tracking-[0.3em] text-white/70 mb-6">
+            We Accept
+          </h4>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            {/* Chapa */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20 hover:bg-white/20 transition-colors">
+              <span className="font-heading text-lg font-bold text-white">Chapa</span>
+            </div>
+
+            {/* Telebirr */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20 hover:bg-white/20 transition-colors">
+              <span className="font-heading text-lg font-bold text-white">Telebirr</span>
+            </div>
+
+            {/* CBE Birr */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-lg px-6 py-3 border border-white/20 hover:bg-white/20 transition-colors">
+              <span className="font-heading text-lg font-bold text-white">CBE Birr</span>
+            </div>
+
+            {/* Visa */}
+            <div className="bg-white rounded-lg px-6 py-3 shadow-lg">
+              <span className="font-heading text-lg font-bold text-[#1A1F71]">VISA</span>
+            </div>
+
+            {/* Mastercard */}
+            <div className="bg-white rounded-lg px-6 py-3 shadow-lg">
+              <span className="font-heading text-lg font-bold">
+                <span className="text-[#EB001B]">Master</span>
+                <span className="text-[#FF5F00]">card</span>
+              </span>
+            </div>
+          </div>
+          <p className="mt-6 text-sm text-white/50">
+            All transactions are secured with industry-standard encryption
+          </p>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-8 max-w-7xl border-t border-white/10 pt-6 text-center text-xs text-white/50">
         © {new Date().getFullYear()} Habesha Fashion. All rights reserved.
       </div>
     </footer>

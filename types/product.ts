@@ -123,6 +123,13 @@ export interface ProductSearchFilters {
   limit?: number;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  productCount: number;
+}
+
 // Filter Options
 export interface FilterOptions {
   colors: string[];
@@ -131,12 +138,7 @@ export interface FilterOptions {
     min: number;
     max: number;
   };
-  categories: {
-    id: string;
-    name: string;
-    slug: string;
-    productCount: number;
-  }[];
+  categories: Category[];
 }
 
 // Stock Update Request
