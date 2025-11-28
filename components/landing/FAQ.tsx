@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MessageCircle } from "lucide-react";
 
 interface FAQItem {
     question: string;
@@ -42,6 +42,15 @@ const faqs: FAQItem[] = [
         answer: "Yes, we ship worldwide! International shipping costs and delivery times vary by destination. Customs duties and taxes may apply depending on your country's regulations.",
     },
 ];
+
+
+const handleChatOpen = () => {
+    // Find the chat button and click it
+    const chatButton = document.querySelector('button[aria-label="Open chat"]') as HTMLButtonElement;
+    if (chatButton) {
+        chatButton.click();
+    }
+};
 
 export default function FAQ() {
     const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -109,22 +118,20 @@ export default function FAQ() {
                 </div>
 
                 {/* Contact CTA */}
-                <div className="mt-12 text-center p-8 bg-gradient-to-br from-[#1E2A55] to-[#0A1128] rounded-2xl max-w-4xl mx-auto">
-                    <h3 className="font-heading text-2xl font-bold text-white mb-3">
+                <div className="mt-12 text-center p-8 bg-gradient-to-br  rounded-2xl max-w-4xl mx-auto">
+                    <h3 className="font-heading text-2xl font-bold text-black/80 mb-3">
                         Still have questions?
                     </h3>
-                    <p className="text-white/80 mb-6">
+                    <p className="text-black/80 mb-6">
                         Our customer service team is here to help you.
                     </p>
-                    <a
-                        href="/contact"
-                        className="inline-flex items-center justify-center rounded-full bg-[#CFAE56] px-8 py-4 font-heading text-lg font-bold text-[#1E2A55] shadow-lg hover:bg-[#E5C976] transition-colors"
+                    <button
+                        onClick={handleChatOpen}
+                        className="w-auto mt-2 px-4 py-2 bg-[#1E2A55] text-white rounded-lg font-semibold hover:bg-[#2A3A65] transition-colors flex items-center justify-center gap-2 align-center mx-auto"
                     >
-                        Contact Us
-                        <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </a>
+                        <MessageCircle className="h-4 w-4" />
+                        Chat With Us
+                    </button>
                 </div>
             </div>
         </section>

@@ -490,7 +490,7 @@ export async function searchProducts(
  * Get filter options (public)
  */
 export async function getFilterOptions(): Promise<ApiResponse<FilterOptions>> {
-  return apiCall<FilterOptions>('/api/v1/public/products/filters');
+  return apiCall<FilterOptions>('/api/v1/products/filters');
 }
 
 /**

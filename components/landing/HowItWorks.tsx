@@ -1,6 +1,7 @@
 "use client";
 
-import { ShoppingBag, Truck, Package, Sparkles, MessageCircle, Link } from "lucide-react";
+import { ShoppingBag, Truck, Package, Sparkles, MessageCircle } from "lucide-react";
+import Link from "next/link";
 
 interface Step {
     number: string;
@@ -133,15 +134,17 @@ export default function HowItWorks() {
 
                 {/* CTA */}
                 <div className="text-center mt-12">
-                    <Link
-                        href="/products"
-                        className="inline-flex items-center justify-center rounded-full bg-[#1E2A55] px-8 py-4 font-heading text-lg font-bold text-white shadow-lg hover:bg-[#2A3A65] transition-colors"
-                    >
-                        Start Shopping
-                        <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                        </svg>
-                    </Link>
+               <Link
+  href="/products"
+  className="inline-flex items-center justify-center rounded-full bg-[#1E2A55] px-8 py-4 font-heading 
+             text-lg font-bold text-white shadow-lg hover:bg-[#2A3A65] transition-colors"
+>
+  Start Shopping
+  <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+  </svg>
+</Link>
+
                 </div>
             </div>
         </section>
