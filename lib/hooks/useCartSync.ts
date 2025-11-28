@@ -6,6 +6,8 @@ import { useCartStore, buildCartKey } from "@/stores/cart";
 import type { CartItem, CartSyncItem, ServerCartItem } from "@/types/cart";
 import { fetchCart, syncCart } from "@/lib/api/cart";
 
+
+// map from the backends format for displaying them consistently in the frotnend
 const mapServerItemsToCartItems = (items: ServerCartItem[]): CartItem[] => {
   return items.map((item) => ({
     productId: item.productId,
@@ -29,6 +31,10 @@ const mapServerItemsToCartItems = (items: ServerCartItem[]): CartItem[] => {
   }));
 };
 
+
+
+// send to  backend format
+
 const buildSyncPayload = (items: CartItem[]): CartSyncItem[] =>
   items
     .filter((item) => !!item.variantId)
@@ -36,6 +42,8 @@ const buildSyncPayload = (items: CartItem[]): CartSyncItem[] =>
       variantId: item.variantId as string,
       quantity: item.quantity,
     }));
+
+
 
 export const useCartSync = () => {
   const { user, isAuthenticated } = useAuth();
@@ -47,11 +55,21 @@ export const useCartSync = () => {
     setOwner: state.setOwner,
   }));
 
+
+
+  // refs to avoid race conditions.
+
   const [initialSyncDone, setInitialSyncDone] = useState(false);
   const syncingRef = useRef(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const targetOwnerId = isAuthenticated && user?.id ? user.id : null;
 
+
+
+  // three  things handle in these effec
+  //  user login for the first times -< fetch the server cart and  overwrites the local cart and set owner
+  //use logeed in ,so  syncs b.n the server and the local cart
+  
   useEffect(() => {
     if (!hasHydrated || syncingRef.current) return;
 

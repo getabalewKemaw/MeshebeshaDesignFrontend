@@ -17,11 +17,13 @@ export default function HomePage() {
       <main className="bg-[#FFF9F0] text-[#1E2A55]">
         <Hero />
         <FeaturedCollections />
-        <Benefits />
+      
         <TrendingProducts />
         <HowItWorks />
         <FAQ />
         <Testimonials />
+         <Benefits />
+
         <Newsletter />
       </main>
       <Footer />

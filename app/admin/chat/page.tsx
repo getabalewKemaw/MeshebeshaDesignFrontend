@@ -20,7 +20,7 @@ export default function AdminChatPage() {
   const socketRef = useSocket(!!user && user.role === "admin");
   const [rooms, setRooms] = useState<RoomSummary[]>([]);
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
-  const [selectedUserInfo, setSelectedUserInfo] = useState<any>();
+  const [selectedUserInfo, setSelectedUserInfo] = useState<any>(null);
   const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
 

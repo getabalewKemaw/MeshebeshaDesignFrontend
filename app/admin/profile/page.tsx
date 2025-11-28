@@ -122,7 +122,7 @@ export default function AdminProfilePage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Profile Header */}
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-        <div className="h-32 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+        <div className="h-32 "></div>
         <div className="px-8 pb-8">
           <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-16">
             {/* Profile Image */}
@@ -162,8 +162,8 @@ export default function AdminProfilePage() {
               <div className="flex items-center gap-2 mt-2 justify-center sm:justify-start">
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium ${user?.emailVerified
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-yellow-100 text-yellow-700"
                     }`}
                 >
                   {user?.emailVerified ? "✓ Verified" : "Pending Verification"}
