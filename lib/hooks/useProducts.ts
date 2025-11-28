@@ -77,7 +77,6 @@ export function useProduct(id: string | null) {
 
   useEffect(() => {
     if (!id) {
-      setLoading(false);
       return;
     }
 
@@ -134,9 +133,9 @@ export function useProductVariants(productId: string | null) {
 
   useEffect(() => {
     if (!productId) {
-      setLoading(false);
       return;
     }
+
 
     const fetchVariants = async () => {
       setLoading(true);

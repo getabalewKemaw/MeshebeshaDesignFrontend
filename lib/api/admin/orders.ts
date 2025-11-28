@@ -2,10 +2,6 @@ import type { ApiResponse } from "@/types/product";
 import type { AdminOrder, PaginationMeta } from "@/types/order";
 import { apiRequest } from "../request";
 
-type AdminOrdersListResponse = ApiResponse<AdminOrder[]> & {
-  pagination?: PaginationMeta;
-};
-
 export const listAdminOrders = (params: {
   status?: string;
   page?: number;
@@ -20,13 +16,13 @@ export const listAdminOrders = (params: {
   const qs = query.toString();
   const suffix = qs ? `?${qs}` : "";
 
-  return apiRequest<AdminOrdersListResponse>(`/api/v1/admin/orders${suffix}`, {
+  return apiRequest<AdminOrder[]>(`/api/v1/admin/orders${suffix}`, {
     method: "GET",
   });
 };
 
 export const getAdminOrder = (orderId: string) =>
-  apiRequest<ApiResponse<AdminOrder>>(`/api/v1/admin/orders/${orderId}`, {
+  apiRequest<AdminOrder>(`/api/v1/admin/orders/${orderId}`, {
     method: "GET",
   });
 
@@ -35,7 +31,7 @@ export const updateAdminOrderStatus = (
   status: string,
   note?: string
 ) =>
-  apiRequest<ApiResponse<AdminOrder>>(`/api/v1/admin/orders/${orderId}/status`, {
+  apiRequest<AdminOrder>(`/api/v1/admin/orders/${orderId}/status`, {
     method: "PATCH",
     body: {
       status,
@@ -48,7 +44,7 @@ export const bulkUpdateAdminOrderStatus = (
   status: string,
   note?: string
 ) =>
-  apiRequest<ApiResponse<{ successful: number; failed: number; orders: AdminOrder[] }>>(
+  apiRequest<{ successful: number; failed: number; orders: AdminOrder[] }>(
     `/api/v1/admin/orders/bulk/status`,
     {
       method: "PATCH",

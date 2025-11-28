@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { validateEmail, validateOtp } from "@/utils/validator";
 import { checkEmail, sendOtp, verifyOtp } from "@/services/authServices";
-// how to import interfaces
 import type { User } from "@/types/auth";
 
 export function useOTPAuth() {
@@ -52,8 +51,9 @@ export function useOTPAuth() {
         setOtpSent(true);
         setSuccess("OTP sent to your email!");
       }
-    } catch (err: any) {
-      setErrors(prev => ({ ...prev, general: err.message || "An error occurred" }));
+    } catch (err: unknown) {
+      const errMsg=err instanceof Error ? err.message : String(err);
+      setErrors(prev => ({ ...prev, general: errMsg || "An error occurred" }));
     } finally {
       setLoading(false);
     }
