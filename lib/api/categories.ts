@@ -1,7 +1,5 @@
 import { apiRequest } from "./request";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-
+import type { Product } from "@/types/product";
 export interface Category {
     id: string;
     name: string;
@@ -15,7 +13,7 @@ export interface Category {
 
 export interface CategoryWithProducts {
     category: Category;
-    products: any[];
+    products: Product[];
     pagination: {
         total: number;
         page: number;
@@ -32,7 +30,7 @@ export async function fetchCategories(): Promise<Category[]> {
         const response = await apiRequest<Category[]>('/api/v1/categories', {
             method: 'GET',
             headers: {
-                'Cache-Control': 'no-store',
+                'Cache-Control': 'no-store',// for  fetchign allways fresh data ,and not tostore the responses
             },
         });
 

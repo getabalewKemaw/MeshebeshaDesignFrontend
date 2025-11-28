@@ -207,6 +207,7 @@ export async function uploadVariantMedia(
   files: FileList | File[]
 ): Promise<ApiResponse<ProductMedia[]>> {
   const formData = new FormData();
+  // in these case we use from data becuase we can not send files in json body
   Array.from(files).forEach((file) => formData.append('files', file));
 
   return apiRequest<ProductMedia[]>(
