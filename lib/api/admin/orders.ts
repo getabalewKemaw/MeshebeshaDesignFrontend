@@ -1,52 +1,10 @@
 import type { ApiResponse } from "@/types/product";
 import type { AdminOrder, PaginationMeta } from "@/types/order";
-
-const resolveBaseUrl = () => {
-  const base = process.env.NEXT_PUBLIC_API_URL || "";
-  if (!base) return "";
-  return base.endsWith("/") ? base.slice(0, -1) : base;
-};
-
-const ADMIN_ORDERS_URL = `${resolveBaseUrl()}/api/v1/admin/orders`;
+import { apiRequest } from "../request";
 
 type AdminOrdersListResponse = ApiResponse<AdminOrder[]> & {
   pagination?: PaginationMeta;
 };
-
-const buildUrl = (suffix: string) => {
-  if (!suffix) return ADMIN_ORDERS_URL;
-  if (suffix.startsWith("?") || suffix.startsWith("/")) {
-    return `${ADMIN_ORDERS_URL}${suffix}`;
-  }
-  return `${ADMIN_ORDERS_URL}/${suffix}`;
-};
-
-async function adminOrdersRequest<T extends ApiResponse<unknown>>(
-  path: string,
-  options: RequestInit = {}
-): Promise<T> {
-  try {
-    const response = await fetch(buildUrl(path), {
-      ...options,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
-    });
-
-    return (await response.json()) as T;
-  } catch (error) {
-    console.error("Admin orders request failed:", error);
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : "Failed to reach admin orders API",
-    } as T;
-  }
-}
 
 export const listAdminOrders = (params: {
   status?: string;
@@ -62,13 +20,13 @@ export const listAdminOrders = (params: {
   const qs = query.toString();
   const suffix = qs ? `?${qs}` : "";
 
-  return adminOrdersRequest<AdminOrdersListResponse>(`${suffix}`, {
+  return apiRequest<AdminOrdersListResponse>(`/api/v1/admin/orders${suffix}`, {
     method: "GET",
   });
 };
 
 export const getAdminOrder = (orderId: string) =>
-  adminOrdersRequest<ApiResponse<AdminOrder>>(`/${orderId}`, {
+  apiRequest<ApiResponse<AdminOrder>>(`/api/v1/admin/orders/${orderId}`, {
     method: "GET",
   });
 
@@ -77,12 +35,12 @@ export const updateAdminOrderStatus = (
   status: string,
   note?: string
 ) =>
-  adminOrdersRequest<ApiResponse<AdminOrder>>(`/${orderId}/status`, {
+  apiRequest<ApiResponse<AdminOrder>>(`/api/v1/admin/orders/${orderId}/status`, {
     method: "PATCH",
-    body: JSON.stringify({
+    body: {
       status,
       ...(note ? { note } : {}),
-    }),
+    },
   });
 
 export const bulkUpdateAdminOrderStatus = (
@@ -90,15 +48,15 @@ export const bulkUpdateAdminOrderStatus = (
   status: string,
   note?: string
 ) =>
-  adminOrdersRequest<ApiResponse<{ successful: number; failed: number; orders: AdminOrder[] }>>(
-    `/bulk/status`,
+  apiRequest<ApiResponse<{ successful: number; failed: number; orders: AdminOrder[] }>>(
+    `/api/v1/admin/orders/bulk/status`,
     {
       method: "PATCH",
-      body: JSON.stringify({
+      body: {
         orderIds,
         status,
         ...(note ? { note } : {}),
-      }),
+      },
     }
   );
 

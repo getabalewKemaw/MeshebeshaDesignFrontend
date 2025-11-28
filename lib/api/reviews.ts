@@ -3,6 +3,8 @@
  * Centralized API calls for review-related operations
  */
 
+import { apiRequest, ApiResponse } from './request';
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 export interface Review {
@@ -41,54 +43,7 @@ export interface CreateReviewPayload {
   variantColor?: string;
 }
 
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  message?: string;
-  pagination?: {
-    total: number;
-    limit: number;
-    offset: number;
-    totalPages: number;
-  };
-}
-
-/**
- * Helper function to make API calls
- */
-async function apiCall<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: data.error || 'An error occurred',
-      };
-    }
-
-    return data;
-  } catch (error) {
-    console.error('API call failed:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Network error',
-    };
-  }
-}
+export { type ApiResponse };
 
 /**
  * Create a review for a product from an order
@@ -98,9 +53,9 @@ export async function createReview(
   productId: string,
   payload: CreateReviewPayload
 ): Promise<ApiResponse<Review>> {
-  return apiCall<Review>(`/api/v1/reviews/${orderId}/${productId}`, {
+  return apiRequest<Review>(`/api/v1/reviews/${orderId}/${productId}`, {
     method: 'POST',
-    body: JSON.stringify(payload),
+    body: payload,
   });
 }
 
@@ -109,7 +64,7 @@ export async function createReview(
  * GET /reviews/eligibility/:productId
  */
 export async function checkReviewEligibility(productId: string): Promise<ApiResponse<{ canReview: boolean; orderId?: string; message?: string }>> {
-  return apiCall<{ canReview: boolean; orderId?: string; message?: string }>(`/api/v1/reviews/eligibility/${productId}`, {
+  return apiRequest<{ canReview: boolean; orderId?: string; message?: string }>(`/api/v1/reviews/eligibility/${productId}`, {
     method: 'GET',
   });
 }
@@ -133,7 +88,7 @@ export async function getProductReviews(
   const queryString = params.toString();
   const endpoint = `/api/v1/reviews/product/${productId}${queryString ? `?${queryString}` : ''}`;
 
-  return apiCall<Review[]>(endpoint, {
+  return apiRequest<Review[]>(endpoint, {
     method: 'GET',
   });
 }
@@ -145,11 +100,11 @@ export async function markReviewHelpful(
   reviewId: string,
   isHelpful: boolean
 ): Promise<ApiResponse<{ helpfulCount: number; notHelpfulCount: number }>> {
-  return apiCall<{ helpfulCount: number; notHelpfulCount: number }>(
+  return apiRequest<{ helpfulCount: number; notHelpfulCount: number }>(
     `/api/v1/reviews/${reviewId}/helpful`,
     {
       method: 'POST',
-      body: JSON.stringify({ isHelpful }),
+      body: { isHelpful },
     }
   );
 }
@@ -160,11 +115,11 @@ export async function markReviewHelpful(
 export async function markReviewNotHelpful(
   reviewId: string
 ): Promise<ApiResponse<{ helpfulCount: number; notHelpfulCount: number }>> {
-  return apiCall<{ helpfulCount: number; notHelpfulCount: number }>(
+  return apiRequest<{ helpfulCount: number; notHelpfulCount: number }>(
     `/api/v1/reviews/${reviewId}/not-helpful`,
     {
       method: 'POST',
-      body: JSON.stringify({ isHelpful: false }),
+      body: { isHelpful: false },
     }
   );
 }
@@ -191,7 +146,7 @@ export async function getAllReviews(options?: {
   const queryString = params.toString();
   const endpoint = `/api/v1/admin/reviews${queryString ? `?${queryString}` : ''}`;
 
-  return apiCall<Review[]>(endpoint, {
+  return apiRequest<Review[]>(endpoint, {
     method: 'GET',
   });
 }
@@ -203,7 +158,7 @@ export async function deleteReview(
   reviewId: string,
   productId: string
 ): Promise<ApiResponse<void>> {
-  return apiCall<void>(`/api/v1/admin/reviews/${reviewId}?productId=${productId}`, {
+  return apiRequest<void>(`/api/v1/admin/reviews/${reviewId}?productId=${productId}`, {
     method: 'DELETE',
   });
 }
