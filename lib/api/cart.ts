@@ -1,53 +1,36 @@
 import type { ApiResponse } from "@/types/product";
 import type { CartSyncItem, ServerCartSnapshot } from "@/types/cart";
+import { apiRequest } from "./request";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+/* below the ff, we include the  ServerCartSnapshot in all fucnctions
+  becuase the  server  is a  single source of truth so each action  need the latest server action in the cart   
+  
+  so returning that make the server and the client synchroiized   at all times.
+  */
+export const fetchCart = () => apiRequest<ServerCartSnapshot>("/api/v1/cart");
 
-async function cartRequest<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
-    });
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Cart API error:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Request failed",
-    };
-  }
-}
 
-export const fetchCart = () => cartRequest<ServerCartSnapshot>("/api/v1/cart");
-
+// used to sync the cart items from the client and the server.
 export const syncCart = (items: CartSyncItem[]) =>
-  cartRequest<ServerCartSnapshot>("/api/v1/cart", {
+  apiRequest<ServerCartSnapshot>("/api/v1/cart", {
     method: "PUT",
-    body: JSON.stringify({ items }),
+    body: { items },
   });
 
+
 export const updateCartItem = (variantId: string, quantity: number) =>
-  cartRequest<ServerCartSnapshot>(`/api/v1/cart/items/${variantId}`, {
+  apiRequest<ServerCartSnapshot>(`/api/v1/cart/items/${variantId}`, {
     method: "PATCH",
-    body: JSON.stringify({ quantity }),
+    body: { quantity },
   });
 
 export const removeCartItem = (variantId: string) =>
-  cartRequest<ServerCartSnapshot>(`/api/v1/cart/items/${variantId}`, {
+  apiRequest<ServerCartSnapshot>(`/api/v1/cart/items/${variantId}`, {
     method: "DELETE",
   });
 
 export const clearCart = () =>
-  cartRequest<ServerCartSnapshot>("/api/v1/cart", {
+  apiRequest<ServerCartSnapshot>("/api/v1/cart", {
     method: "DELETE",
   });
 

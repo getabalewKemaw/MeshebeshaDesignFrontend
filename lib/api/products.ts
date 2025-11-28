@@ -17,44 +17,7 @@ import {
   ApiResponse,
   PaginatedResponse,
 } from '@/types/product';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-
-/**
- * Helper function to make API calls with credentials
- */
-async function apiCall<T>(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return {
-        success: false,
-        error: data.error || 'An error occurred',
-      };
-    }
-
-    return data;
-  } catch (error) {
-    console.error('API call failed:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Network error',
-    };
-  }
-}
+import { apiRequest } from './request';
 
 // ==================== PRODUCT CRUD ====================
 
@@ -69,7 +32,7 @@ export async function getProducts(
   if (filters?.limit) params.append('limit', filters.limit.toString());
 
   const query = params.toString();
-  return apiCall<Product[]>(
+  return apiRequest<Product[]>(
     `/api/v1/admin/products${query ? `?${query}` : ''}`
   );
 }
@@ -80,7 +43,7 @@ export async function getProducts(
 export async function getProductById(
   id: string
 ): Promise<ApiResponse<ProductWithDetails>> {
-  return apiCall<ProductWithDetails>(`/api/v1/admin/products/${id}`);
+  return apiRequest<ProductWithDetails>(`/api/v1/admin/products/${id}`);
 }
 
 /**
@@ -103,38 +66,13 @@ export async function getPublicProducts(params: {
   if (params.page) qs.append('page', String(params.page));
   if (params.limit) qs.append('limit', String(params.limit));
 
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/products${qs.toString() ? `?${qs.toString()}` : ''}`,
-      {
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+  const response = await apiRequest<ProductWithDetails[]>(
+    `/api/v1/products${qs.toString() ? `?${qs.toString()}` : ''}`
+  );
 
-    // Check if response is JSON before parsing
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      console.error('API returned non-JSON response:', await response.text());
-      return {
-        success: false,
-        data: [],
-        pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
-      };
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Public list failed:', error);
-    return {
-      success: false,
-      data: [],
-      pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
-    };
-  }
+  // Transform standard ApiResponse to PaginatedResponse structure if needed
+  // The backend returns { success, data, pagination } which matches PaginatedResponse
+  return response as unknown as PaginatedResponse<ProductWithDetails>;
 }
 
 /**
@@ -143,7 +81,7 @@ export async function getPublicProducts(params: {
 export async function getPublicProductById(
   id: string
 ): Promise<ApiResponse<ProductWithDetails>> {
-  return apiCall<ProductWithDetails>(`/api/v1/products/${id}`);
+  return apiRequest<ProductWithDetails>(`/api/v1/products/${id}`);
 }
 
 /**
@@ -152,9 +90,9 @@ export async function getPublicProductById(
 export async function createProduct(
   data: Partial<Product>
 ): Promise<ApiResponse<Product>> {
-  return apiCall<Product>('/api/v1/admin/products', {
+  return apiRequest<Product>('/api/v1/admin/products', {
     method: 'POST',
-    body: JSON.stringify(data),
+    body: data,
   });
 }
 
@@ -165,9 +103,9 @@ export async function updateProduct(
   id: string,
   data: Partial<Product>
 ): Promise<ApiResponse<Product>> {
-  return apiCall<Product>(`/api/v1/admin/products/${id}`, {
+  return apiRequest<Product>(`/api/v1/admin/products/${id}`, {
     method: 'PUT',
-    body: JSON.stringify(data),
+    body: data,
   });
 }
 
@@ -175,7 +113,7 @@ export async function updateProduct(
  * Delete product (admin)
  */
 export async function deleteProduct(id: string): Promise<ApiResponse<void>> {
-  return apiCall<void>(`/api/v1/admin/products/${id}`, {
+  return apiRequest<void>(`/api/v1/admin/products/${id}`, {
     method: 'DELETE',
   });
 }
@@ -186,7 +124,7 @@ export async function deleteProduct(id: string): Promise<ApiResponse<void>> {
 export async function archiveProduct(
   id: string
 ): Promise<ApiResponse<Product>> {
-  return apiCall<Product>(`/api/v1/admin/products/${id}/archive`, {
+  return apiRequest<Product>(`/api/v1/admin/products/${id}/archive`, {
     method: 'POST',
   });
 }
@@ -197,7 +135,7 @@ export async function archiveProduct(
 export async function restoreProduct(
   id: string
 ): Promise<ApiResponse<Product>> {
-  return apiCall<Product>(`/api/v1/admin/products/${id}/restore`, {
+  return apiRequest<Product>(`/api/v1/admin/products/${id}/restore`, {
     method: 'POST',
   });
 }
@@ -208,7 +146,7 @@ export async function restoreProduct(
 export async function duplicateProduct(
   id: string
 ): Promise<ApiResponse<ProductWithDetails>> {
-  return apiCall<ProductWithDetails>(`/api/v1/admin/products/${id}/duplicate`, {
+  return apiRequest<ProductWithDetails>(`/api/v1/admin/products/${id}/duplicate`, {
     method: 'POST',
   });
 }
@@ -221,7 +159,7 @@ export async function duplicateProduct(
 export async function getProductVariants(
   productId: string
 ): Promise<ApiResponse<ProductVariant[]>> {
-  return apiCall<ProductVariant[]>(
+  return apiRequest<ProductVariant[]>(
     `/api/v1/admin/products/${productId}/variants`
   );
 }
@@ -232,7 +170,7 @@ export async function getProductVariants(
 export async function getVariantById(
   id: string
 ): Promise<ApiResponse<ProductVariant>> {
-  return apiCall<ProductVariant>(`/api/v1/admin/products/variants/${id}`);
+  return apiRequest<ProductVariant>(`/api/v1/admin/products/variants/${id}`);
 }
 
 /**
@@ -241,9 +179,9 @@ export async function getVariantById(
 export async function createVariant(
   data: Partial<ProductVariant>
 ): Promise<ApiResponse<ProductVariant>> {
-  return apiCall<ProductVariant>('/api/v1/admin/products/variants', {
+  return apiRequest<ProductVariant>('/api/v1/admin/products/variants', {
     method: 'POST',
-    body: JSON.stringify(data),
+    body: data,
   });
 }
 
@@ -254,9 +192,9 @@ export async function updateVariant(
   id: string,
   data: Partial<ProductVariant>
 ): Promise<ApiResponse<ProductVariant>> {
-  return apiCall<ProductVariant>(`/api/v1/admin/products/variants/${id}`, {
+  return apiRequest<ProductVariant>(`/api/v1/admin/products/variants/${id}`, {
     method: 'PUT',
-    body: JSON.stringify(data),
+    body: data,
   });
 }
 
@@ -271,24 +209,16 @@ export async function uploadVariantMedia(
   const formData = new FormData();
   Array.from(files).forEach((file) => formData.append('files', file));
 
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/admin/products/${productId}/variants/${variantId}/media`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: formData,
-      }
-    );
-
-    return await response.json();
-  } catch (error) {
-    console.error('Variant media upload failed:', error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Failed to upload variant media',
-    };
-  }
+  return apiRequest<ProductMedia[]>(
+    `/api/v1/admin/products/${productId}/variants/${variantId}/media`,
+    {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
 }
 
 /**
@@ -298,7 +228,7 @@ export async function getVariantMedia(
   productId: string,
   variantId: string
 ): Promise<ApiResponse<ProductMedia[]>> {
-  return apiCall<ProductMedia[]>(
+  return apiRequest<ProductMedia[]>(
     `/api/v1/admin/products/${productId}/variants/${variantId}/media`
   );
 }
@@ -311,11 +241,11 @@ export async function reorderVariantMedia(
   variantId: string,
   mediaIds: string[]
 ): Promise<ApiResponse<ProductMedia[]>> {
-  return apiCall<ProductMedia[]>(
+  return apiRequest<ProductMedia[]>(
     `/api/v1/admin/products/${productId}/variants/${variantId}/media/reorder`,
     {
       method: 'POST',
-      body: JSON.stringify({ mediaIds }),
+      body: { mediaIds },
     }
   );
 }
@@ -326,7 +256,7 @@ export async function reorderVariantMedia(
 export async function deleteMedia(
   mediaId: string
 ): Promise<ApiResponse<void>> {
-  return apiCall<void>(`/api/v1/admin/products/media/${mediaId}`, {
+  return apiRequest<void>(`/api/v1/admin/products/media/${mediaId}`, {
     method: 'DELETE',
   });
 }
@@ -335,7 +265,7 @@ export async function deleteMedia(
  * Delete product variant
  */
 export async function deleteVariant(id: string): Promise<ApiResponse<void>> {
-  return apiCall<void>(`/api/v1/admin/products/variants/${id}`, {
+  return apiRequest<void>(`/api/v1/admin/products/variants/${id}`, {
     method: 'DELETE',
   });
 }
@@ -349,11 +279,11 @@ export async function updateStock(
   variantId: string,
   stock: number
 ): Promise<ApiResponse<ProductVariant>> {
-  return apiCall<ProductVariant>(
+  return apiRequest<ProductVariant>(
     `/api/v1/admin/products/variants/${variantId}/stock`,
     {
       method: 'PATCH',
-      body: JSON.stringify({ stock }),
+      body: { stock },
     }
   );
 }
@@ -364,11 +294,11 @@ export async function updateStock(
 export async function bulkUpdateStock(
   updates: StockUpdateRequest[]
 ): Promise<ApiResponse<ProductVariant[]>> {
-  return apiCall<ProductVariant[]>(
+  return apiRequest<ProductVariant[]>(
     '/api/v1/admin/products/variants/stock/bulk',
     {
       method: 'POST',
-      body: JSON.stringify({ updates }),
+      body: { updates },
     }
   );
 }
@@ -379,11 +309,11 @@ export async function bulkUpdateStock(
 export async function checkStock(
   items: { variantId: string; quantity: number }[]
 ): Promise<ApiResponse<{ available: boolean; insufficientItems: string[] }>> {
-  return apiCall<{ available: boolean; insufficientItems: string[] }>(
+  return apiRequest<{ available: boolean; insufficientItems: string[] }>(
     '/api/v1/admin/products/variants/stock/check',
     {
       method: 'POST',
-      body: JSON.stringify({ items }),
+      body: { items },
     }
   );
 }
@@ -396,7 +326,7 @@ export async function getProductMetrics(
   startDate: string,
   endDate: string
 ): Promise<ApiResponse<Record<string, unknown>[]>> {
-  return apiCall<Record<string, unknown>[]>(
+  return apiRequest<Record<string, unknown>[]>(
     `/api/v1/admin/products/${productId}/metrics?startDate=${startDate}&endDate=${endDate}`
   );
 }
@@ -408,7 +338,7 @@ export async function getTopProductsByRevenue(
   days: number = 30,
   limit: number = 10
 ): Promise<ApiResponse<Record<string, unknown>[]>> {
-  return apiCall<Record<string, unknown>[]>(
+  return apiRequest<Record<string, unknown>[]>(
     `/api/v1/admin/products/analytics/top-revenue?days=${days}&limit=${limit}`
   );
 }
@@ -417,7 +347,7 @@ export async function getTopProductsByRevenue(
  * Manually trigger metrics update (admin)
  */
 export async function updateMetrics(): Promise<ApiResponse<Record<string, unknown>>> {
-  return apiCall<Record<string, unknown>>(
+  return apiRequest<Record<string, unknown>>(
     '/api/v1/admin/products/analytics/update-metrics',
     {
       method: 'POST',
@@ -431,7 +361,7 @@ export async function updateMetrics(): Promise<ApiResponse<Record<string, unknow
 export async function getLowStock(
   threshold: number = 10
 ): Promise<ApiResponse<ProductVariant[]>> {
-  return apiCall<ProductVariant[]>(
+  return apiRequest<ProductVariant[]>(
     `/api/v1/admin/products/variants/stock/low?threshold=${threshold}`
   );
 }
@@ -452,45 +382,18 @@ export async function searchProducts(
     }
   });
 
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/public/products/search?${params.toString()}`,
-      {
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+  const response = await apiRequest<ProductWithDetails[]>(
+    `/api/v1/public/products/search?${params.toString()}`
+  );
 
-    // Check if response is JSON before parsing
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      console.error('Search API returned non-JSON response');
-      return {
-        success: false,
-        data: [],
-        pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
-      };
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Search failed:', error);
-    return {
-      success: false,
-      data: [],
-      pagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
-    };
-  }
+  return response as unknown as PaginatedResponse<ProductWithDetails>;
 }
 
 /**
  * Get filter options (public)
  */
 export async function getFilterOptions(): Promise<ApiResponse<FilterOptions>> {
-  return apiCall<FilterOptions>('/api/v1/products/filters');
+  return apiRequest<FilterOptions>('/api/v1/products/filters');
 }
 
 /**
@@ -500,7 +403,7 @@ export async function getProductSuggestions(
   query: string,
   limit: number = 5
 ): Promise<ApiResponse<ProductWithDetails[]>> {
-  return apiCall<ProductWithDetails[]>(
+  return apiRequest<ProductWithDetails[]>(
     `/api/v1/public/products/suggestions?q=${encodeURIComponent(query)}&limit=${limit}`
   );
 }
@@ -513,29 +416,12 @@ export async function getProductSuggestions(
 export async function recordProductView(
   productId: string
 ): Promise<ApiResponse<void>> {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/v1/products/${productId}/view`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    // Don't throw errors for view tracking - it's not critical
-    if (!response.ok) {
-      console.warn(`Failed to record view for product ${productId}`);
-      return { success: false };
+  return apiRequest<void>(
+    `/api/v1/products/${productId}/view`,
+    {
+      method: 'POST',
     }
-
-    return { success: true };
-  } catch (error) {
-    console.warn(`Failed to record view for product ${productId}:`, error);
-    return { success: false };
-  }
+  );
 }
 
 /**
@@ -544,7 +430,7 @@ export async function recordProductView(
 export async function getTrendingProducts(
   limit: number = 10
 ): Promise<ApiResponse<TrendingProduct[]>> {
-  return apiCall<TrendingProduct[]>(
+  return apiRequest<TrendingProduct[]>(
     `/api/v1/public/products/trending?limit=${limit}`
   );
 }
@@ -556,7 +442,7 @@ export async function getMostViewedProducts(
   days: number = 7,
   limit: number = 10
 ): Promise<ApiResponse<ProductWithDetails[]>> {
-  return apiCall<ProductWithDetails[]>(
+  return apiRequest<ProductWithDetails[]>(
     `/api/v1/public/products/most-viewed?days=${days}&limit=${limit}`
   );
 }
@@ -567,7 +453,7 @@ export async function getMostViewedProducts(
 export async function getProductAnalytics(
   productId: string
 ): Promise<ApiResponse<ProductAnalytics>> {
-  return apiCall<ProductAnalytics>(
+  return apiRequest<ProductAnalytics>(
     `/api/v1/admin/products/${productId}/analytics`
   );
 }

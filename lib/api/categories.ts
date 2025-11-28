@@ -1,3 +1,5 @@
+import { apiRequest } from "./request";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
 export interface Category {
@@ -27,27 +29,18 @@ export interface CategoryWithProducts {
  */
 export async function fetchCategories(): Promise<Category[]> {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/v1/categories`, {
+        const response = await apiRequest<Category[]>('/api/v1/categories', {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store',
             },
-            cache: 'no-store',
         });
 
-        // Check if response is JSON before parsing
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            console.error('Categories API returned non-JSON response');
-            return [];
+        if (!response.success) {
+            throw new Error(response.error || 'Failed to fetch categories');
         }
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch categories');
-        }
-
-        const data = await response.json();
-        return data.data || [];
+        return response.data || [];
     } catch (error) {
         console.error('Error fetching categories:', error);
         return [];
@@ -63,30 +56,21 @@ export async function fetchCategoryBySlug(
     limit: number = 20
 ): Promise<CategoryWithProducts | null> {
     try {
-        const response = await fetch(
-            `${API_BASE_URL}/api/v1/categories/${slug}?page=${page}&limit=${limit}`,
+        const response = await apiRequest<CategoryWithProducts>(
+            `/api/v1/categories/${slug}?page=${page}&limit=${limit}`,
             {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Cache-Control': 'no-store',
                 },
-                cache: 'no-store',
             }
         );
 
-        // Check if response is JSON before parsing
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            console.error('Category API returned non-JSON response');
-            return null;
+        if (!response.success) {
+            throw new Error(response.error || 'Failed to fetch category');
         }
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch category');
-        }
-
-        const data = await response.json();
-        return data.data || null;
+        return response.data || null;
     } catch (error) {
         console.error('Error fetching category:', error);
         return null;

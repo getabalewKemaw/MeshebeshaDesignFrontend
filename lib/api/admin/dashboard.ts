@@ -1,31 +1,5 @@
 import type { ApiResponse } from '@/types/product';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-
-async function dashboardRequest<T>(
-    endpoint: string,
-    options: RequestInit = {}
-): Promise<ApiResponse<T>> {
-    try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-            ...options,
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(options.headers || {}),
-            },
-        });
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Dashboard API error:', error);
-        return {
-            success: false,
-            error: error instanceof Error ? error.message : 'Request failed',
-        };
-    }
-}
+import { apiRequest } from '../request';
 
 export interface OverviewStats {
     totalProducts: number;
@@ -101,14 +75,14 @@ export interface ReviewsStats {
  * Get overview statistics
  */
 export async function getOverviewStats(): Promise<ApiResponse<OverviewStats>> {
-    return dashboardRequest<OverviewStats>('/api/v1/admin/dashboard/overview');
+    return apiRequest<OverviewStats>('/api/v1/admin/dashboard/overview');
 }
 
 /**
  * Get revenue data over time
  */
 export async function getRevenueStats(days: number = 30): Promise<ApiResponse<RevenueDataPoint[]>> {
-    return dashboardRequest<RevenueDataPoint[]>(`/api/v1/admin/dashboard/revenue?days=${days}`);
+    return apiRequest<RevenueDataPoint[]>(`/api/v1/admin/dashboard/revenue?days=${days}`);
 }
 
 /**
@@ -118,33 +92,33 @@ export async function getOrderStats(): Promise<ApiResponse<{
     total: number;
     breakdown: OrderStatusBreakdown[];
 }>> {
-    return dashboardRequest(`/api/v1/admin/dashboard/orders`);
+    return apiRequest(`/api/v1/admin/dashboard/orders`);
 }
 
 /**
  * Get top products
  */
 export async function getTopProducts(limit: number = 10): Promise<ApiResponse<TopProduct[]>> {
-    return dashboardRequest<TopProduct[]>(`/api/v1/admin/dashboard/products?limit=${limit}`);
+    return apiRequest<TopProduct[]>(`/api/v1/admin/dashboard/products?limit=${limit}`);
 }
 
 /**
  * Get recent orders
  */
 export async function getRecentOrders(limit: number = 10): Promise<ApiResponse<RecentOrder[]>> {
-    return dashboardRequest<RecentOrder[]>(`/api/v1/admin/dashboard/recent-orders?limit=${limit}`);
+    return apiRequest<RecentOrder[]>(`/api/v1/admin/dashboard/recent-orders?limit=${limit}`);
 }
 
 /**
  * Get user growth data
  */
 export async function getUserGrowth(days: number = 30): Promise<ApiResponse<UserGrowthDataPoint[]>> {
-    return dashboardRequest<UserGrowthDataPoint[]>(`/api/v1/admin/dashboard/users?days=${days}`);
+    return apiRequest<UserGrowthDataPoint[]>(`/api/v1/admin/dashboard/users?days=${days}`);
 }
 
 /**
  * Get reviews statistics
  */
 export async function getReviewsStats(): Promise<ApiResponse<ReviewsStats>> {
-    return dashboardRequest<ReviewsStats>('/api/v1/admin/dashboard/reviews');
+    return apiRequest<ReviewsStats>('/api/v1/admin/dashboard/reviews');
 }
