@@ -8,6 +8,8 @@ import FAQ from "@/components/landing/FAQ";
 import Testimonials from "@/components/landing/Testimonials";
 import Newsletter from "@/components/landing/Newsletter";
 import Footer from "@/components/landing/Footer";
+import ChatPopup from "@/components/landing/ChatPopup";
+
 export default function HomePage() {
   return (
     <>
@@ -23,6 +25,7 @@ export default function HomePage() {
         <Newsletter />
       </main>
       <Footer />
+      <ChatPopup />
     </>
   );
 }
