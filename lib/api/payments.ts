@@ -1,7 +1,6 @@
 import type { ApiResponse } from "@/types/product";
 import { apiRequest } from "./request";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export interface CreatePaymentResponse {
   success: boolean;

@@ -1,4 +1,3 @@
-import type { ApiResponse } from "@/types/product";
 import type {
   CreateOrderPayload,
   OrderPreview,
@@ -6,7 +5,6 @@ import type {
 } from "@/types/order";
 import { apiRequest } from "./request";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export const previewOrder = (payload: CreateOrderPayload) =>
   apiRequest<OrderPreview>("/api/v1/orders/preview", {
