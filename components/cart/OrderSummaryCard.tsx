@@ -43,9 +43,12 @@ export default function OrderSummaryCard({
                 >
                     {ctaLabel}
                 </Link>
+             
                 {helperText && (
                     <p className="text-xs text-gray-500 text-center">{helperText}</p>
                 )}
+
+               
             </div>
         </div>
     );

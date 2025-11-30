@@ -15,6 +15,8 @@ export interface AuthState {
 export interface User{
   id:string;
   email:string;
+  phone?:string;
+  country?:string;
   role:"admin" | "user";
   name:string;
   image?:string | null;

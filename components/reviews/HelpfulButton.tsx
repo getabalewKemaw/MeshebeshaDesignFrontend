@@ -28,7 +28,7 @@ export default function HelpfulButton({
     try {
       const response = await markReviewHelpful(reviewId, true);
       if (response.success && response.data) {
-        setHelpfulCount(response.data.helpfulCount);
+        setHelpfulCount(response.data.helpfulCount+1);
         setNotHelpfulCount(response.data.notHelpfulCount);
         setUserVote("helpful");
         if (onVote) {
@@ -50,7 +50,7 @@ export default function HelpfulButton({
       const response = await markReviewHelpful(reviewId, false);
       if (response.success && response.data) {
         setHelpfulCount(response.data.helpfulCount);
-        setNotHelpfulCount(response.data.notHelpfulCount);
+        setNotHelpfulCount(response.data.notHelpfulCount +1);
         setUserVote("not-helpful");
         if (onVote) {
           onVote(response.data.helpfulCount, response.data.notHelpfulCount);

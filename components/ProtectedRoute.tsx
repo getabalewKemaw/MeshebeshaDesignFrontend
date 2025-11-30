@@ -19,7 +19,7 @@ export function ProtectedRoute({
   const { isAuthenticated, isAdmin, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading) { 
       if (!isAuthenticated) {
         router.push(redirectTo);
       } else if (requireAdmin && !isAdmin) {

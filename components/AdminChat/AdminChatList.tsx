@@ -30,7 +30,7 @@ export default function AdminChatList({
   });
 
   return (
-    <div className="w-80 bg-white border-r-2 border-[#1E2A55] overflow-y-auto fixed left-0 top-0 bottom-0 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200">
+    <div className="w-80 bg-white border-r-2 border-[#1E2A55] overflow-y-auto fixed left-0 top-10 bottom-0 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200">
       {/* Header */}
       <div className="bg-[#1E2A55] text-white p-4 border-b-2 border-white">
         <h2 className="text-xl font-bold mb-3">Conversations</h2>

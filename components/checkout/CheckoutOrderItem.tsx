@@ -7,10 +7,13 @@ interface CheckoutOrderItemProps {
     formatPrice: (price: number) => string;
 }
 
+
 export default function CheckoutOrderItem({
     item,
     formatPrice,
 }: CheckoutOrderItemProps) {
+
+    
     return (
         <div className="flex items-start gap-3">
             {/* Product Image - Clickable with Black Border */}

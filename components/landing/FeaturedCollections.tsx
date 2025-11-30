@@ -86,7 +86,7 @@ export default function FeaturedCollections() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
                 {/* Tag */}
-                <div className="absolute top-6 left-4">
+                <div className="absolute top-4 left-2">
                   <span className="inline-flex rounded-full bg-white/95 backdrop-blur-sm px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[#1E2A55] shadow-md">
                     {collection.tag}
                   </span>

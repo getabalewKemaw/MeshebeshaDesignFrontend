@@ -3,7 +3,6 @@
 import { Bell } from "lucide-react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import NotificationList from "@/components/NotificationList";
-
 export default function AdminNotificationsPage() {
   const { isAdmin, isLoading } = useAuth();
 

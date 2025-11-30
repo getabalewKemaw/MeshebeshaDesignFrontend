@@ -12,7 +12,7 @@ export default function NotificationList() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-
+ 
     const loadNotifications = async () => {
       setLoading(true);
       const response = await getNotifications({ limit: 20, unreadOnly: false });
@@ -37,7 +37,7 @@ export default function NotificationList() {
       );
       setUnreadCount((prev) => Math.max(0, prev - 1));
     }
-  };
+  }; 
 
   const handleMarkAllAsRead = async () => {
     const response = await markAllAsRead();
@@ -89,13 +89,13 @@ export default function NotificationList() {
                   : "bg-gray-50 border-gray-200"
               }`}
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start sm:flex sm:items-end justify-between gap-3 ">
                 <div className="flex-1">
                   <p className="text-sm text-gray-900 font-medium">
                     {typeof notification.data === "object" && notification.data?.message
                       ? String(notification.data.message)
                       : notification.type}
-                  </p>
+                  </p>  
                   <p className="text-xs text-gray-500 mt-1">
                     {new Date(notification.createdAt).toLocaleString()}
                   </p>
