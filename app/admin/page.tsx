@@ -4,7 +4,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { Package, ShoppingCart, Users, Star, DollarSign, MessageSquare, AlertTriangle, ShoppingBag } from "lucide-react";
+import { Package, ShoppingCart, Users, DollarSign, MessageSquare, AlertTriangle, ShoppingBag } from "lucide-react";
 import * as dashboardAPI from "@/lib/api/admin/dashboard";
 
 const COLORS = ['#1E2A55', '#CFAE56', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       {/* Welcome Section */}
       <div className="bg-gradient-to-r from-[#1E2A55] to-[#2A3A65] rounded-2xl shadow-lg p-8 mb-8 text-white">
         <h1 className="text-3xl font-bold mb-2">Admin Dashboard 📊</h1>
-        <p className="text-blue-100">Welcome back, {user?.name}! Here's your store analytics.</p>
+        <p className="text-blue-100">Welcome back, {user?.name}! Here is your store analytics.</p>
       </div>
 
       {/* Key Metrics Overview */}

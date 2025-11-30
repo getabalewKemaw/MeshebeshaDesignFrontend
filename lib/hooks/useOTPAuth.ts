@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
-import { validateEmail, validateOtp } from "@/utils/validator";
+
+import { validateEmail,validateOtp } from "@/utils/validator";
 import { checkEmail, sendOtp, verifyOtp } from "@/services/authServices";
 import type { User } from "@/types/auth";
 

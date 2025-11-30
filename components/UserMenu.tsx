@@ -14,7 +14,7 @@ export function UserMenu() {
   const handleSignOut = async () => {
     setLoading(true);
     await authClient.signOut();
-    router.push("/auth/sign-in");
+    router.push("/"); 
   };
 
   if (!user) return null;
@@ -25,7 +25,7 @@ export function UserMenu() {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
       >
-        <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center text-white font-medium">
+        <div className="w-8 h-8 rounded-full text-gray-950 flex items-center justify-center font-medium">
           {user.name?.charAt(0).toUpperCase()}
         </div>
         <div className="text-left">
@@ -55,12 +55,7 @@ export function UserMenu() {
             Profile
           </a>
 
-          <a
-            href="/settings"
-            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-          >
-            Settings
-          </a>
+       
 
           {isAdmin && (
             <>
@@ -69,10 +64,11 @@ export function UserMenu() {
                 href="/admin"
                 className="block px-4 py-2 text-sm text-purple-600 hover:bg-gray-100 font-medium"
               >
-                👑 Admin Panel
+                 Admin Panel
               </a>
             </>
           )}
+
 
           <div className="border-t border-gray-200 my-1"></div>
 

@@ -1,4 +1,3 @@
-// services/authService.ts
 import { authClient } from "@/lib/auth-client";
 export async function checkEmail(email: string) {
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/check-email`, {

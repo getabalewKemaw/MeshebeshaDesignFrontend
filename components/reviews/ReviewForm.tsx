@@ -28,7 +28,6 @@ export default function ReviewForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (rating === 0) {
       setError("Please select a rating");
       return;
