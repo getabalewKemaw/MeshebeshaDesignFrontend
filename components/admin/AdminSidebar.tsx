@@ -13,6 +13,7 @@ import {
   TrendingUp,
   Bell,
   User,
+  Users,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import type { LucideIcon } from "lucide-react";
@@ -42,6 +43,7 @@ const NAV_SECTIONS: AdminNavSection[] = [
       { href: "/admin/orders", label: "Orders", icon: Truck },
       { href: "/admin/payments", label: "Payments", icon: CreditCard },
       { href: "/admin/reviews", label: "Reviews", icon: Star },
+      { href: "/admin/users", label: "Users", icon: Users },
     ],
   },
   {
@@ -103,16 +105,14 @@ export default function AdminSidebar({ onNavigate, footerSlot }: AdminSidebarPro
                     key={item.href}
                     href={item.href}
                     onClick={onNavigate}
-                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                      active
-                        ? "bg-slate-900 text-white"
-                        : "text-slate-300 hover:bg-slate-900/70 hover:text-white"
-                    }`}
+                    className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${active
+                      ? "bg-slate-900 text-white"
+                      : "text-slate-300 hover:bg-slate-900/70 hover:text-white"
+                      }`}
                   >
                     <span
-                      className={`flex h-8 w-8 items-center justify-center rounded-md text-slate-200 ${
-                        active ? "bg-slate-800" : "bg-slate-900"
-                      }`}
+                      className={`flex h-8 w-8 items-center justify-center rounded-md text-slate-200 ${active ? "bg-slate-800" : "bg-slate-900"
+                        }`}
                     >
                       <Icon className="h-4 w-4" />
                     </span>
