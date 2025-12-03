@@ -8,6 +8,9 @@ import ModernCulturalSection from '@/components/newlanding/ModernCulturalSection
 import EventHolidaySection from '@/components/newlanding/EventHolidaySection';
 import MensCouplesSection from '@/components/newlanding/MensCouplesSection';
 import JewelrySection from '@/components/newlanding/JewelrySection';
+import CustomProductSection from '@/components/newlanding/CustomProductSection';
+import AboutSection from '@/components/newlanding/AboutSection';
+import FooterSection from '@/components/newlanding/FooterSection';
 
 export default function NewLandingPage() {
     return (
@@ -20,6 +23,9 @@ export default function NewLandingPage() {
             <EventHolidaySection />
             <MensCouplesSection />
             <JewelrySection />
+            <CustomProductSection />
+            <AboutSection />
+            <FooterSection />
         </div>
     );
 }

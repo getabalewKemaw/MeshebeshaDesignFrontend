@@ -29,8 +29,8 @@ const products = [
 
 export default function BestSellingSection() {
     return (
-        <section className="relative w-full min-h-screen overflow-hidden flex flex-col justify-center py-20">
-            {/* Background Image - Original Orientation */}
+        <section className="relative w-full min-h-screen overflow-hidden py-20">
+            {/* Background Image */}
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/ui/bgimage2.png"
@@ -41,17 +41,6 @@ export default function BestSellingSection() {
                 />
                 {/* Dark overlay for better contrast */}
                 <div className="absolute inset-0 bg-black/20" />
-            </div>
-
-            {/* Decorative Left Border Pattern (Continuing from Hero) */}
-            <div className="absolute left-0 top-0 bottom-0 w-24 z-10 hidden md:block">
-                <div
-                    className="w-full h-full bg-repeat-y opacity-90"
-                    style={{
-                        backgroundImage: 'url(/ui/pattern-border.png)',
-                        backgroundSize: 'contain',
-                    }}
-                />
             </div>
 
             {/* Content Container */}

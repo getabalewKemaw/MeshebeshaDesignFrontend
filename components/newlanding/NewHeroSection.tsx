@@ -7,15 +7,7 @@ export default function NewHeroSection() {
     return (
         <section className="relative w-full h-screen min-h-[600px] overflow-hidden">
             {/* Decorative Left Border Pattern */}
-            <div className="absolute left-0 top-0 bottom-0 w-24 z-10">
-                <div
-                    className="w-full h-full bg-repeat-y opacity-90"
-                    style={{
-                        backgroundImage: 'url(/ui/pattern-border.png)',
-                        backgroundSize: 'contain',
-                    }}
-                />
-            </div>
+
 
             {/* Background Image */}
             <div className="absolute inset-0">
@@ -30,7 +22,7 @@ export default function NewHeroSection() {
             </div>
 
             {/* Hero Content - Right Side */}
-            <div className="relative z-10 h-full flex items-center justify-end px-8 md:px-16 lg:px-24">
+            <div className="relative z-10 h-full flex items-center justify-end px-8 md:px-16 lg:px-24  pt-19">
                 <div className="max-w-2xl text-right space-y-6">
                     {/* Tagline */}
                     <h2
