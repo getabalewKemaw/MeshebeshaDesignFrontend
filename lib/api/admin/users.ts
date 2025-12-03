@@ -50,19 +50,40 @@ export const getUsers = async (params?: {
     sortBy?: 'createdAt' | 'name' | 'email';
     sortOrder?: 'asc' | 'desc';
 }): Promise<UsersListResponse> => {
-    const queryParams = new URLSearchParams();
+    try {
+        const queryParams = new URLSearchParams();
 
-    if (params?.page) queryParams.append('page', params.page.toString());
-    if (params?.limit) queryParams.append('limit', params.limit.toString());
-    if (params?.search) queryParams.append('search', params.search);
-    if (params?.role) queryParams.append('role', params.role);
-    if (params?.banned !== undefined) queryParams.append('banned', params.banned.toString());
-    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
-    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+        if (params?.page) queryParams.append('page', params.page.toString());
+        if (params?.limit) queryParams.append('limit', params.limit.toString());
+        if (params?.search) queryParams.append('search', params.search);
+        if (params?.role) queryParams.append('role', params.role);
+        if (params?.banned !== undefined) queryParams.append('banned', params.banned.toString());
+        if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+        if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
 
-    const response = await apiRequest<UsersListResponse>(`/api/v1/admin/users?${queryParams.toString()}`);
-    if (!response.data) throw new Error(response.error || 'Failed to fetch users');
-    return response.data;
+        const response = await apiRequest<UsersListResponse>(`/api/v1/admin/users?${queryParams.toString()}`);
+
+        // Debug logging
+        console.log('=== GET USERS DEBUG ===');
+        console.log('Full Response:', JSON.stringify(response, null, 2));
+        console.log('Response.success:', response.success);
+        console.log('Response.data:', response.data);
+        console.log('Response.error:', response.error);
+        console.log('======================');
+
+        if (!response.success) {
+            throw new Error(response.error || response.message || 'Failed to fetch users');
+        }
+
+        if (!response.data) {
+            throw new Error('No data in response');
+        }
+
+        return response.data;
+    } catch (error: any) {
+        console.error('getUsers error:', error);
+        throw error;
+    }
 };
 
 /**
