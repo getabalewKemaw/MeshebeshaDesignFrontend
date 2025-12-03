@@ -34,18 +34,18 @@ export default function UserDetailPage() {
     const fetchUser = async () => {
         try {
             setLoading(true);
-            const response = await getUserById(userId);
-            setUser(response.data);
+            const userData = await getUserById(userId);
+            setUser(userData);
             setEditForm({
-                name: response.data.name,
-                email: response.data.email,
-                phone: response.data.phone || '',
-                country: response.data.country || '',
-                role: response.data.role as 'user' | 'admin',
+                name: userData.name,
+                email: userData.email,
+                phone: userData.phone || '',
+                country: userData.country || '',
+                role: userData.role as 'user' | 'admin',
             });
             setError(null);
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to fetch user');
+            setError(err.message || 'Failed to fetch user');
         } finally {
             setLoading(false);
         }
@@ -53,8 +53,8 @@ export default function UserDetailPage() {
 
     const fetchOrders = async () => {
         try {
-            const response = await getUserOrders(userId, { limit: 10 });
-            setOrders(response.data.orders);
+            const ordersData = await getUserOrders(userId, { limit: 10 });
+            setOrders(ordersData.orders);
         } catch (err) {
             console.error('Failed to fetch orders:', err);
         }
@@ -186,8 +186,8 @@ export default function UserDetailPage() {
                         <button
                             onClick={() => setActiveTab('details')}
                             className={`px-6 py-3 font-medium ${activeTab === 'details'
-                                    ? 'border-b-2 border-blue-600 text-blue-600'
-                                    : 'text-gray-600 hover:text-gray-900'
+                                ? 'border-b-2 border-blue-600 text-blue-600'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             User Details
@@ -195,8 +195,8 @@ export default function UserDetailPage() {
                         <button
                             onClick={() => setActiveTab('orders')}
                             className={`px-6 py-3 font-medium ${activeTab === 'orders'
-                                    ? 'border-b-2 border-blue-600 text-blue-600'
-                                    : 'text-gray-600 hover:text-gray-900'
+                                ? 'border-b-2 border-blue-600 text-blue-600'
+                                : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
                             Order History ({user._count?.orders || 0})
@@ -357,12 +357,12 @@ export default function UserDetailPage() {
                                             </div>
                                             <span
                                                 className={`px-2 py-1 text-xs font-semibold rounded-full ${order.status === 'completed'
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : order.status === 'shipped'
-                                                            ? 'bg-blue-100 text-blue-800'
-                                                            : order.status === 'paid'
-                                                                ? 'bg-purple-100 text-purple-800'
-                                                                : 'bg-yellow-100 text-yellow-800'
+                                                    ? 'bg-green-100 text-green-800'
+                                                    : order.status === 'shipped'
+                                                        ? 'bg-blue-100 text-blue-800'
+                                                        : order.status === 'paid'
+                                                            ? 'bg-purple-100 text-purple-800'
+                                                            : 'bg-yellow-100 text-yellow-800'
                                                     }`}
                                             >
                                                 {order.status}

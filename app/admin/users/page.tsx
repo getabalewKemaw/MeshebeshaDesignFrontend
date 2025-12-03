@@ -47,12 +47,12 @@ export default function AdminUsersPage() {
                 sortOrder,
             });
 
-            setUsers(response.data.users);
-            setTotalPages(response.data.pagination.totalPages);
-            setTotal(response.data.pagination.total);
+            setUsers(response.users);
+            setTotalPages(response.pagination.totalPages);
+            setTotal(response.pagination.total);
             setError(null);
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to fetch users');
+            setError(err.message || 'Failed to fetch users');
         } finally {
             setLoading(false);
         }
@@ -60,8 +60,8 @@ export default function AdminUsersPage() {
 
     const fetchStats = async () => {
         try {
-            const response = await getUserStats();
-            setStats(response.data);
+            const stats = await getUserStats();
+            setStats(stats);
         } catch (err) {
             console.error('Failed to fetch stats:', err);
         }
@@ -268,8 +268,8 @@ export default function AdminUsersPage() {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span
                                                 className={`px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'admin'
-                                                        ? 'bg-purple-100 text-purple-800'
-                                                        : 'bg-gray-100 text-gray-800'
+                                                    ? 'bg-purple-100 text-purple-800'
+                                                    : 'bg-gray-100 text-gray-800'
                                                     }`}
                                             >
                                                 {user.role}
