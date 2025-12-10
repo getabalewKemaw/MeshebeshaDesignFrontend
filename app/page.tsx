@@ -1,33 +1,32 @@
-import Navbar from "@/components/NavBar";
-import Hero from "@/components/landing/Hero";
-import FeaturedCollections from "@/components/landing/FeaturedCollections";
-import Benefits from "@/components/landing/Benefits";
-import TrendingProducts from "@/components/landing/TrendingProducts";
-import HowItWorks from "@/components/landing/HowItWorks";
-import FAQ from "@/components/landing/FAQ";
-import Testimonials from "@/components/landing/Testimonials";
-import Newsletter from "@/components/landing/Newsletter";
-import Footer from "@/components/landing/Footer";
-import ChatPopup from "@/components/landing/ChatPopup";
+'use client';
+
+import './newlanding/styles.css';
+import NewNavBar from '@/components/newlanding/NewNavBar';
+import NewHeroSection from '@/components/newlanding/NewHeroSection';
+import BestSellingSection from '@/components/newlanding/BestSellingSection';
+import ModernCulturalSection from '@/components/newlanding/ModernCulturalSection';
+import EventHolidaySection from '@/components/newlanding/EventHolidaySection';
+import MensCouplesSection from '@/components/newlanding/MensCouplesSection';
+import JewelrySection from '@/components/newlanding/JewelrySection';
+import CustomProductSection from '@/components/newlanding/CustomProductSection';
+import AboutSection from '@/components/newlanding/AboutSection';
+import FooterSection from '@/components/newlanding/FooterSection';
+import ChatPopup from '@/components/landing/ChatPopup';
 
 export default function HomePage() {
   return (
-    <>
-      <Navbar />
-      <main className="bg-[#FFF9F0] text-[#1E2A55]">
-        <Hero />
-        <FeaturedCollections />
-      
-        <TrendingProducts />
-        <HowItWorks />
-        <FAQ />
-        <Testimonials />
-         <Benefits />
-
-        <Newsletter />
-      </main>
-      <Footer />
+    <div className="min-h-screen">
+      <NewNavBar />
+      <NewHeroSection />
+      <BestSellingSection />
+      <ModernCulturalSection />
+      <EventHolidaySection />
+      <MensCouplesSection />
+      <JewelrySection />
+      <CustomProductSection />
+      <AboutSection />
+      <FooterSection />
       <ChatPopup />
-    </>
+    </div>
   );
 }
