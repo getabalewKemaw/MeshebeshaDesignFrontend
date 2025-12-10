@@ -22,7 +22,8 @@ export default function JewelrySection() {
     // Responsive items per view
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth >= 1024) setItemsToShow(3);
+            if (window.innerWidth >= 1280) setItemsToShow(5);
+            else if (window.innerWidth >= 1024) setItemsToShow(4);
             else if (window.innerWidth >= 640) setItemsToShow(2);
             else setItemsToShow(1);
         };
@@ -154,12 +155,16 @@ export default function JewelrySection() {
                                 <div
                                     key={item.id}
                                     style={{ flex: `0 0 ${100 / itemsToShow}%` }}
-                                    className={`px-4 transform transition-all duration-500 ${
-                                        // Curve Logic: Apply translation based on index pattern
-                                        // This creates the "wave" look on desktop similar to the original grid
-                                        index % 6 === 0 || index % 6 === 5 ? 'lg:-translate-y-12' :
-                                            index % 6 === 1 || index % 6 === 4 ? 'lg:translate-y-0' :
-                                                'lg:translate-y-12'
+                                    className={`px-4 transform transition-all duration-500 ease-in-out ${
+                                        // Dynamic Bowl Curve for Desktop (itemsToShow >= 4)
+                                        itemsToShow >= 4 ? (
+                                            Math.abs(index - currentIndex - 2) === 0 ? 'lg:translate-y-12' : // Center (Low)
+                                                Math.abs(index - currentIndex - 2) === 1 ? 'lg:translate-y-0' : // Mid
+                                                    'lg:-translate-y-12' // Sides (High)
+                                        ) : (
+                                            // Simple alternating for Tablet/Mobile
+                                            index % 2 === 0 ? 'translate-y-0' : 'translate-y-4'
+                                        )
                                         }`}
                                 >
                                     <div className="flex flex-col items-center group">
