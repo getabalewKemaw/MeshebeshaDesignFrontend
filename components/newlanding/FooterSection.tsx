@@ -10,7 +10,7 @@ export default function FooterSection() {
             {/* Background Image */}
             <div className="absolute inset-0 z-0 opacity-30">
                 <Image
-                    src="/ui/footerbg.png"
+                    src="/footerbg.png"
                     alt="Footer Background"
                     fill
                     className="object-cover"

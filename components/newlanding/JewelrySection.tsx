@@ -3,17 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-const jewelryItems = [
-    { id: 1, image: '/ui/jewlery1.png', title: 'JEWELRY JKCBSD' },
-    { id: 2, image: '/ui/jewlery2.png', title: 'JEWELRY JKCBSD' },
-    { id: 3, image: '/ui/jewlery1.png', title: 'JEWELRY JKCBSD' },
-    { id: 4, image: '/ui/jewlery1.png', title: 'JEWELRY JKCBSD' },
-    { id: 5, image: '/ui/jewlery1.png', title: 'JEWELRY JKCBSD' },
-    { id: 6, image: '/ui/jewlery1.png', title: 'JEWELRY JKCBSD' },
-];
+import { useCategoryProducts } from './useCategoryProducts';
+import NewLandingProductCard from './NewLandingProductCard';
 
 export default function JewelrySection() {
+    const { products, loading } = useCategoryProducts('jewlerys', 12);
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [itemsToShow, setItemsToShow] = useState(1);
     const [isVisible, setIsVisible] = useState(false);
@@ -43,7 +38,7 @@ export default function JewelrySection() {
                     }
                 });
             },
-            { threshold: 0.2 }
+            { threshold: 0.1 } // Lower threshold for earlier trigger
         );
 
         if (sectionRef.current) {
@@ -59,17 +54,24 @@ export default function JewelrySection() {
 
     const nextSlide = () => {
         setCurrentIndex((prev) => {
-            const maxIndex = jewelryItems.length - itemsToShow;
+            // Ensure we don't scroll past the end
+            // If we have fewer items than itemsToShow, we can't scroll
+            if (products.length <= itemsToShow) return 0;
+            const maxIndex = products.length - itemsToShow;
             return prev >= maxIndex ? 0 : prev + 1;
         });
     };
 
     const prevSlide = () => {
         setCurrentIndex((prev) => {
-            const maxIndex = jewelryItems.length - itemsToShow;
+            if (products.length <= itemsToShow) return 0;
+            const maxIndex = products.length - itemsToShow;
             return prev <= 0 ? maxIndex : prev - 1;
         });
     };
+
+    // Removed early return so section renders and refs attach properly
+    // if (loading) return null;
 
     return (
         <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden bg-[#310101] py-20">
@@ -151,9 +153,9 @@ export default function JewelrySection() {
                                 transform: `translateX(-${currentIndex * (100 / itemsToShow)}%)`,
                             }}
                         >
-                            {jewelryItems.map((item, index) => (
+                            {products.map((product, index) => (
                                 <div
-                                    key={item.id}
+                                    key={product.id}
                                     style={{ flex: `0 0 ${100 / itemsToShow}%` }}
                                     className={`px-4 transform transition-all duration-500 ease-in-out ${
                                         // Dynamic Bowl Curve for Desktop (itemsToShow >= 4)
@@ -167,21 +169,10 @@ export default function JewelrySection() {
                                         )
                                         }`}
                                 >
-                                    <div className="flex flex-col items-center group">
-                                        <div className="relative w-full aspect-[3/4] bg-white/10 backdrop-blur-sm rounded-2xl border-2 border-white p-2 shadow-lg transform transition-transform duration-300 group-hover:scale-105">
-                                            <div className="relative w-full h-full rounded-xl overflow-hidden">
-                                                <Image
-                                                    src={item.image}
-                                                    alt={item.title}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            </div>
-                                        </div>
-                                        <p className="text-white text-xs font-bold mt-4 uppercase tracking-wider text-center">
-                                            {item.title}
-                                        </p>
-                                    </div>
+                                    <NewLandingProductCard
+                                        product={product}
+                                        variant="light"
+                                    />
                                 </div>
                             ))}
                         </div>

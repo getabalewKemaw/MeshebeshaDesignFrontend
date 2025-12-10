@@ -2,38 +2,21 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-const products = [
-    {
-        id: 1,
-        image: '/ui/DRESS1.png',
-        description: 'A handwoven fetel dress decorated with colorful tibeb patterns, worn for special cultural occasions.',
-    },
-    {
-        id: 2,
-        image: '/ui/DRESS2.png',
-        description: 'A handwoven fetel dress decorated with colorful tibeb patterns, worn for special cultural occasions.',
-    },
-    {
-        id: 3,
-        image: '/ui/DRESS3.png',
-        description: 'A handwoven fetel dress decorated with colorful tibeb patterns, worn for special cultural occasions.',
-    },
-    {
-        id: 4,
-        image: '/ui/DRESS4.png',
-        description: 'A handwoven fetel dress decorated with colorful tibeb patterns, worn for special cultural occasions.',
-    },
-];
+import { useCategoryProducts } from './useCategoryProducts';
+import NewLandingProductCard from './NewLandingProductCard';
 
 export default function BestSellingSection() {
+    const { products, loading } = useCategoryProducts('best-sellings', 8);
+
+    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 4;
+    const totalPages = Math.ceil((products.length || 1) / itemsPerPage);
+
     const [currentMobileIndex, setCurrentMobileIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);
-    const totalPages = 20;
 
     // Intersection Observer for scroll-based animation
     useEffect(() => {
@@ -45,7 +28,7 @@ export default function BestSellingSection() {
                     }
                 });
             },
-            { threshold: 0.2 }
+            { threshold: 0.1 }
         );
 
         if (sectionRef.current) {
@@ -74,6 +57,15 @@ export default function BestSellingSection() {
     const handleMobileNext = () => {
         setCurrentMobileIndex((prev) => (prev < products.length - 1 ? prev + 1 : 0));
     };
+
+    // Derived products for current desktop page
+    const currentDesktopProducts = products.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
+
+    // Removed early return to ensure ref is attached and observer runs
+    // if (loading) return null;
 
     return (
         <section ref={sectionRef} className="relative w-full h-screen min-h-[600px] overflow-hidden pt-[70px]">
@@ -130,45 +122,16 @@ export default function BestSellingSection() {
 
                     {/* Desktop: Products Horizontal Grid */}
                     <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                        {products.map((product, index) => (
-                            <div
+                        {currentDesktopProducts.map((product, index) => (
+                            <NewLandingProductCard
                                 key={product.id}
-                                className={`flex flex-col items-center group transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                                    }`}
+                                product={product}
+                                variant="light"
+                                className={`transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
                                 style={{
                                     transitionDelay: `${(index + 1) * 150}ms`
                                 }}
-                            >
-                                {/* Image Container */}
-                                <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-2 border-white/20 shadow-2xl">
-                                    <Image
-                                        src={product.image}
-                                        alt="Traditional Dress"
-                                        fill
-                                        className="object-cover transition-transform duration-500 group-hover:scale-110"
-                                    />
-                                    {/* SALE Tag */}
-                                    <div className="absolute bottom-4 left-4 bg-[#310101] text-white px-3 py-1 rounded text-sm font-bold tracking-wider">
-                                        SALE
-                                    </div>
-                                </div>
-
-                                {/* Description */}
-                                <p
-                                    className="text-white text-center text-sm mb-4 leading-relaxed line-clamp-3 px-2"
-                                    style={{ fontFamily: 'Abhaya Libre, serif' }}
-                                >
-                                    {product.description}
-                                </p>
-
-                                {/* Shop Button */}
-                                <button
-                                    className="bg-white text-[#310101] px-8 py-2 rounded-full font-bold text-sm uppercase hover:bg-gray-100 transition-all shadow-lg transform hover:-translate-y-1 hover:shadow-2xl"
-                                    style={{ fontFamily: 'Fredoka One, cursive' }}
-                                >
-                                    SHOP
-                                </button>
-                            </div>
+                            />
                         ))}
                     </div>
 
@@ -184,35 +147,12 @@ export default function BestSellingSection() {
                                         key={product.id}
                                         className="min-w-full flex-shrink-0 flex flex-col items-center transition-all duration-700"
                                     >
-                                        {/* Image Container */}
-                                        <div className="relative w-full max-w-[280px] sm:max-w-sm aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-2 border-white/20 shadow-2xl mx-auto">
-                                            <Image
-                                                src={product.image}
-                                                alt="Traditional Dress"
-                                                fill
-                                                className="object-cover"
+                                        <div className="w-full max-w-[280px] sm:max-w-sm mx-auto">
+                                            <NewLandingProductCard
+                                                product={product}
+                                                variant="light"
                                             />
-                                            {/* SALE Tag */}
-                                            <div className="absolute bottom-4 left-4 bg-[#310101] text-white px-3 py-1 rounded text-sm font-bold tracking-wider">
-                                                SALE
-                                            </div>
                                         </div>
-
-                                        {/* Description */}
-                                        <p
-                                            className="text-white text-center text-xs sm:text-sm mb-4 leading-relaxed px-4 max-w-[280px] sm:max-w-sm"
-                                            style={{ fontFamily: 'Abhaya Libre, serif' }}
-                                        >
-                                            {product.description}
-                                        </p>
-
-                                        {/* Shop Button */}
-                                        <button
-                                            className="bg-white text-[#310101] px-6 sm:px-8 py-2 rounded-full font-bold text-xs sm:text-sm uppercase hover:bg-gray-100 transition-all shadow-lg"
-                                            style={{ fontFamily: 'Fredoka One, cursive' }}
-                                        >
-                                            SHOP
-                                        </button>
                                     </div>
                                 ))}
                             </div>
@@ -250,7 +190,7 @@ export default function BestSellingSection() {
                 </div>
 
                 {/* Pagination / Navigation */}
-                <div className="flex items-center justify-center gap-4 text-white">
+                <div className="flex items-center justify-center gap-4 text-white pb-8">
                     <button
                         onClick={handlePrevious}
                         className="hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full"
@@ -270,7 +210,7 @@ export default function BestSellingSection() {
                     </button>
                 </div>
             </div>
-       
-        </section >
+
+        </section>
     );
 }

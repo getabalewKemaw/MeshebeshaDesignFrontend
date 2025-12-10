@@ -3,64 +3,13 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-const eventProducts = [
-    {
-        id: 1,
-        image: '/ui/DRESS1.png',
-        description: 'A handwoven fetel dress decorated with colorful tibeb patterns, worn for special cultural occasions.',
-    },
-    {
-        id: 2,
-        image: '/ui/DRESS2.png',
-        description: 'A handwoven fetel dress decorated with colorful tibeb patterns, worn for special cultural occasions.',
-    },
-    {
-        id: 3,
-        image: '/ui/DRESS3.png',
-        description: 'A handwoven fetel dress decorated with colorful tibeb patterns, worn for special cultural occasions.',
-    },
-    {
-        id: 4,
-        image: '/ui/DRESS4.png',
-        description: 'A handwoven fetel dress decorated with colorful tibeb patterns, worn for special cultural occasions.',
-    },
-    {
-        id: 5,
-        image: '/ui/DRESS1.png',
-        description: 'A handwoven fetel dress decorated with colorful tibeb patterns, worn for special cultural occasions.',
-    },
-];
-
-const weddingProducts = [
-    {
-        id: 1,
-        image: '/ui/DRESS2.png',
-        description: 'Elegant wedding dress with traditional Ethiopian embroidery and modern design.',
-    },
-    {
-        id: 2,
-        image: '/ui/DRESS3.png',
-        description: 'Elegant wedding dress with traditional Ethiopian embroidery and modern design.',
-    },
-    {
-        id: 3,
-        image: '/ui/DRESS4.png',
-        description: 'Elegant wedding dress with traditional Ethiopian embroidery and modern design.',
-    },
-    {
-        id: 4,
-        image: '/ui/DRESS1.png',
-        description: 'Elegant wedding dress with traditional Ethiopian embroidery and modern design.',
-    },
-    {
-        id: 5,
-        image: '/ui/DRESS2.png',
-        description: 'Elegant wedding dress with traditional Ethiopian embroidery and modern design.',
-    },
-];
+import { useCategoryProducts } from './useCategoryProducts';
+import NewLandingProductCard from './NewLandingProductCard';
 
 export default function EventHolidaySection() {
+    const { products: eventProducts, loading: eventLoading } = useCategoryProducts('eventholiday-dress', 10);
+    const { products: weddingProducts, loading: weddingLoading } = useCategoryProducts('weddiing', 10);
+
     const [currentEventIndex, setCurrentEventIndex] = useState(0);
     const [currentWeddingIndex, setCurrentWeddingIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
@@ -105,6 +54,12 @@ export default function EventHolidaySection() {
     const handleWeddingNext = () => {
         setCurrentWeddingIndex((prev) => (prev < weddingProducts.length - 1 ? prev + 1 : 0));
     };
+
+    // Subsets for Desktop (Show 5)
+    const eventDesktop = eventProducts.slice(0, 5);
+    const weddingDesktop = weddingProducts.slice(0, 5);
+
+    if (eventLoading || weddingLoading) return null;
 
     return (
         <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden py-20">
@@ -164,29 +119,12 @@ export default function EventHolidaySection() {
 
                     {/* Desktop Grid */}
                     <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-5 gap-6 px-8 md:px-16">
-                        {eventProducts.map((product, index) => (
-                            <div
-                                key={`event-${index}`}
-                                className="flex flex-col items-center group"
-                            >
-                                <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-4 border-[#310101]/10 bg-white shadow-xl transform transition-transform hover:-translate-y-2">
-                                    <Image
-                                        src={product.image}
-                                        alt="Event Dress"
-                                        fill
-                                        className="object-cover"
-                                    />
-                                    <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold">
-                                        SALE
-                                    </div>
-                                </div>
-                                <p className="text-[#310101] text-center text-xs font-semibold mb-3 leading-tight px-2 line-clamp-3 bg-white/80 backdrop-blur-sm rounded p-1" style={{ fontFamily: 'Abhaya Libre, serif' }}>
-                                    {product.description}
-                                </p>
-                                <button className="bg-[#310101] text-white px-6 py-1.5 rounded-full font-bold text-xs uppercase hover:bg-[#4a0202] transition-colors shadow-md" style={{ fontFamily: 'Fredoka One, cursive' }}>
-                                    SHOP
-                                </button>
-                            </div>
+                        {eventDesktop.map((product, index) => (
+                            <NewLandingProductCard
+                                key={`event-${product.id}`}
+                                product={product}
+                                variant="dark"
+                            />
                         ))}
                     </div>
 
@@ -200,23 +138,12 @@ export default function EventHolidaySection() {
                             >
                                 {eventProducts.map((product) => (
                                     <div key={`event-mobile-${product.id}`} className="min-w-full flex-shrink-0 flex flex-col items-center px-2">
-                                        <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-4 border-[#310101]/10 bg-white shadow-xl">
-                                            <Image
-                                                src={product.image}
-                                                alt="Event Dress"
-                                                fill
-                                                className="object-cover"
+                                        <div className="w-full max-w-sm mx-auto">
+                                            <NewLandingProductCard
+                                                product={product}
+                                                variant="dark"
                                             />
-                                            <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold">
-                                                SALE
-                                            </div>
                                         </div>
-                                        <p className="text-[#310101] text-center text-xs font-semibold mb-3 leading-tight px-4 max-w-sm bg-white/80 backdrop-blur-sm rounded p-2" style={{ fontFamily: 'Abhaya Libre, serif' }}>
-                                            {product.description}
-                                        </p>
-                                        <button className="bg-[#310101] text-white px-6 py-1.5 rounded-full font-bold text-xs uppercase hover:bg-[#4a0202] transition-colors shadow-md" style={{ fontFamily: 'Fredoka One, cursive' }}>
-                                            SHOP
-                                        </button>
                                     </div>
                                 ))}
                             </div>
@@ -249,141 +176,113 @@ export default function EventHolidaySection() {
                         ))}
                     </div>
                 </div>
-            </div>
 
 
 
-            {/* --- SECOND ROW: WEDDING DRESSES --- */}
-            <div className="relative">
-                {/* Divider Background - Now visible on mobile */}
-                <div className="absolute top-[60%] left-0 right-0 h-[150px] md:h-[200px] -translate-y-1/2 z-0 opacity-90">
-                    <Image
-                        src="/ui/page4deviderimage.png"
-                        alt="Divider Pattern"
-                        fill
-                        className="object-cover"
-                    />
-                </div>
-
-                {/* Header */}
-                <div className="flex flex-col md:flex-row items-center justify-between mb-8 px-4 md:px-8">
-                    <div className="w-[120px] hidden md:block"></div>
-
-                    {/* Title */}
-                    <div
-                        className={`text-center mt-9 md:mt-9 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                            }`}
-                    >
-                        <h2
-                            className="text-[#310101] text-3xl md:text-5xl font-bold uppercase tracking-wider border-b-4 border-[#310101] pb-2 inline-block"
-                            style={{
-                                fontFamily: 'ADLaM Display, cursive',
-                                WebkitTextStroke: '1px #310101'
-                            }}
-                        >
-                            WEDDING DRESSES
-                        </h2>
+                {/* --- SECOND ROW: WEDDING DRESSES --- */}
+                <div className="relative">
+                    {/* Divider Background - Now visible on mobile */}
+                    <div className="absolute top-[60%] left-0 right-0 h-[150px] md:h-[200px] -translate-y-1/2 z-0 opacity-90">
+                        <Image
+                            src="/ui/page4deviderimage.png"
+                            alt="Divider Pattern"
+                            fill
+                            className="object-cover"
+                        />
                     </div>
 
-                    {/* 25% OFF Badge - Right - Animated */}
-                    <div
-                        className={`bg-[#310101] text-white px-6 py-2 rounded-full border-2 border-[#310101] shadow-lg transform rotate-[2deg] mt-4 md:mt-0 transition-all duration-700 delay-300 animate-pulse ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
-                            }`}
-                    >
-                        <span className="font-black text-xl md:text-2xl" style={{ fontFamily: 'Fredoka One, cursive' }}>
-                            25% OFF
-                        </span>
-                    </div>
-                </div>
+                    {/* Header */}
+                    <div className="flex flex-col md:flex-row items-center justify-between mb-8 px-4 md:px-8">
+                        <div className="w-[120px] hidden md:block"></div>
 
-                {/* Desktop Grid */}
-                <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-5 gap-6 px-8 md:px-16">
-                    {weddingProducts.map((product, index) => (
+                        {/* Title */}
                         <div
-                            key={`wedding-${index}`}
-                            className="flex flex-col items-center group"
+                            className={`text-center mt-9 md:mt-9 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                                }`}
                         >
-                            <div className="relative w-full aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-4 border-[#310101]/10 bg-white shadow-xl transform transition-transform hover:-translate-y-2">
-                                <Image
-                                    src={product.image}
-                                    alt="Wedding Dress"
-                                    fill
-                                    className="object-cover"
-                                />
-                                <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold">
-                                    SALE
-                                </div>
-                            </div>
-                            <p className="text-[#310101] text-center text-xs font-semibold mb-3 leading-tight px-2 line-clamp-3 bg-white/80 backdrop-blur-sm rounded p-1" style={{ fontFamily: 'Abhaya Libre, serif' }}>
-                                {product.description}
-                            </p>
-                            <button className="bg-[#310101] text-white px-6 py-1.5 rounded-full font-bold text-xs uppercase hover:bg-[#4a0202] transition-colors shadow-md" style={{ fontFamily: 'Fredoka One, cursive' }}>
-                                SHOP
-                            </button>
+                            <h2
+                                className="text-[#310101] text-3xl md:text-5xl font-bold uppercase tracking-wider border-b-4 border-[#310101] pb-2 inline-block"
+                                style={{
+                                    fontFamily: 'ADLaM Display, cursive',
+                                    WebkitTextStroke: '1px #310101'
+                                }}
+                            >
+                                WEDDING DRESSES
+                            </h2>
                         </div>
-                    ))}
-                </div>
 
-                {/* Mobile Horizontal Slider */}
-                {/* Mobile Horizontal Slider - Track */}
-                <div className="md:hidden relative">
-                    <div className="overflow-hidden px-4">
+                        {/* 25% OFF Badge - Right - Animated */}
                         <div
-                            className="flex transition-transform duration-500 ease-in-out"
-                            style={{ transform: `translateX(-${currentWeddingIndex * 100}%)` }}
+                            className={`bg-[#310101] text-white px-6 py-2 rounded-full border-2 border-[#310101] shadow-lg transform rotate-[2deg] mt-4 md:mt-0 transition-all duration-700 delay-300 animate-pulse ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+                                }`}
                         >
-                            {weddingProducts.map((product) => (
-                                <div key={`wedding-mobile-${product.id}`} className="min-w-full flex-shrink-0 flex flex-col items-center px-2">
-                                    <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-4 border-[#310101]/10 bg-white shadow-xl">
-                                        <Image
-                                            src={product.image}
-                                            alt="Wedding Dress"
-                                            fill
-                                            className="object-cover"
-                                        />
-                                        <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold">
-                                            SALE
+                            <span className="font-black text-xl md:text-2xl" style={{ fontFamily: 'Fredoka One, cursive' }}>
+                                25% OFF
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Desktop Grid */}
+                    <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-5 gap-6 px-8 md:px-16">
+                        {weddingDesktop.map((product, index) => (
+                            <NewLandingProductCard
+                                key={`wedding-${product.id}`}
+                                product={product}
+                                variant="dark"
+                            />
+                        ))}
+                    </div>
+
+                    {/* Mobile Horizontal Slider */}
+                    {/* Mobile Horizontal Slider - Track */}
+                    <div className="md:hidden relative">
+                        <div className="overflow-hidden px-4">
+                            <div
+                                className="flex transition-transform duration-500 ease-in-out"
+                                style={{ transform: `translateX(-${currentWeddingIndex * 100}%)` }}
+                            >
+                                {weddingProducts.map((product) => (
+                                    <div key={`wedding-mobile-${product.id}`} className="min-w-full flex-shrink-0 flex flex-col items-center px-2">
+                                        <div className="w-full max-w-sm mx-auto">
+                                            <NewLandingProductCard
+                                                product={product}
+                                                variant="dark"
+                                            />
                                         </div>
                                     </div>
-                                    <p className="text-[#310101] text-center text-xs font-semibold mb-3 leading-tight px-4 max-w-sm bg-white/80 backdrop-blur-sm rounded p-2" style={{ fontFamily: 'Abhaya Libre, serif' }}>
-                                        {product.description}
-                                    </p>
-                                    <button className="bg-[#310101] text-white px-6 py-1.5 rounded-full font-bold text-xs uppercase hover:bg-[#4a0202] transition-colors shadow-md" style={{ fontFamily: 'Fredoka One, cursive' }}>
-                                        SHOP
-                                    </button>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
                         </div>
+
+                        {/* Navigation Arrows */}
+                        <button
+                            onClick={handleWeddingPrev}
+                            className="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
+                        >
+                            <ChevronLeft size={24} className="text-[#310101]" />
+                        </button>
+                        <button
+                            onClick={handleWeddingNext}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
+                        >
+                            <ChevronRight size={24} className="text-[#310101]" />
+                        </button>
                     </div>
 
-                    {/* Navigation Arrows */}
-                    <button
-                        onClick={handleWeddingPrev}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
-                    >
-                        <ChevronLeft size={24} className="text-[#310101]" />
-                    </button>
-                    <button
-                        onClick={handleWeddingNext}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
-                    >
-                        <ChevronRight size={24} className="text-[#310101]" />
-                    </button>
+                    {/* Indicator Dots */}
+                    <div className="flex justify-center gap-2 mt-6">
+                        {weddingProducts.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setCurrentWeddingIndex(index)}
+                                className={`w-2 h-2 rounded-full transition-all ${index === currentWeddingIndex ? 'bg-[#310101] w-6' : 'bg-[#310101]/50'
+                                    }`}
+                            />
+                        ))}
+                    </div>
                 </div>
 
-                {/* Indicator Dots */}
-                <div className="flex justify-center gap-2 mt-6">
-                    {weddingProducts.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setCurrentWeddingIndex(index)}
-                            className={`w-2 h-2 rounded-full transition-all ${index === currentWeddingIndex ? 'bg-[#310101] w-6' : 'bg-[#310101]/50'
-                                }`}
-                        />
-                    ))}
-                </div>
             </div>
-
         </section>
     );
 }
