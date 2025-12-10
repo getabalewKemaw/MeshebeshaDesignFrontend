@@ -172,98 +172,105 @@ export default function BestSellingSection() {
                         ))}
                     </div>
 
-                    {/* Mobile: Single Product Slider - Smaller Cards */}
-                    <div className="md:hidden mb-12">
-                        <div className="relative">
-                            {/* Single Product Display */}
+                    {/* Mobile: Single Product Slider - Smooth Track Style */}
+                    <div className="md:hidden mb-12 relative">
+                        <div className="overflow-hidden px-4">
                             <div
-                                className={`flex flex-col items-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                                    }`}
+                                className="flex transition-transform duration-500 ease-in-out"
+                                style={{ transform: `translateX(-${currentMobileIndex * 100}%)` }}
                             >
-                                {/* Image Container - Smaller on Mobile */}
-                                <div className="relative w-full max-w-[280px] sm:max-w-sm aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-2 border-white/20 shadow-2xl mx-auto">
-                                    <Image
-                                        src={products[currentMobileIndex].image}
-                                        alt="Traditional Dress"
-                                        fill
-                                        className="object-cover"
-                                    />
-                                    {/* SALE Tag */}
-                                    <div className="absolute bottom-4 left-4 bg-[#310101] text-white px-3 py-1 rounded text-sm font-bold tracking-wider">
-                                        SALE
+                                {products.map((product) => (
+                                    <div
+                                        key={product.id}
+                                        className="min-w-full flex-shrink-0 flex flex-col items-center transition-all duration-700"
+                                    >
+                                        {/* Image Container */}
+                                        <div className="relative w-full max-w-[280px] sm:max-w-sm aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-2 border-white/20 shadow-2xl mx-auto">
+                                            <Image
+                                                src={product.image}
+                                                alt="Traditional Dress"
+                                                fill
+                                                className="object-cover"
+                                            />
+                                            {/* SALE Tag */}
+                                            <div className="absolute bottom-4 left-4 bg-[#310101] text-white px-3 py-1 rounded text-sm font-bold tracking-wider">
+                                                SALE
+                                            </div>
+                                        </div>
+
+                                        {/* Description */}
+                                        <p
+                                            className="text-white text-center text-xs sm:text-sm mb-4 leading-relaxed px-4 max-w-[280px] sm:max-w-sm"
+                                            style={{ fontFamily: 'Abhaya Libre, serif' }}
+                                        >
+                                            {product.description}
+                                        </p>
+
+                                        {/* Shop Button */}
+                                        <button
+                                            className="bg-white text-[#310101] px-6 sm:px-8 py-2 rounded-full font-bold text-xs sm:text-sm uppercase hover:bg-gray-100 transition-all shadow-lg"
+                                            style={{ fontFamily: 'Fredoka One, cursive' }}
+                                        >
+                                            SHOP
+                                        </button>
                                     </div>
-                                </div>
-
-                                {/* Description */}
-                                <p
-                                    className="text-white text-center text-xs sm:text-sm mb-4 leading-relaxed px-4 max-w-[280px] sm:max-w-sm"
-                                    style={{ fontFamily: 'Abhaya Libre, serif' }}
-                                >
-                                    {products[currentMobileIndex].description}
-                                </p>
-
-                                {/* Shop Button */}
-                                <button
-                                    className="bg-white text-[#310101] px-6 sm:px-8 py-2 rounded-full font-bold text-xs sm:text-sm uppercase hover:bg-gray-100 transition-all shadow-lg"
-                                    style={{ fontFamily: 'Fredoka One, cursive' }}
-                                >
-                                    SHOP
-                                </button>
+                                ))}
                             </div>
-
-                            {/* Mobile Navigation Arrows */}
-                            <button
-                                onClick={handleMobilePrevious}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full"
-                                aria-label="Previous product"
-                            >
-                                <ChevronLeft size={28} />
-                            </button>
-                            <button
-                                onClick={handleMobileNext}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full"
-                                aria-label="Next product"
-                            >
-                                <ChevronRight size={28} />
-                            </button>
                         </div>
 
-                        {/* Mobile Product Indicator Dots */}
-                        <div className="flex justify-center gap-2 mt-6">
-                            {products.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setCurrentMobileIndex(index)}
-                                    className={`w-2 h-2 rounded-full transition-all ${index === currentMobileIndex ? 'bg-white w-6' : 'bg-white/50'
-                                        }`}
-                                    aria-label={`Go to product ${index + 1}`}
-                                />
-                            ))}
-                        </div>
+                        {/* Mobile Navigation Arrows */}
+                        <button
+                            onClick={handleMobilePrevious}
+                            className="absolute left-0 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full z-10"
+                            aria-label="Previous product"
+                        >
+                            <ChevronLeft size={28} />
+                        </button>
+                        <button
+                            onClick={handleMobileNext}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full z-10"
+                            aria-label="Next product"
+                        >
+                            <ChevronRight size={28} />
+                        </button>
                     </div>
 
-                    {/* Pagination / Navigation */}
-                    <div className="flex items-center justify-center gap-4 text-white">
-                        <button
-                            onClick={handlePrevious}
-                            className="hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full"
-                            aria-label="Previous page"
-                        >
-                            <ChevronLeft size={32} />
-                        </button>
-                        <span className="text-xl font-medium tracking-widest min-w-[60px] text-center">
-                            {currentPage}/{totalPages}
-                        </span>
-                        <button
-                            onClick={handleNext}
-                            className="hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full"
-                            aria-label="Next page"
-                        >
-                            <ChevronRight size={32} />
-                        </button>
+                    {/* Mobile Product Indicator Dots */}
+                    <div className="flex justify-center gap-2 mt-6">
+                        {products.map((_, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setCurrentMobileIndex(index)}
+                                className={`w-2 h-2 rounded-full transition-all ${index === currentMobileIndex ? 'bg-white w-6' : 'bg-white/50'
+                                    }`}
+                                aria-label={`Go to product ${index + 1}`}
+                            />
+                        ))}
                     </div>
                 </div>
+
+                {/* Pagination / Navigation */}
+                <div className="flex items-center justify-center gap-4 text-white">
+                    <button
+                        onClick={handlePrevious}
+                        className="hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full"
+                        aria-label="Previous page"
+                    >
+                        <ChevronLeft size={32} />
+                    </button>
+                    <span className="text-xl font-medium tracking-widest min-w-[60px] text-center">
+                        {currentPage}/{totalPages}
+                    </span>
+                    <button
+                        onClick={handleNext}
+                        className="hover:text-gray-300 transition-colors p-2 hover:bg-white/10 rounded-full"
+                        aria-label="Next page"
+                    >
+                        <ChevronRight size={32} />
+                    </button>
+                </div>
             </div>
-        </section>
+       
+        </section >
     );
 }
