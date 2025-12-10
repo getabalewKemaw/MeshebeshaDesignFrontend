@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function NewHeroSection() {
     return (
-        <section className="relative w-full h-screen min-h-[600px] overflow-hidden">
+        <section className="relative w-full h-screen min-h-[600px] overflow-hidden pt-[70px]">
             {/* Decorative Left Border Pattern */}
 
 
