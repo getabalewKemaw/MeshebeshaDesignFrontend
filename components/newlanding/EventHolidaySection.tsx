@@ -191,37 +191,47 @@ export default function EventHolidaySection() {
                     </div>
 
                     {/* Mobile Horizontal Slider */}
-                    <div className="md:hidden relative px-4">
-                        <div className="flex flex-col items-center">
-                            <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-4 border-[#310101]/10 bg-white shadow-xl">
-                                <Image
-                                    src={eventProducts[currentEventIndex].image}
-                                    alt="Event Dress"
-                                    fill
-                                    className="object-cover"
-                                />
-                                <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold">
-                                    SALE
-                                </div>
+                    {/* Mobile Horizontal Slider - Track */}
+                    <div className="md:hidden relative">
+                        <div className="overflow-hidden px-4">
+                            <div
+                                className="flex transition-transform duration-500 ease-in-out"
+                                style={{ transform: `translateX(-${currentEventIndex * 100}%)` }}
+                            >
+                                {eventProducts.map((product) => (
+                                    <div key={`event-mobile-${product.id}`} className="min-w-full flex-shrink-0 flex flex-col items-center px-2">
+                                        <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-4 border-[#310101]/10 bg-white shadow-xl">
+                                            <Image
+                                                src={product.image}
+                                                alt="Event Dress"
+                                                fill
+                                                className="object-cover"
+                                            />
+                                            <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold">
+                                                SALE
+                                            </div>
+                                        </div>
+                                        <p className="text-[#310101] text-center text-xs font-semibold mb-3 leading-tight px-4 max-w-sm bg-white/80 backdrop-blur-sm rounded p-2" style={{ fontFamily: 'Abhaya Libre, serif' }}>
+                                            {product.description}
+                                        </p>
+                                        <button className="bg-[#310101] text-white px-6 py-1.5 rounded-full font-bold text-xs uppercase hover:bg-[#4a0202] transition-colors shadow-md" style={{ fontFamily: 'Fredoka One, cursive' }}>
+                                            SHOP
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
-                            <p className="text-[#310101] text-center text-xs font-semibold mb-3 leading-tight px-4 max-w-sm bg-white/80 backdrop-blur-sm rounded p-2" style={{ fontFamily: 'Abhaya Libre, serif' }}>
-                                {eventProducts[currentEventIndex].description}
-                            </p>
-                            <button className="bg-[#310101] text-white px-6 py-1.5 rounded-full font-bold text-xs uppercase hover:bg-[#4a0202] transition-colors shadow-md" style={{ fontFamily: 'Fredoka One, cursive' }}>
-                                SHOP
-                            </button>
                         </div>
 
                         {/* Navigation Arrows */}
                         <button
                             onClick={handleEventPrev}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
+                            className="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
                         >
                             <ChevronLeft size={24} className="text-[#310101]" />
                         </button>
                         <button
                             onClick={handleEventNext}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
+                            className="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
                         >
                             <ChevronRight size={24} className="text-[#310101]" />
                         </button>
@@ -241,7 +251,7 @@ export default function EventHolidaySection() {
                 </div>
             </div>
 
-      
+
 
             {/* --- SECOND ROW: WEDDING DRESSES --- */}
             <div className="relative">
@@ -315,37 +325,47 @@ export default function EventHolidaySection() {
                 </div>
 
                 {/* Mobile Horizontal Slider */}
-                <div className="md:hidden relative px-4">
-                    <div className="flex flex-col items-center">
-                        <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-4 border-[#310101]/10 bg-white shadow-xl">
-                            <Image
-                                src={weddingProducts[currentWeddingIndex].image}
-                                alt="Wedding Dress"
-                                fill
-                                className="object-cover"
-                            />
-                            <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold">
-                                SALE
-                            </div>
+                {/* Mobile Horizontal Slider - Track */}
+                <div className="md:hidden relative">
+                    <div className="overflow-hidden px-4">
+                        <div
+                            className="flex transition-transform duration-500 ease-in-out"
+                            style={{ transform: `translateX(-${currentWeddingIndex * 100}%)` }}
+                        >
+                            {weddingProducts.map((product) => (
+                                <div key={`wedding-mobile-${product.id}`} className="min-w-full flex-shrink-0 flex flex-col items-center px-2">
+                                    <div className="relative w-full max-w-sm aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-4 border-[#310101]/10 bg-white shadow-xl">
+                                        <Image
+                                            src={product.image}
+                                            alt="Wedding Dress"
+                                            fill
+                                            className="object-cover"
+                                        />
+                                        <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold">
+                                            SALE
+                                        </div>
+                                    </div>
+                                    <p className="text-[#310101] text-center text-xs font-semibold mb-3 leading-tight px-4 max-w-sm bg-white/80 backdrop-blur-sm rounded p-2" style={{ fontFamily: 'Abhaya Libre, serif' }}>
+                                        {product.description}
+                                    </p>
+                                    <button className="bg-[#310101] text-white px-6 py-1.5 rounded-full font-bold text-xs uppercase hover:bg-[#4a0202] transition-colors shadow-md" style={{ fontFamily: 'Fredoka One, cursive' }}>
+                                        SHOP
+                                    </button>
+                                </div>
+                            ))}
                         </div>
-                        <p className="text-[#310101] text-center text-xs font-semibold mb-3 leading-tight px-4 max-w-sm bg-white/80 backdrop-blur-sm rounded p-2" style={{ fontFamily: 'Abhaya Libre, serif' }}>
-                            {weddingProducts[currentWeddingIndex].description}
-                        </p>
-                        <button className="bg-[#310101] text-white px-6 py-1.5 rounded-full font-bold text-xs uppercase hover:bg-[#4a0202] transition-colors shadow-md" style={{ fontFamily: 'Fredoka One, cursive' }}>
-                            SHOP
-                        </button>
                     </div>
 
                     {/* Navigation Arrows */}
                     <button
                         onClick={handleWeddingPrev}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
+                        className="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
                     >
                         <ChevronLeft size={24} className="text-[#310101]" />
                     </button>
                     <button
                         onClick={handleWeddingNext}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
                     >
                         <ChevronRight size={24} className="text-[#310101]" />
                     </button>

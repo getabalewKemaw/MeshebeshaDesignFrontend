@@ -11,6 +11,7 @@ import JewelrySection from '@/components/newlanding/JewelrySection';
 import CustomProductSection from '@/components/newlanding/CustomProductSection';
 import AboutSection from '@/components/newlanding/AboutSection';
 import FooterSection from '@/components/newlanding/FooterSection';
+import InfiniteTextDivider from '@/components/newlanding/InfiniteTextDivider';
 import ChatPopup from '@/components/landing/ChatPopup';
 
 export default function HomePage() {
@@ -18,12 +19,19 @@ export default function HomePage() {
     <div className="min-h-screen">
       <NewNavBar />
       <NewHeroSection />
+      <InfiniteTextDivider />
       <BestSellingSection />
+      <InfiniteTextDivider />
       <ModernCulturalSection />
+      <InfiniteTextDivider />
       <EventHolidaySection />
+      <InfiniteTextDivider />
       <MensCouplesSection />
+      <InfiniteTextDivider />
       <JewelrySection />
+      <InfiniteTextDivider />
       <CustomProductSection />
+      <InfiniteTextDivider />
       <AboutSection />
       <FooterSection />
       <ChatPopup />

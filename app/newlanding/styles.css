@@ -1,139 +1,163 @@
-/* Mobile Responsive Styles for New Landing Page */
+/* CSS for New Landing Page */
+@import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Fredoka+One&family=Abhaya+Libre:wght@400;500;600;700;800&family=ADLaM+Display&display=swap');
 
-/* Ensure no extra spacing at top */
-body {
-    margin: 0;
-    padding: 0;
-}
-
-/* Mobile Navigation - Responsive */
-@media (max-width: 1024px) {
-    .new-landing-nav-links {
-        display: none;
-    }
-}
-
-/* Hero Section Responsive Text */
-@media (max-width: 768px) {
-    .hero-tagline {
-        font-size: 1.5rem !important;
-        letter-spacing: 0.1em !important;
-    }
-
-    .hero-main-heading {
-        font-size: 3rem !important;
-        letter-spacing: 0.05em !important;
-    }
-
-    .hero-description {
-        font-size: 1rem !important;
-        letter-spacing: 0.05em !important;
-    }
-
-    .decorative-border {
-        width: 40px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .hero-tagline {
-        font-size: 1.2rem !important;
-    }
-
-    .hero-main-heading {
-        font-size: 2.5rem !important;
-    }
-
-    .hero-description {
-        font-size: 0.9rem !important;
-    }
-
-    .decorative-border {
-        width: 30px !important;
-    }
-}
-
-/* Fade In Up Animation for Hero Text */
-@keyframes fadeInUp {
-    from {
+/* Existing Animations from previous edits preserved/merged */
+@keyframes fade-in-up {
+    0% {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(20px);
     }
 
-    to {
+    100% {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
 .animate-fade-in-up {
-    animation: fadeInUp 0.8s ease-out;
+    animation: fade-in-up 0.8s ease-out forwards;
 }
 
-/* Sparkle Animation */
-@keyframes sparkle {
+/* Modern Premium Animations */
 
-    0%,
-    100% {
-        opacity: 0;
-        transform: scale(0) translateY(0);
-    }
-
-    50% {
-        opacity: 1;
-        transform: scale(1) translateY(-20px);
-    }
-}
-
-.sparkle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: white;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-    animation: sparkle 3s ease-in-out infinite;
-}
-
-.sparkle-1 {
-    top: 20%;
-    left: 15%;
-    animation-delay: 0s;
-}
-
-.sparkle-2 {
-    top: 60%;
-    left: 25%;
-    animation-delay: 1s;
-}
-
-.sparkle-3 {
-    top: 40%;
-    right: 20%;
-    animation-delay: 2s;
-}
-
-.sparkle-4 {
-    top: 75%;
-    right: 30%;
-    animation-delay: 1.5s;
-}
-
-/* Infinite Spin Animation for 25% OFF Badge */
-@keyframes spinIn {
+/* 1. Cinematic Tracking Expansion (for Tagline) */
+@keyframes tracking-expand-fwd {
     0% {
-        transform: rotate(0deg) scale(1);
+        letter-spacing: -0.5em;
+        opacity: 0;
+        filter: blur(12px);
     }
 
-    50% {
-        transform: rotate(180deg) scale(1.05);
+    40% {
+        opacity: 0.6;
     }
 
     100% {
-        transform: rotate(360deg) scale(1);
+        letter-spacing: 0.2em;
+        /* Target tracking */
+        opacity: 1;
+        filter: blur(0px);
+    }
+}
+
+.animate-tracking-expand {
+    animation: tracking-expand-fwd 1.2s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards;
+}
+
+/* 2. Text Reveal from Mask (for Main Title) */
+@keyframes reveal-up {
+    0% {
+        transform: translateY(110%);
+        opacity: 0;
+        /* Just in case */
+        filter: blur(5px);
+    }
+
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+.animate-reveal-up {
+    animation: reveal-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 2b. Rotated Reveal (Modern) */
+@keyframes reveal-rotate-up {
+    0% {
+        transform: translateY(110%) rotate(5deg);
+        transform-origin: bottom left;
+        opacity: 0;
+        filter: blur(5px);
+    }
+
+    100% {
+        transform: translateY(0) rotate(0deg);
+        transform-origin: bottom left;
+        opacity: 1;
+        filter: blur(0);
+    }
+}
+
+.animate-reveal-rotate {
+    animation: reveal-rotate-up 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 3. Blur Slide In (for Description) */
+@keyframes blur-slide-up {
+    0% {
+        opacity: 0;
+        filter: blur(20px);
+        transform: translateY(40px) scale(0.95);
+    }
+
+    100% {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateY(0) scale(1);
+    }
+}
+
+.animate-blur-slide {
+    animation: blur-slide-up 1s ease-out forwards;
+}
+
+/* Animation Delays */
+.delay-100 {
+    animation-delay: 100ms;
+}
+
+.delay-200 {
+    animation-delay: 200ms;
+}
+
+.delay-300 {
+    animation-delay: 300ms;
+}
+
+.delay-500 {
+    animation-delay: 500ms;
+}
+
+.delay-700 {
+    animation-delay: 700ms;
+}
+
+/* Infinite Text Marquee */
+@keyframes marquee {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-marquee {
+    animation: marquee 25s linear infinite;
+}
+
+.animate-marquee2 {
+    animation: marquee 25s linear infinite;
+    position: absolute;
+    top: 0;
+    left: 100%;
+}
+
+/* 25% OFF Badge Spin Animation */
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
     }
 }
 
 .animate-spin-slow {
-    animation: spinIn 8s ease-in-out infinite;
+    animation: spin-slow 8s linear infinite;
 }
