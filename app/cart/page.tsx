@@ -10,6 +10,7 @@ import { ShoppingBag } from "lucide-react";
 import { useState } from "react";
 import type { ToastType } from "@/components/ui/Toast";
 import Link from "next/link";
+import NewNavBar from "@/components/newlanding/NewNavBar";
 
 
 // to prevent unnnessary computation on evert rende
@@ -52,7 +53,7 @@ export default function CartPage() {
 
   return (
     <>
-      <Navbar />
+      <NewNavBar />
       <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

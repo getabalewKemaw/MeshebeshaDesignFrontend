@@ -15,6 +15,7 @@ import ProductInfo from "@/components/products/details/ProductInfo";
 import ProductActions from "@/components/products/details/ProductActions";
 import ProductVariantsList from "@/components/products/details/ProductVariantsList";
 import ProductReviewModalWrapper from "@/components/products/details/ProductReviewModalWrapper";
+import NewNavBar from "@/components/newlanding/NewNavBar";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
@@ -293,7 +294,7 @@ export default function ProductDetailPage() {
 
   return (
     <>
-      <Navbar />
+      <NewNavBar />
       <div className="max-w-5xl mx-auto px-4 py-6">
         {loading ? (
           <div className="py-10 text-center">Loading...</div>

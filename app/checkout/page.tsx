@@ -10,6 +10,7 @@ import EmptyState from "@/components/ui/EmptyState";
 import { useCartStore } from "@/stores/cart";
 import { useCheckoutStore } from "@/stores/checkout";
 import { useCheckoutSubmission } from "@/hooks/useCheckoutSubmission";
+import NewNavBar from "@/components/newlanding/NewNavBar";
 
 const formatCurrency = (currency: string) =>
   new Intl.NumberFormat("en-US", {
@@ -71,7 +72,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Navbar />
+      <NewNavBar />
       <div className="max-w-6xl mx-auto px-4 py-8">
         <CheckoutHeader />
 

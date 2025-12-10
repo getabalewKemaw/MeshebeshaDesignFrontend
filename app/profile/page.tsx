@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
 import Navbar from "@/components/NavBar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import NewNavBar from "@/components/newlanding/NewNavBar";
 
 export default function ProfilePage() {
   const { user,refreshUser } = useAuth();
@@ -90,7 +91,7 @@ export default function ProfilePage() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
+        <NewNavBar />
 
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Profile Header */}

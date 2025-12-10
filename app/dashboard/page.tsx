@@ -5,6 +5,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import Navbar from "@/components/NavBar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import NotificationList from "@/components/NotificationList";
+import NewNavBar from "@/components/newlanding/NewNavBar";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -21,7 +22,7 @@ const memberSince = useMemo(() => {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
+        <NewNavBar />
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Welcome Section */}

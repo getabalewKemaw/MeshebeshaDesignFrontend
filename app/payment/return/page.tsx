@@ -8,6 +8,7 @@ import PaymentError from "@/components/payment/return/PaymentError";
 import PaymentSuccess from "@/components/payment/return/PaymentSuccess";
 import PaymentFailed from "@/components/payment/return/PaymentFailed";
 import PaymentPending from "@/components/payment/return/PaymentPending";
+import NewNavBar from "@/components/newlanding/NewNavBar";
 export default function PaymentReturnPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
@@ -18,7 +19,7 @@ export default function PaymentReturnPage() {
   if (!orderId) {
     return (
       <>
-        <Navbar />
+        <NewNavBar />
         <PaymentError
           title="Invalid Request"
           message="Order ID is missing from the URL."
@@ -31,7 +32,7 @@ export default function PaymentReturnPage() {
   if (error) {
     return (
       <>
-        <Navbar />
+        <NewNavBar />
         <PaymentError message={error} />
       </>
     );
@@ -41,7 +42,7 @@ export default function PaymentReturnPage() {
   if (isLoading || !paymentStatus) {
     return (
       <>
-        <Navbar />
+        <NewNavBar />
         <PaymentLoading />
       </>
     );
@@ -51,7 +52,7 @@ export default function PaymentReturnPage() {
   if (paymentStatus.status === "paid") {
     return (
       <>
-        <Navbar />
+        <NewNavBar />
         <PaymentSuccess paymentStatus={paymentStatus} />
       </>
     );
@@ -61,7 +62,7 @@ export default function PaymentReturnPage() {
   if (paymentStatus.status === "failed") {
     return (
       <>
-        <Navbar />
+        <NewNavBar />
         <PaymentFailed paymentStatus={paymentStatus} />
       </>
     );
@@ -70,7 +71,7 @@ export default function PaymentReturnPage() {
   // 6. Pending State (Default fallback)
   return (
     <>
-      <Navbar />
+      <NewNavBar />
       <PaymentPending />
     </>
   );

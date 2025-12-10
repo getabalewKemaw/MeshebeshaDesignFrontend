@@ -11,6 +11,7 @@ import ProductsPagination from "@/components/products/listing/ProductsPagination
 import ProductsLoading from "@/components/products/listing/ProductsLoading";
 import ProductsError from "@/components/products/listing/ProductsError";
 import ProductsEmpty from "@/components/products/listing/ProductsEmpty";
+import NewNavBar from "@/components/newlanding/NewNavBar";
 
 const DEFAULT_FILTERS = {
   q: "",
@@ -98,7 +99,7 @@ export default function ProductsPage() {
 
   return (
     <>
-      <Navbar />
+      <NewNavBar />
 
       <main className="min-h-screen bg-gradient-to-b from-[#FFF9F0] to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

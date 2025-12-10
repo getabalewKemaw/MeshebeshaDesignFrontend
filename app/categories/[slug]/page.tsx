@@ -10,6 +10,7 @@ import CategoryHeader from "@/components/categories/CategoryHeader";
 import EmptyState from "@/components/categories/EmptyState";
 import ProductsGrid from "@/components/categories/ProductsGrid";
 import Pagination from "@/components/categories/Pagination";
+import NewNavBar from "@/components/newlanding/NewNavBar";
 
 export default function CategoryPage() {
     const params = useParams();
@@ -48,7 +49,7 @@ export default function CategoryPage() {
 
     return (
         <>
-            <Navbar />
+            <NewNavBar />
 
             <main className="min-h-screen bg-linear-to-b from-[#FFF9F0] to-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -12,6 +12,7 @@ import OrdersLoadingState from "@/components/orders/OrdersLoadingState";
 import OrdersErrorState from "@/components/orders/OrdersErrorState";
 import OrdersEmptyState from "@/components/orders/OrdersEmptyState";
 import OrdersList from "@/components/orders/OrdersList";
+import NewNavBar from "@/components/newlanding/NewNavBar";
 
 export default function OrdersPage() {
     const { isAuthenticated } = useAuth();
@@ -77,7 +78,7 @@ const handleCloseModal = useCallback(() => {
     return (
         <ProtectedRoute>
             <div className="min-h-screen bg-[#F8F9FC]">
-                <Navbar />
+                <NewNavBar />
 
                 <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
                     <OrdersHeader
