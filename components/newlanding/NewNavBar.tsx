@@ -74,7 +74,7 @@ export default function NewNavBar() {
     };
 
     return (
-        <nav className={`fixed top-0 left-0 right-0 z-50 w-full bg-white border-b-[3px] border-[#310101] transition-all duration-300 ${scrolled ? 'shadow-xl' : 'shadow-md'
+        <nav className={`fixed top-0 left-0 right-0 z-50 w-full bg-white/95 backdrop-blur-md border-b-[3px] border-[#310101] transition-all duration-300 ${scrolled ? 'shadow-xl bg-white' : 'shadow-md'
             }`}>
             <div className="max-w-[1400px] mx-auto h-[70px] px-4 md:px-8 flex items-center justify-between">
                 {/* Logo and Brand */}
