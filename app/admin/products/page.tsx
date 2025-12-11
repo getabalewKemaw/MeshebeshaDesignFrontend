@@ -3,7 +3,8 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Package, Plus, Search, Edit, Trash2, Image, Copy, Archive, RotateCcw, Layers } from "lucide-react";
+import { Package, Plus, Search, Edit, Trash2, Image as ImageIcon, Copy, Archive, RotateCcw, Layers } from "lucide-react";
+import Image from 'next/image';
 import { Product } from "@/types/product";
 import * as productApi from "@/lib/api/products";
 import { formatCurrency, getStatusBadge } from "@/lib/utils/product-utils";
@@ -56,6 +57,7 @@ export default function ProductsPage() {
   };
 
   const handleArchive = async (id: string) => {
+    
     if (!confirm("Archive this product?")) return;
     try {
       const response = await productApi.archiveProduct(id);
@@ -181,8 +183,21 @@ export default function ProductsPage() {
                 className={`bg-white shadow-sm hover:shadow-md transition-shadow ${isArchived ? 'opacity-75' : ''
                   }`}
               >
-                <div className="h-48 bg-gray-100 flex items-center justify-center">
-                  <Image className="h-16 w-16 text-gray-400" width={280} height={280} />
+                <div className="relative h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+
+                  {/*  in these if the product have a medea we show up the first media  if not we show up the placeholder   so lets do it*/}
+                  {product.media && product.media.length > 0 ? (
+                    <Image
+                      src={product.media[0].url}
+                      alt={product.title}
+                      fill
+                      // to make the image fully shown make the image aspecr ration 3;4 how to do these
+                      // style={{ objectFit: 'cover', aspectRatio: '3 / 4' }}
+                      className="object-cover w-full h-full aspect-square "
+                    />
+                  ) : (
+                    <ImageIcon className="h-16 w-16 text-gray-400" />
+                  )}
                 </div>
                 <div className="p-6">
                   <div className="flex items-start justify-between mb-2">
@@ -240,7 +255,7 @@ export default function ProductsPage() {
                         href={`/admin/products/${product.id}/media`}
                         className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
                       >
-                        <Image className="h-4 w-4" />
+                        <ImageIcon className="h-4 w-4" />
                         Media
                       </a>
                       <button
