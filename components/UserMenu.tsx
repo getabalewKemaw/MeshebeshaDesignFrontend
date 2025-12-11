@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { authClient } from "@/lib/auth-client";
+import Image from 'next/image';
 
 export function UserMenu() {
   const router = useRouter();
@@ -26,7 +27,21 @@ export function UserMenu() {
         className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors"
       >
         <div className="w-8 h-8 rounded-full text-gray-950 flex items-center justify-center font-medium">
-          {user.name?.charAt(0).toUpperCase()}
+          {/* {user.name?.charAt(0).toUpperCase()} */}
+
+          {/*  if the user has an image display it if not make the first letter of the name */}
+          {!user.image ? (
+            <span>{user.name.charAt(0).toUpperCase()}</span>
+          ) : (
+            <Image
+              src={user.image} // Replace with your user's profile image URL
+              alt="Profile Picture"
+              className="w-8 h-8 rounded-full object-cover"
+              width={8}
+              height={8}
+            />
+          )}
+     
         </div>
         <div className="text-left">
           <p className="text-sm font-medium text-gray-900">{user.name}</p>

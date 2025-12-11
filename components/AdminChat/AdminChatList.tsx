@@ -1,10 +1,13 @@
 "use client";
 import React, { useState } from "react";
+import Image from 'next/image';
+import { p } from "framer-motion/client";
+
 
 type RoomSummary = {
   id: string;
   product: { id: string; title: string } | null;
-  user: { id: string; name: string; email?: string } | null;
+  user: { id: string; name: string; email?: string, image?: string } | null;
   lastMessage?: { id: string; content: string; type: string; createdAt: string } | null;
   createdAt: string;
 };
@@ -20,6 +23,8 @@ export default function AdminChatList({
   selectedRoomId: string | null;
   onlineUsers: Set<string>;
 }) {
+
+  
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredRooms = rooms.filter((room) => {
@@ -98,9 +103,20 @@ export default function AdminChatList({
                 <div className="flex items-start gap-3">
                   {/* Avatar */}
                   <div className="relative flex-shrink-0">
-                    <div className="w-12 h-12 bg-[#310101] text-white flex items-center justify-center font-bold text-lg">
-                      {r.user?.name?.charAt(0).toUpperCase() || "U"}
+                    <div className="relative w-12 h-12 rounded-full overflow-hidden bg-[#310101] flex items-center justify-center font-bold text-lg">
+                      {r.user?.image ? (
+                        <Image
+                          src={r.user.image}
+                          alt={`${r.user.name}'s avatar`}
+                          fill
+                          className="object-cover rounded-full"
+                        />
+                      ) : (
+                        <p className="text-white ">  {r.user?.name?.charAt(0).toUpperCase() || "U"}</p>
+
+                      )}
                     </div>
+
                     {isOnline && (
                       <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white"></span>
                     )}
