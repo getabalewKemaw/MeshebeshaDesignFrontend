@@ -12,6 +12,20 @@
 :root {
   --background: #fff9f0;
   --foreground: #1e2a55;
+  --admin-primary: #310101;
+  --admin-secondary: #500202;
+}
+
+.text-admin-primary {
+  color: var(--admin-primary);
+}
+
+.bg-admin-primary {
+  background-color: var(--admin-primary);
+}
+
+.border-admin-primary {
+  border-color: var(--admin-primary);
 }
 
 body {

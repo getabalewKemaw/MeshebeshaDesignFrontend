@@ -55,7 +55,7 @@ export default function ChatPopup() {
                 {/* Popup Card */}
                 <button
                     onClick={handleChatOpen}
-                    className="block bg-gradient-to-br from-[#1E2A55] to-[#2A3A65] text-white rounded-2xl shadow-2xl p-5 pr-12 max-w-sm hover:shadow-3xl transition-shadow group text-left w-full"
+                    className="block bg-[#310101] text-white rounded-2xl shadow-2xl p-5 pr-12 max-w-sm hover:shadow-3xl transition-shadow group text-left w-full"
                 >
                     {/* Close Button */}
                     <div

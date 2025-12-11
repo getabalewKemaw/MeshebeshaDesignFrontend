@@ -79,8 +79,8 @@ export default function AdminSidebar({ onNavigate, footerSlot }: AdminSidebarPro
   };
 
   return (
-    <nav className="flex h-full w-full flex-col bg-slate-950 text-slate-100 border-r border-slate-800">
-      <div className="flex h-16 items-center gap-3 px-5 border-b border-slate-800">
+    <nav className="flex h-full w-full flex-col bg-[var(--admin-primary)] text-slate-100 border-r border-slate-800">
+      <div className="flex h-16 items-center gap-3 px-5 border-b border-white/10">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-purple-500/20 text-lg font-bold text-purple-300">
           M
         </div>
@@ -106,12 +106,12 @@ export default function AdminSidebar({ onNavigate, footerSlot }: AdminSidebarPro
                     href={item.href}
                     onClick={onNavigate}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${active
-                      ? "bg-slate-900 text-white"
-                      : "text-slate-300 hover:bg-slate-900/70 hover:text-white"
+                      ? "bg-white/20 text-white"
+                      : "text-slate-300 hover:bg-white/10 hover:text-white"
                       }`}
                   >
                     <span
-                      className={`flex h-8 w-8 items-center justify-center rounded-md text-slate-200 ${active ? "bg-slate-800" : "bg-slate-900"
+                      className={`flex h-8 w-8 items-center justify-center rounded-md text-slate-200 ${active ? "bg-white/20" : "bg-white/5"
                         }`}
                     >
                       <Icon className="h-4 w-4" />

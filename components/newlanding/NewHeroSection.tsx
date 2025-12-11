@@ -2,8 +2,74 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { getProductSuggestions } from '@/lib/api/products';
+import { ProductWithDetails } from '@/types/product';
+import { Loader2, Search } from 'lucide-react';
 
 export default function NewHeroSection() {
+    const router = useRouter();
+    const [searchQuery, setSearchQuery] = useState('');
+    const [suggestions, setSuggestions] = useState<ProductWithDetails[]>([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    // Debounce logic
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchQuery.length >= 2) {
+                fetchSuggestions(searchQuery);
+            } else {
+                setSuggestions([]);
+            }
+        }, 300); // 300ms debounce
+
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
+    // Close suggestions on outside click
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+                setShowSuggestions(false);
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [wrapperRef]);
+
+    const fetchSuggestions = async (query: string) => {
+        setIsLoading(true);
+        try {
+            const response = await getProductSuggestions(query, 5);
+            if (response.success && response.data) {
+                setSuggestions(response.data);
+                setShowSuggestions(true);
+            }
+        } catch (error) {
+            console.error('Error fetching suggestions:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSearchSubmit = (e?: React.FormEvent) => {
+        e?.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/products?q=${encodeURIComponent(searchQuery)}`);
+            setShowSuggestions(false);
+        }
+    };
+
+    const handleSuggestionClick = (productId: string) => {
+        router.push(`/products/${productId}`);
+        setShowSuggestions(false);
+    };
+
     return (
         <section className="relative w-full h-screen min-h-[750px] overflow-hidden pt-[70px]">
             {/* Background Image - Desktop */}
@@ -113,18 +179,76 @@ export default function NewHeroSection() {
                         </Link>
 
                         {/* Search Bar - Modern Glassmorphism */}
-                        <div className="w-full max-w-md relative group">
-                            <input
-                                type="text"
-                                placeholder="Search products..."
-                                className="w-full h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/70 px-8 pr-14 focus:ring-2 focus:ring-white/50 focus:bg-white/20 outline-none transition-all duration-300 shadow-lg"
-                            />
-                            <button className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 group-hover:text-white transition-colors duration-300 transform group-hover:scale-110">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
-                            </button>
+                        <div ref={wrapperRef} className="w-full max-w-md relative group">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onFocus={() => searchQuery.length >= 2 && setShowSuggestions(true)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
+                                    placeholder="Search products..."
+                                    className="w-full h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/70 px-8 pr-14 focus:ring-2 focus:ring-white/50 focus:bg-white/20 outline-none transition-all duration-300 shadow-lg"
+                                />
+                                <button
+                                    onClick={() => handleSearchSubmit()}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 group-hover:text-white transition-colors duration-300 transform group-hover:scale-110"
+                                >
+                                    {isLoading ? (
+                                        <Loader2 className="w-6 h-6 animate-spin" />
+                                    ) : (
+                                        <Search className="w-6 h-6" />
+                                    )}
+                                </button>
+                            </div>
+
+                            {/* Suggestions Dropdown */}
+                            {showSuggestions && suggestions.length > 0 && (
+                                <div className="absolute w-full bottom-full mb-2 bg-white rounded-2xl shadow-xl overflow-hidden z-50 text-left animate-in fade-in slide-in-from-bottom-2 duration-200">
+                                    {suggestions.map((product) => (
+                                        <div
+                                            key={product.id}
+                                            onClick={() => handleSuggestionClick(product.id)}
+                                            className="flex items-center gap-4 p-3 hover:bg-gray-50 cursor-pointer border-b last:border-none border-gray-100 transition-colors"
+                                        >
+                                            <div className="relative h-12 w-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                                                {product.media && product.media[0] ? (
+                                                    <Image
+                                                        src={product.media[0].url}
+                                                        alt={product.title}
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                                        <Search className="h-5 w-5" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <h4 className="text-sm font-semibold text-gray-900 truncate">
+                                                    {product.title}
+                                                </h4>
+                                                <p className="text-xs text-gray-500 truncate">
+                                                    {product.category?.name || 'Uncategorized'}
+                                                </p>
+                                            </div>
+                                            <div className="text-xs font-bold text-[#310101]">
+                                                {new Intl.NumberFormat('en-ET', {
+                                                    style: 'currency',
+                                                    currency: 'ETB'
+                                                }).format(product.price)}
+                                            </div>
+                                        </div>
+                                    ))}
+                                    <div
+                                        onClick={() => handleSearchSubmit()}
+                                        className="p-3 text-center text-sm font-medium text-indigo-600 hover:text-indigo-800 hover:bg-gray-50 cursor-pointer border-t border-gray-100"
+                                    >
+                                        View all results for {searchQuery}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

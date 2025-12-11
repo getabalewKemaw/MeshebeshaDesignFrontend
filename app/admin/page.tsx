@@ -7,7 +7,7 @@ import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, Cart
 import { Package, ShoppingCart, Users, DollarSign, MessageSquare, AlertTriangle, ShoppingBag } from "lucide-react";
 import * as dashboardAPI from "@/lib/api/admin/dashboard";
 
-const COLORS = ['#1E2A55', '#CFAE56', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
+const COLORS = ['#310101', '#CFAE56', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
 export default function AdminDashboard() {
   const { user, isAdmin, isLoading: authLoading } = useAuth();
@@ -58,7 +58,7 @@ export default function AdminDashboard() {
   if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#1E2A55]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--admin-primary)]"></div>
       </div>
     );
   }
@@ -90,9 +90,9 @@ export default function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-50">
       {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-[#1E2A55] to-[#2A3A65] rounded-2xl shadow-lg p-8 mb-8 text-white">
+      <div className="bg-gradient-to-r from-[var(--admin-primary)] to-[var(--admin-secondary)] rounded-2xl shadow-lg p-8 mb-8 text-white">
         <h1 className="text-3xl font-bold mb-2">Admin Dashboard 📊</h1>
-        <p className="text-blue-100">Welcome back, {user?.name}! Here is your store analytics.</p>
+        <p className="text-red-100">Welcome back, {user?.name}! Here is your store analytics.</p>
       </div>
 
       {/* Key Metrics Overview */}
@@ -185,11 +185,11 @@ export default function AdminDashboard() {
               <XAxis dataKey="date" tick={{ fontSize: 12 }} />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#1E2A55', border: 'none', borderRadius: '8px', color: 'white' }}
+                contentStyle={{ backgroundColor: '#310101', border: 'none', borderRadius: '8px', color: 'white' }}
                 formatter={(value: any) => formatCurrency(value)}
               />
               <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="#1E2A55" strokeWidth={3} dot={{ fill: '#CFAE56', r: 5 }} name="Revenue (ETB)" />
+              <Line type="monotone" dataKey="revenue" stroke="#310101" strokeWidth={3} dot={{ fill: '#CFAE56', r: 5 }} name="Revenue (ETB)" />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -204,7 +204,7 @@ export default function AdminDashboard() {
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, percent }) => `${name}: ${(percent!* 100).toFixed(0)}%`}
+                label={({ name, percent }) => `${name}: ${(percent! * 100).toFixed(0)}%`}
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
@@ -226,14 +226,14 @@ export default function AdminDashboard() {
           <BarChart data={productBarData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="name" tick={{ fontSize: 11 }} angle={-15} textAnchor="end" height={80} />
-            <YAxis yAxisId="left" orientation="left" stroke="#1E2A55" tick={{ fontSize: 12 }} />
+            <YAxis yAxisId="left" orientation="left" stroke="#310101" tick={{ fontSize: 12 }} />
             <YAxis yAxisId="right" orientation="right" stroke="#CFAE56" tick={{ fontSize: 12 }} />
             <Tooltip
-              contentStyle={{ backgroundColor: '#1E2A55', border: 'none', borderRadius: '8px', color: 'white' }}
+              contentStyle={{ backgroundColor: '#310101', border: 'none', borderRadius: '8px', color: 'white' }}
               formatter={(value: any, name: string) => [name === 'revenue' ? formatCurrency(value) : value, name === 'revenue' ? 'Revenue' : 'Sales']}
             />
             <Legend />
-            <Bar yAxisId="left" dataKey="sales" fill="#1E2A55" name="Units Sold" radius={[8, 8, 0, 0]} />
+            <Bar yAxisId="left" dataKey="sales" fill="#310101" name="Units Sold" radius={[8, 8, 0, 0]} />
             <Bar yAxisId="right" dataKey="revenue" fill="#CFAE56" name="Revenue (ETB)" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>

@@ -117,14 +117,14 @@ export default function MessageInput({ socket, roomId }: Props) {
           )}
           <div className="flex flex-col gap-2">
             <button
-              className="px-3 py-1 bg-[#1E2A55] text-white hover:bg-[#2A3A65] text-sm"
+              className="px-3 py-1 bg-[#310101] text-white hover:bg-[#500202] text-sm"
               onClick={() => uploadAndSend()}
               disabled={loading}
             >
               {loading ? "Uploading..." : "Send"}
             </button>
             <button
-              className="px-3 py-1 border border-[#1E2A55] hover:bg-gray-100 text-sm"
+              className="px-3 py-1 border border-[#310101] hover:bg-gray-100 text-sm"
               onClick={() => { setPreviewUrl(null); setSelectedFile(null); setUploadError(null); }}
             >
               Cancel
@@ -141,7 +141,7 @@ export default function MessageInput({ socket, roomId }: Props) {
 
       <div className="flex items-center gap-2">
         <input
-          className="flex-1 px-4 py-2 border border-gray-300 focus:outline-none focus:border-[#1E2A55]"
+          className="flex-1 px-4 py-2 border border-gray-300 focus:outline-none focus:border-[#310101]"
           value={text}
           onChange={(e) => { setText(e.target.value); handleTyping(); }}
           onKeyDown={(e) => e.key === "Enter" && sendText()}
@@ -157,7 +157,7 @@ export default function MessageInput({ socket, roomId }: Props) {
         />
 
         <button
-          className="px-4 py-2 border border-[#1E2A55] hover:bg-gray-100"
+          className="px-4 py-2 border border-[#310101] hover:bg-gray-100"
           onClick={() => fileRef.current?.click()}
           disabled={loading}
           title="Attach file"
@@ -169,7 +169,7 @@ export default function MessageInput({ socket, roomId }: Props) {
 
         <button
           onClick={isRecording ? stopRecording : startRecording}
-          className={`px-4 py-2 border ${isRecording ? "bg-red-600 text-white border-red-600" : "border-[#1E2A55] hover:bg-gray-100"}`}
+          className={`px-4 py-2 border ${isRecording ? "bg-red-600 text-white border-red-600" : "border-[#310101] hover:bg-gray-100"}`}
           title={isRecording ? "Stop recording" : "Record voice"}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -178,7 +178,7 @@ export default function MessageInput({ socket, roomId }: Props) {
         </button>
 
         <button
-          className="px-6 py-2 bg-[#1E2A55] text-white hover:bg-[#2A3A65] disabled:opacity-50"
+          className="px-6 py-2 bg-[#310101] text-white hover:bg-[#310101] disabled:opacity-50"
           onClick={sendText}
           disabled={!text.trim() || loading}
         >

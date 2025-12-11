@@ -12,6 +12,7 @@ interface CustomRequest {
   description: string;
   status: string;
   createdAt: string;
+  media?: string[];
   user: {
     name: string;
     email: string;
@@ -102,8 +103,8 @@ export default function CustomRequestsPage() {
           <button
             onClick={() => setFilter("all")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "all"
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
+              ? "bg-black text-white"
+              : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
           >
             All
@@ -111,8 +112,8 @@ export default function CustomRequestsPage() {
           <button
             onClick={() => setFilter("submitted")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "submitted"
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
+              ? "bg-black text-white"
+              : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
           >
             Submitted
@@ -120,8 +121,8 @@ export default function CustomRequestsPage() {
           <button
             onClick={() => setFilter("in_progress")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "in_progress"
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
+              ? "bg-black text-white"
+              : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
           >
             In Progress
@@ -129,8 +130,8 @@ export default function CustomRequestsPage() {
           <button
             onClick={() => setFilter("completed")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "completed"
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
+              ? "bg-black text-white"
+              : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
           >
             Completed
@@ -138,8 +139,8 @@ export default function CustomRequestsPage() {
           <button
             onClick={() => setFilter("rejected")}
             className={`px-4 py-2 text-sm font-medium transition-colors ${filter === "rejected"
-                ? "bg-black text-white"
-                : "bg-gray-100 text-gray-900 hover:bg-gray-200"
+              ? "bg-black text-white"
+              : "bg-gray-100 text-gray-900 hover:bg-gray-200"
               }`}
           >
             Rejected
@@ -187,6 +188,25 @@ export default function CustomRequestsPage() {
               <p className="text-gray-700 mb-4 line-clamp-2">
                 {request.description}
               </p>
+
+              {/* Media Previews */}
+              {request.media && Array.isArray(request.media) && request.media.length > 0 && (
+                <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+                  {request.media.map((url, index) => (
+                    <div key={index} className="relative h-16 w-16 flex-shrink-0 border rounded-md overflow-hidden bg-gray-50">
+                      {url.includes('/video/') || url.endsWith('.mp4') ? (
+                        <video src={url} className="h-full w-full object-cover" />
+                      ) : (
+                        <img
+                          src={url}
+                          alt={`Request attachment ${index + 1}`}
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-500">
                   {new Date(request.createdAt).toLocaleDateString("en-US", {

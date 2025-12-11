@@ -405,7 +405,7 @@ export async function getProductSuggestions(
   limit: number = 5
 ): Promise<ApiResponse<ProductWithDetails[]>> {
   return apiRequest<ProductWithDetails[]>(
-    `/api/v1/public/products/suggestions?q=${encodeURIComponent(query)}&limit=${limit}`
+    `/api/v1/products/suggestions?q=${encodeURIComponent(query)}&limit=${limit}`
   );
 }
 

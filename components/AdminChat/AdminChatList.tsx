@@ -30,9 +30,9 @@ export default function AdminChatList({
   });
 
   return (
-    <div className="w-80 bg-white border-r-2 border-[#1E2A55] overflow-y-auto fixed left-0 top-10 bottom-0 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200">
+    <div className="w-80 bg-white border-r-2 border-[#310101] overflow-y-auto fixed left-0 top-10 bottom-0 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-200">
       {/* Header */}
-      <div className="bg-[#1E2A55] text-white p-4 border-b-2 border-white">
+      <div className="bg-[#310101] text-white p-4 border-b-2 border-white">
         <h2 className="text-xl font-bold mb-3">Conversations</h2>
         <div className="relative">
           <input
@@ -85,7 +85,7 @@ export default function AdminChatList({
             return (
               <div
                 key={r.id}
-                className={`p-4 hover:bg-gray-100 cursor-pointer transition-colors border-l-4 ${isSelected ? "bg-gray-100 border-l-[#1E2A55]" : "border-l-transparent"
+                className={`p-4 hover:bg-gray-100 cursor-pointer transition-colors border-l-4 ${isSelected ? "bg-gray-100 border-l-[#310101]" : "border-l-transparent"
                   }`}
                 onClick={() =>
                   onSelect(r.id, {
@@ -98,7 +98,7 @@ export default function AdminChatList({
                 <div className="flex items-start gap-3">
                   {/* Avatar */}
                   <div className="relative flex-shrink-0">
-                    <div className="w-12 h-12 bg-[#1E2A55] text-white flex items-center justify-center font-bold text-lg">
+                    <div className="w-12 h-12 bg-[#310101] text-white flex items-center justify-center font-bold text-lg">
                       {r.user?.name?.charAt(0).toUpperCase() || "U"}
                     </div>
                     {isOnline && (

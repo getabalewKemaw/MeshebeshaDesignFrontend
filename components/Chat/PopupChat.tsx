@@ -31,7 +31,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isRecording, setIsRecording] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const typingTimeoutRef = useRef<NodeJS.Timeout>();
+    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const fileRef = useRef<HTMLInputElement | null>(null);
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const audioChunksRef = useRef<Blob[]>([]);
@@ -253,7 +253,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
             {/* Floating Chat Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 sm:w-14 sm:h-14 bg-[#1E2A55] text-white hover:bg-[#2A3A65] transition-colors z-50 flex items-center justify-center shadow-lg"
+                className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-12 h-12 sm:w-14 sm:h-14 bg-[#310101] text-white hover:bg-[#500202] transition-colors z-50 flex items-center justify-center shadow-lg"
                 aria-label="Open chat"
             >
                 {isOpen ? (
@@ -274,16 +274,16 @@ export default function PopupChat({ productId }: { productId?: string }) {
 
             {/* Chat Popup Window */}
             {isOpen && (
-                <div className="fixed bottom-16 right-0 left-0 sm:bottom-24 sm:right-6 sm:left-auto w-full sm:w-96 h-[calc(100vh-4rem)] sm:h-[600px] sm:max-h-[80vh] bg-white border-2 border-[#1E2A55] shadow-2xl z-50 flex flex-col">
+                <div className="fixed bottom-16 right-0 left-0 sm:bottom-24 sm:right-6 sm:left-auto w-full sm:w-96 h-[calc(100vh-4rem)] sm:h-[600px] sm:max-h-[80vh] bg-white border-2 border-[#310101] shadow-2xl z-50 flex flex-col">
                     {/* Header */}
-                    <div className="bg-[#1E2A55] text-white p-3 sm:p-4 flex items-center justify-between">
+                    <div className="bg-[#310101] text-white p-3 sm:p-4 flex items-center justify-between">
                         <div className="flex items-center gap-2 sm:gap-3">
                             <div className="relative">
-                                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white text-[#1E2A55] flex items-center justify-center font-bold text-sm sm:text-base">
+                                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white text-[#310101] flex items-center justify-center font-bold text-sm sm:text-base">
                                     S
                                 </div>
                                 {isAdminOnline && (
-                                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 border-2 border-[#1E2A55]"></span>
+                                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 border-2 border-[#310101]"></span>
                                 )}
                             </div>
                             <div>
@@ -320,8 +320,8 @@ export default function PopupChat({ productId }: { productId?: string }) {
                                 <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
                                     <div
                                         className={`max-w-[85%] sm:max-w-[75%] px-3 sm:px-4 py-2 border ${isMine
-                                                ? "bg-[#1E2A55] text-white border-[#1E2A55]"
-                                                : "bg-white text-gray-800 border-gray-300"
+                                            ? "bg-[#310101] text-white border-[#310101]"
+                                            : "bg-white text-gray-800 border-gray-300"
                                             }`}
                                     >
                                         {msg.type === "text" && <p className="text-sm break-words">{msg.content}</p>}
@@ -381,14 +381,14 @@ export default function PopupChat({ productId }: { productId?: string }) {
                                 {selectedFile?.type.startsWith("audio/") && <audio src={previewUrl} controls className="w-full" />}
                                 <div className="flex flex-col gap-1">
                                     <button
-                                        className="text-xs sm:text-sm px-2 py-1 bg-[#1E2A55] text-white hover:bg-[#2A3A65]"
+                                        className="text-xs sm:text-sm px-2 py-1 bg-[#310101] text-white hover:bg-[#500202]"
                                         onClick={() => uploadAndSend()}
                                         disabled={loading}
                                     >
                                         {loading ? "Uploading..." : "Send"}
                                     </button>
                                     <button
-                                        className="text-xs sm:text-sm px-2 py-1 border border-[#1E2A55] hover:bg-gray-100"
+                                        className="text-xs sm:text-sm px-2 py-1 border border-[#310101] hover:bg-gray-100"
                                         onClick={() => {
                                             setPreviewUrl(null);
                                             setSelectedFile(null);
@@ -404,7 +404,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
                     )}
 
                     {/* Input */}
-                    <div className="p-2 sm:p-3 bg-white border-t-2 border-[#1E2A55]">
+                    <div className="p-2 sm:p-3 bg-white border-t-2 border-[#310101]">
                         <div className="flex items-center gap-1 sm:gap-2">
                             <input
                                 type="text"
@@ -415,7 +415,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
                                 }}
                                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                                 placeholder="Type your message..."
-                                className="flex-1 px-2 sm:px-3 py-2 border border-gray-300 focus:outline-none focus:border-[#1E2A55] text-sm"
+                                className="flex-1 px-2 sm:px-3 py-2 border border-gray-300 focus:outline-none focus:border-[#310101] text-sm"
                             />
 
                             <input
@@ -431,7 +431,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
                             <button
                                 onClick={() => fileRef.current?.click()}
                                 disabled={loading}
-                                className="p-1.5 sm:p-2 border border-[#1E2A55] hover:bg-gray-100 disabled:opacity-50"
+                                className="p-1.5 sm:p-2 border border-[#310101] hover:bg-gray-100 disabled:opacity-50"
                                 title="Attach file"
                             >
                                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -441,7 +441,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
 
                             <button
                                 onClick={isRecording ? stopRecording : startRecording}
-                                className={`p-1.5 sm:p-2 border ${isRecording ? "bg-red-600 text-white border-red-600" : "border-[#1E2A55] hover:bg-gray-100"}`}
+                                className={`p-1.5 sm:p-2 border ${isRecording ? "bg-red-600 text-white border-red-600" : "border-[#310101] hover:bg-gray-100"}`}
                                 title={isRecording ? "Stop recording" : "Record voice"}
                             >
                                 <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -452,7 +452,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
                             <button
                                 onClick={sendMessage}
                                 disabled={!text.trim() || loading}
-                                className="px-2 sm:px-4 py-2 bg-[#1E2A55] text-white hover:bg-[#2A3A65] disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm"
+                                className="px-2 sm:px-4 py-2 bg-[#310101] text-white hover:bg-[#500202] disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm"
                             >
                                 Send
                             </button>

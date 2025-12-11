@@ -39,7 +39,7 @@ export default function MessageList({
               className={`
                 max-w-[70%] px-4 py-3 border transition-all duration-200
                 ${isMine
-                  ? "bg-[#1E2A55] text-white border-[#1E2A55]"
+                  ? "bg-[#310101] text-white border-[#310101]"
                   : "bg-white text-gray-800 border-gray-300"
                 }
               `}

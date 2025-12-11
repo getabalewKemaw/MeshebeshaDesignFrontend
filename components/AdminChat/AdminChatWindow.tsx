@@ -113,14 +113,14 @@ export default function AdminChatWindow({
   return (
     <div className="flex-1 flex flex-col ml-80 relative bg-white">
       {/* Chat Header */}
-      <div className="bg-[#1E2A55] text-white px-6 py-4 border-b-2 border-white flex items-center justify-between">
+      <div className="bg-[#310101] text-white px-6 py-4 border-b-2 border-white flex items-center justify-between">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-12 h-12 bg-white text-[#1E2A55] flex items-center justify-center font-bold text-lg">
+            <div className="w-12 h-12 bg-white text-[#310101] flex items-center justify-center font-bold text-lg">
               {userInfo?.name?.charAt(0).toUpperCase() || "U"}
             </div>
             {userInfo?.isOnline && (
-              <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-[#1E2A55]"></span>
+              <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-[#310101]"></span>
             )}
           </div>
           <div>
@@ -159,7 +159,7 @@ export default function AdminChatWindow({
       </div>
 
       {/* Input Area */}
-      <div className="bg-white border-t-2 border-[#1E2A55] p-4">
+      <div className="bg-white border-t-2 border-[#310101] p-4">
         <MessageInput socket={socket} roomId={roomId} />
       </div>
 
