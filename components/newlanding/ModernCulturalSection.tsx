@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { Link } from 'lucide-react';
 
 export default function ModernCulturalSection() {
     const [isVisible, setIsVisible] = useState(false);
@@ -94,13 +95,13 @@ export default function ModernCulturalSection() {
                     className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                         }`}
                 >
-                    <a
+                    <Link
                         href="/products"
                         className="inline-block bg-white text-[#310101] px-12 py-4 rounded-full font-black text-lg md:text-xl uppercase hover:bg-[#310101] hover:text-white transition-all duration-300 shadow-2xl hover:shadow-[0_0_30px_rgba(49,1,1,0.5)] hover:scale-110 animate-float border-4 border-[#310101]"
                         style={{ fontFamily: 'Fredoka One, cursive' }}
                     >
                         SHOP NOW
-                    </a>
+                    </Link>
                 </div>
             </div>
 

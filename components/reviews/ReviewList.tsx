@@ -94,18 +94,18 @@ export default function ReviewList({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8 border-t border-[#310101]/20 pt-8 border-b pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h2 className="text-2xl font-semibold text-gray-900">
-          Customer Reviews ({reviews.length > 0 ? "..." : "0"})
+        <h2 className="text-2xl font-bold text-[#310101]" style={{ fontFamily: 'Fraunces, serif' }}>
+          Customer Reviews ({reviews.length > 0 ? reviews.length : "0"})
         </h2>
 
         <div className="flex items-center gap-4">
           {showWriteReview && orderId && (
             <button
               onClick={onWriteReview}
-              className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+              className="px-6 py-2 bg-[#310101] text-white rounded-full hover:bg-[#4a0202] transition shadow-md font-medium"
             >
               Write Review
             </button>
@@ -117,7 +117,7 @@ export default function ReviewList({
               setSortBy(e.target.value as typeof sortBy);
               setPage(1);
             }}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="px-4 py-2 border border-[#310101]/20 rounded-lg focus:ring-2 focus:ring-[#310101] focus:border-transparent text-[#310101] bg-white cursor-pointer"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -129,24 +129,24 @@ export default function ReviewList({
 
       {/* Reviews List */}
       {reviews.length === 0 ? (
-        <div className="py-12 text-center text-gray-500">
-          <p className="text-lg">No reviews yet.</p>
+        <div className="py-12 text-center text-[#310101]/70 bg-[#310101]/5 rounded-xl">
+          <p className="text-lg font-medium">No reviews yet.</p>
           <p className="text-sm mt-2">Be the first to review this product!</p>
           {showWriteReview && orderId && (
             <button
               onClick={onWriteReview}
-              className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition"
+              className="mt-6 px-8 py-3 bg-[#310101] text-white rounded-full hover:bg-[#4a0202] transition shadow-lg font-bold uppercase tracking-wide text-sm"
             >
               Write the First Review
             </button>
           )}
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-8">
           {reviews.map((review) => (
             <div
               key={review.id}
-              className="border-b border-gray-200 pb-6 last:border-0 last:pb-0"
+              className="border-b border-[#310101]/10 pb-8 last:border-0 last:pb-0"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
@@ -154,13 +154,11 @@ export default function ReviewList({
                     <img
                       src={review.user.image}
                       alt={review.user.name}
-                      className="w-10 h-10 rounded-full"
+                      className="w-12 h-12 rounded-full border border-[#310101]/10 object-cover"
                     />
                   ) : (
-                    <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
-                      <span className="text-purple-600 font-semibold">
-                        {review.user.name.charAt(0).toUpperCase()}
-                      </span>
+                    <div className="w-12 h-12 rounded-full bg-[#310101]/10 flex items-center justify-center text-[#310101] font-bold text-lg">
+                      {review.user.name.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </div>
@@ -168,12 +166,12 @@ export default function ReviewList({
                 <div className="flex-1">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-bold text-[#310101] text-lg">
                         {review.user.name}
                       </p>
-                      <div className="flex items-center gap-2 mt-1">
+                      <div className="flex items-center gap-3 mt-1">
                         <StarRating rating={review.rating} size="sm" />
-                        <span className="text-sm text-gray-500">
+                        <span className="text-xs text-[#310101]/60 font-medium uppercase tracking-wider">
                           {formatDate(review.createdAt)}
                         </span>
                       </div>
@@ -181,14 +179,14 @@ export default function ReviewList({
                   </div>
 
                   {(review.variantSize || review.variantColor) && (
-                    <div className="mt-2 flex gap-2">
+                    <div className="mt-3 flex gap-2">
                       {review.variantSize && (
-                        <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
+                        <span className="px-3 py-1 text-xs bg-[#310101]/5 text-[#310101] rounded-full border border-[#310101]/10">
                           Size: {review.variantSize}
                         </span>
                       )}
                       {review.variantColor && (
-                        <span className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded">
+                        <span className="px-3 py-1 text-xs bg-[#310101]/5 text-[#310101] rounded-full border border-[#310101]/10">
                           Color: {review.variantColor}
                         </span>
                       )}
@@ -196,16 +194,18 @@ export default function ReviewList({
                   )}
 
                   {review.comment && (
-                    <p className="mt-3 text-gray-700 whitespace-pre-wrap">
+                    <p className="mt-4 text-[#310101]/80 leading-relaxed max-w-3xl">
                       {review.comment}
                     </p>
                   )}
 
-                  <HelpfulButton
-                    reviewId={review.id}
-                    initialHelpfulCount={review.helpfulCount}
-                    initialNotHelpfulCount={review.notHelpfulCount}
-                  />
+                  <div className="mt-4 pt-4 flex items-center text-[#310101]/60">
+                    <HelpfulButton
+                      reviewId={review.id}
+                      initialHelpfulCount={review.helpfulCount}
+                      initialNotHelpfulCount={review.notHelpfulCount}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -215,21 +215,21 @@ export default function ReviewList({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-4">
+        <div className="flex items-center justify-center gap-2 pt-8 border-t border-[#310101]/20">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 border border-[#310101]/20 rounded-full hover:bg-[#310101]/5 disabled:opacity-50 disabled:cursor-not-allowed text-[#310101] transition"
           >
             Previous
           </button>
-          <span className="px-4 py-2 text-sm text-gray-600">
+          <span className="px-4 py-2 text-sm text-[#310101] font-medium">
             Page {page} of {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 border border-[#310101]/20 rounded-full hover:bg-[#310101]/5 disabled:opacity-50 disabled:cursor-not-allowed text-[#310101] transition"
           >
             Next
           </button>

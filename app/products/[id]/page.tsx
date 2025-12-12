@@ -54,9 +54,13 @@ export default function ProductDetailPage() {
         if (isAuthenticated) {
           try {
             const eligibilityRes = await checkReviewEligibility(id);
+            console.log("DEBUG: Review eligibility check response:", eligibilityRes);
+
             if (eligibilityRes.success && eligibilityRes.data?.canReview && eligibilityRes.data.orderId) {
+              console.log("DEBUG: User is eligible to review. Order ID:", eligibilityRes.data.orderId);
               setReviewOrderId(eligibilityRes.data.orderId);
             } else {
+              console.log("DEBUG: User is NOT eligible to review.", eligibilityRes.data);
               // User is authenticated but not eligible - clear any previous orderId
               setReviewOrderId(null);
             }
