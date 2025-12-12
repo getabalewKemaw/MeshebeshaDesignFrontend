@@ -49,7 +49,7 @@ export default function ProductsFilterBar({
                 <div className="flex-1 max-w-md">
                     <div className="relative group">
                         <svg
-                            className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#CFAE56] transition-colors"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 group-focus-within:text-[#310101] transition-colors"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -61,7 +61,7 @@ export default function ProductsFilterBar({
                             placeholder="Search products..."
                             value={filters.q}
                             onChange={(e) => onFilterChange({ q: e.target.value, page: 1 })}
-                            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#CFAE56] focus:ring-1 focus:ring-[#CFAE56] focus:outline-none transition-all placeholder:text-gray-400"
+                            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#310101] focus:ring-1 focus:ring-[#310101] focus:outline-none transition-all placeholder:text-gray-400"
                         />
                     </div>
                 </div>
@@ -74,7 +74,7 @@ export default function ProductsFilterBar({
                     <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                     </svg>
-                    Filters {appliedFilters.length > 0 && <span className="bg-[#CFAE56] text-[#1E2A55] text-xs px-2 py-0.5 rounded-full">{appliedFilters.length}</span>}
+                    Filters {appliedFilters.length > 0 && <span className="bg-[#310101] text-[#1E2A55] text-xs px-2 py-0.5 rounded-full">{appliedFilters.length}</span>}
                 </button>
 
                 {/* Desktop Filters */}
@@ -84,7 +84,7 @@ export default function ProductsFilterBar({
                         <select
                             value={filters.categoryId}
                             onChange={(e) => onFilterChange({ categoryId: e.target.value, page: 1 })}
-                            className="appearance-none px-4 py-3 pr-10 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#CFAE56] focus:ring-1 focus:ring-[#CFAE56] focus:outline-none transition-all min-w-[200px] cursor-pointer text-gray-700 font-medium"
+                            className="appearance-none px-4 py-3 pr-10 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#310101] focus:ring-1 focus:ring-[#310101] focus:outline-none transition-all min-w-[200px] cursor-pointer text-gray-700 font-medium"
                         >
                             <option value="">All Categories</option>
                             {categoryOptions.map((cat) => (
@@ -166,7 +166,7 @@ export default function ProductsFilterBar({
                         </div>
                         <button
                             onClick={onApplyPriceFilter}
-                            className="w-full px-4 py-2.5 bg-[#CFAE56] text-white font-semibold rounded-lg hover:bg-[#B89846] active:scale-95 transition-all shadow-sm"
+                            className="w-full px-4 py-2.5 bg-[#310101] text-white font-semibold rounded-lg hover:bg-[#B89846] active:scale-95 transition-all shadow-sm"
                         >
                             Apply Price Filter
                         </button>
@@ -190,29 +190,29 @@ export default function ProductsFilterBar({
                         <label className="block text-sm font-semibold text-[#1E2A55] mb-3">Price Range (ETB)</label>
                         <div className="flex items-center gap-3">
                             <div className="flex-1 relative group">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-[#CFAE56] transition-colors">Min</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-[#310101] transition-colors">Min</span>
                                 <input
                                     type="number"
                                     placeholder={priceRange.min.toString()}
                                     value={tempMinPrice}
                                     onChange={(e) => setTempMinPrice(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#CFAE56] focus:ring-1 focus:ring-[#CFAE56] focus:outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#310101] focus:ring-1 focus:ring-[#310101] focus:outline-none transition-all"
                                 />
                             </div>
                             <span className="text-gray-400">-</span>
                             <div className="flex-1 relative group">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-[#CFAE56] transition-colors">Max</span>
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm group-focus-within:text-[#310101] transition-colors">Max</span>
                                 <input
                                     type="number"
                                     placeholder={priceRange.max.toString()}
                                     value={tempMaxPrice}
                                     onChange={(e) => setTempMaxPrice(e.target.value)}
-                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#CFAE56] focus:ring-1 focus:ring-[#CFAE56] focus:outline-none transition-all"
+                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:border-[#310101] focus:ring-1 focus:ring-[#310101] focus:outline-none transition-all"
                                 />
                             </div>
                             <button
                                 onClick={onApplyPriceFilter}
-                                className="px-6 py-2.5 bg-[#CFAE56] text-white font-semibold rounded-lg hover:bg-[#B89846] active:scale-95 transition-all shadow-sm"
+                                className="px-6 py-2.5 bg-[#310101] text-white font-semibold rounded-lg hover:bg-[#53050b] active:scale-95 transition-all shadow-sm"
                             >
                                 Apply
                             </button>

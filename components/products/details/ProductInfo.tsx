@@ -1,6 +1,5 @@
 import type { ProductWithDetails, ProductVariant } from "@/types/product";
 import ColorSelect from "@/components/products/ColorSelect";
-
 interface ProductInfoProps {
     product: ProductWithDetails;
     selectedVariant: ProductVariant | null;
@@ -13,7 +12,6 @@ interface ProductInfoProps {
     onSizeChange: (size: string) => void;
     isOutOfStock: boolean;
 }
-
 export default function ProductInfo({
     product,
     selectedVariant,
@@ -29,7 +27,7 @@ export default function ProductInfo({
     return (
         <div className="space-y-6">
             <div className="flex items-end gap-3">
-                <span className="text-3xl font-semibold text-purple-600">
+                <span className="text-3xl font-semibold text-[#310101]">
                     {product.currency} {currentPrice.toFixed(2)}
                 </span>
                 {selectedVariant?.priceOverride && (
@@ -53,7 +51,6 @@ export default function ProductInfo({
             <p className="text-gray-600 whitespace-pre-line leading-relaxed">
                 {product.description || "No description."}
             </p>
-
             {colorOptions.length > 0 && (
                 <ColorSelect
                     colors={colorOptions}
@@ -73,7 +70,7 @@ export default function ProductInfo({
                         value={selectedSize ?? ""}
                         onChange={(event) => onSizeChange(event.target.value)}
                         disabled={isOutOfStock}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 disabled:opacity-50"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#310101] focus:ring-2 focus:ring-purple-200 disabled:opacity-50"
                     >
                         {sizeOptions.map((size) => (
                             <option key={size} value={size}>
@@ -86,3 +83,5 @@ export default function ProductInfo({
         </div>
     );
 }
+
+

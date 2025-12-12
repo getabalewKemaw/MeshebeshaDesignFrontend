@@ -57,7 +57,7 @@ export default function ProductsPage() {
   };
 
   const handleArchive = async (id: string) => {
-    
+
     if (!confirm("Archive this product?")) return;
     try {
       const response = await productApi.archiveProduct(id);
@@ -183,17 +183,16 @@ export default function ProductsPage() {
                 className={`bg-white shadow-sm hover:shadow-md transition-shadow ${isArchived ? 'opacity-75' : ''
                   }`}
               >
-                <div className="relative h-48 bg-gray-100 flex items-center justify-center overflow-hidden">
+                <div className="relative h-64 bg-gray-100 flex items-center justify-center overflow-hidden rounded-t-lg">
 
-                  {/*  in these if the product have a medea we show up the first media  if not we show up the placeholder   so lets do it*/}
+                  {/*  in these if the product have a media we show up the first media  if not we show up the placeholder   so lets do it*/}
                   {product.media && product.media.length > 0 ? (
                     <Image
                       src={product.media[0].url}
                       alt={product.title}
                       fill
-                      // to make the image fully shown make the image aspecr ration 3;4 how to do these
-                      // style={{ objectFit: 'cover', aspectRatio: '3 / 4' }}
-                      className="object-cover w-full h-full aspect-square "
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover"
                     />
                   ) : (
                     <ImageIcon className="h-16 w-16 text-gray-400" />

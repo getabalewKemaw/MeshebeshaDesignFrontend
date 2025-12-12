@@ -7,33 +7,33 @@ import { useState } from "react";
 interface ProductCardProps {
     id: string;
     title: string;
-    price: number;
-    currency?: string;
+    // price: number;
+    // currency?: string;
     image?: string;
-    averageRating?: number;
-    totalReviews?: number;
+    // averageRating?: number;
+    // totalReviews?: number;
 }
 
 export default function ProductCard({
     id,
     title,
-    price,
-    currency = "ETB",
+    // price,
+    // currency = "ETB",
     image,
-    averageRating,
-    totalReviews,
+   /*  averageRating,
+    totalReviews, */
 }: ProductCardProps) {
     const [imageError, setImageError] = useState(false);
 
-    // Format price
-    const formattedPrice = new Intl.NumberFormat("en-ET", {
-        style: "decimal",
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-    }).format(price);
+    // // Format price
+    // const formattedPrice = new Intl.NumberFormat("en-ET", {
+    //     style: "decimal",
+    //     minimumFractionDigits: 2,
+    //     maximumFractionDigits: 2,
+    // }).format(price);
 
     // Render star rating - always show even if 0 reviews
-    const renderStars = () => {
+  /*   const renderStars = () => {
         const rating = averageRating || 0;
         const stars = [];
         const fullStars = Math.floor(rating);
@@ -69,7 +69,7 @@ export default function ProductCard({
                 </span>
             </div>
         );
-    };
+    }; */
 
     return (
         <Link
@@ -113,20 +113,20 @@ export default function ProductCard({
             {/* Product Info - Minimal, clean */}
             <div className="mt-3 space-y-2">
                 {/* Title */}
-                <h3 className="font-heading text-base font-semibold text-[#1E2A55] line-clamp-2 min-h-[3rem] group-hover:text-[#CFAE56] transition-colors">
+                <h3 className="font-heading text-base font-semibold text-[#1E2A55] line-clamp-2 min-h-[3rem] group-hover:text-[#310101] transition-colors">
                     {title}
                 </h3>
 
                 {/* Rating - Always displayed */}
-                {renderStars()}
+                {/* {renderStars()} */}
 
                 {/* Price */}
-                <p className="text-xl font-bold text-[#1E2A55]">
+          {/*       <p className="text-xl font-bold text-[#1E2A55]">
                     {formattedPrice}
                     <span className="ml-1 text-sm font-normal text-gray-600">
                         {currency}
                     </span>
-                </p>
+                </p> */}
             </div>
         </Link>
     );

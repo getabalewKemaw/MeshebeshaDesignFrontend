@@ -2,7 +2,7 @@ export default function ProductsHeader() {
     return (
         <div className="mb-12 text-center">
             <div className="inline-block mb-4">
-                <span className="px-4 py-2 bg-[#CFAE56]/10 text-[#CFAE56] text-sm font-semibold uppercase tracking-wider border-2 border-[#CFAE56]">
+                <span className="px-4 py-2 bg-[#CFAE56]/10 text-[#310101] text-sm font-semibold uppercase tracking-wider border-2 border-[#310101]">
                     Shop
                 </span>
             </div>

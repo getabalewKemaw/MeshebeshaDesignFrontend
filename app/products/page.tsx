@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getPublicProducts, getFilterOptions } from "@/lib/api/products";
 import type { ProductWithDetails, FilterOptions } from "@/types/product";
-import Navbar from "@/components/NavBar";
 import ProductsHeader from "@/components/products/listing/ProductsHeader";
 import ProductsFilterBar from "@/components/products/listing/ProductsFilterBar";
 import ProductsGrid from "@/components/products/listing/ProductsGrid";
@@ -12,6 +11,7 @@ import ProductsLoading from "@/components/products/listing/ProductsLoading";
 import ProductsError from "@/components/products/listing/ProductsError";
 import ProductsEmpty from "@/components/products/listing/ProductsEmpty";
 import NewNavBar from "@/components/newlanding/NewNavBar";
+import FooterSection from "@/components/newlanding/FooterSection";
 
 const DEFAULT_FILTERS = {
   q: "",
@@ -101,7 +101,7 @@ export default function ProductsPage() {
     <>
       <NewNavBar />
 
-      <main className="min-h-screen bg-gradient-to-b from-[#FFF9F0] to-white">
+      <main className="min-h-screen bg-gradient-to-b from-[#FFF9F0] to-white pt-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <ProductsHeader />
 
@@ -141,6 +141,7 @@ export default function ProductsPage() {
           )}
         </div>
       </main>
+      <FooterSection />
     </>
   );
 }

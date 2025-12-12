@@ -295,7 +295,7 @@ export default function ProductDetailPage() {
   return (
     <>
       <NewNavBar />
-      <div className="max-w-5xl mx-auto px-4 py-6">
+      <div className="max-w-5xl mx-auto px-4 pt-32">
         {loading ? (
           <div className="py-10 text-center">Loading...</div>
         ) : error ? (

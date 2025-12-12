@@ -8,11 +8,16 @@ interface StatCardProps {
         value: number;
         isPositive: boolean;
     };
-    color?: 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'yellow';
+    color?: 'brand' | 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'yellow';
     loading?: boolean;
 }
 
 const colorClasses = {
+    brand: {
+        bg: 'bg-[#310101]/10',
+        icon: 'text-[#310101]',
+        border: 'border-[#310101]',
+    },
     blue: {
         bg: 'bg-blue-50',
         icon: 'text-blue-600',
@@ -50,7 +55,7 @@ const StatCard: React.FC<StatCardProps> = ({
     label,
     value,
     trend,
-    color = 'blue',
+    color = 'brand',
     loading = false,
 }) => {
     const colors = colorClasses[color];

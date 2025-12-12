@@ -121,15 +121,15 @@ export default function AdminUsersPage() {
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow">
                         <p className="text-sm text-gray-600">Active Users</p>
-                        <p className="text-2xl font-bold text-green-600">{stats.activeUsers}</p>
+                        <p className="text-2xl font-bold text-[#310101]">{stats.activeUsers}</p>
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow">
                         <p className="text-sm text-gray-600">Admins</p>
-                        <p className="text-2xl font-bold text-blue-600">{stats.totalAdmins}</p>
+                        <p className="text-2xl font-bold text-[#310101]">{stats.totalAdmins}</p>
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow">
                         <p className="text-sm text-gray-600">Verified</p>
-                        <p className="text-2xl font-bold text-purple-600">{stats.verifiedUsers}</p>
+                        <p className="text-2xl font-bold text-[#310101]">{stats.verifiedUsers}</p>
                     </div>
                     <div className="bg-white p-4 rounded-lg shadow">
                         <p className="text-sm text-gray-600">Banned</p>
@@ -146,7 +146,7 @@ export default function AdminUsersPage() {
                         placeholder="Search by name, email, or phone..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="flex-1 min-w-[200px] px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="flex-1 min-w-[200px] px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                     />
 
                     <select
@@ -155,7 +155,7 @@ export default function AdminUsersPage() {
                             setRoleFilter(e.target.value as any);
                             setPage(1);
                         }}
-                        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                     >
                         <option value="">All Roles</option>
                         <option value="user">User</option>
@@ -168,7 +168,7 @@ export default function AdminUsersPage() {
                             setBannedFilter(e.target.value === '' ? '' : e.target.value === 'true');
                             setPage(1);
                         }}
-                        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                     >
                         <option value="">All Status</option>
                         <option value="false">Active</option>
@@ -178,7 +178,7 @@ export default function AdminUsersPage() {
                     <select
                         value={sortBy}
                         onChange={(e) => setSortBy(e.target.value as any)}
-                        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                     >
                         <option value="createdAt">Created Date</option>
                         <option value="name">Name</option>
@@ -188,7 +188,7 @@ export default function AdminUsersPage() {
                     <select
                         value={sortOrder}
                         onChange={(e) => setSortOrder(e.target.value as any)}
-                        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                     >
                         <option value="desc">Descending</option>
                         <option value="asc">Ascending</option>
@@ -196,7 +196,7 @@ export default function AdminUsersPage() {
 
                     <button
                         type="submit"
-                        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        className="px-6 py-2 bg-[#310101] text-white rounded-lg hover:bg-[#500202] transition"
                     >
                         Search
                     </button>
@@ -268,7 +268,7 @@ export default function AdminUsersPage() {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span
                                                 className={`px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'admin'
-                                                    ? 'bg-purple-100 text-purple-800'
+                                                    ? 'bg-[#310101]/10 text-[#310101]'
                                                     : 'bg-gray-100 text-gray-800'
                                                     }`}
                                             >
@@ -302,7 +302,7 @@ export default function AdminUsersPage() {
                                             <div className="flex justify-end gap-2">
                                                 <Link
                                                     href={`/admin/users/${user.id}`}
-                                                    className="text-blue-600 hover:text-blue-900"
+                                                    className="text-[#310101] hover:text-[#500202] font-semibold"
                                                 >
                                                     View
                                                 </Link>
@@ -384,7 +384,7 @@ export default function AdminUsersPage() {
                             <textarea
                                 value={banReason}
                                 onChange={(e) => setBanReason(e.target.value)}
-                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                                 rows={3}
                                 placeholder="Enter reason for banning..."
                                 required
@@ -399,7 +399,7 @@ export default function AdminUsersPage() {
                                 type="datetime-local"
                                 value={banExpires}
                                 onChange={(e) => setBanExpires(e.target.value)}
-                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                             />
                             <p className="text-xs text-gray-500 mt-1">Leave empty for permanent ban</p>
                         </div>

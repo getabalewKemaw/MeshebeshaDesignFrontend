@@ -99,7 +99,7 @@ export default function UserDetailPage() {
         return (
             <div className="p-6 flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#310101] mx-auto mb-4"></div>
                     <p className="text-gray-600">Loading user details...</p>
                 </div>
             </div>
@@ -112,7 +112,7 @@ export default function UserDetailPage() {
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                     {error || 'User not found'}
                 </div>
-                <Link href="/admin/users" className="text-blue-600 hover:underline mt-4 inline-block">
+                <Link href="/admin/users" className="text-[#310101] hover:text-[#500202] font-semibold mt-4 inline-block">
                     ← Back to Users
                 </Link>
             </div>
@@ -124,7 +124,7 @@ export default function UserDetailPage() {
             {/* Header */}
             <div className="mb-6 flex items-center justify-between">
                 <div>
-                    <Link href="/admin/users" className="text-blue-600 hover:underline mb-2 inline-block">
+                    <Link href="/admin/users" className="text-[#310101] hover:text-[#500202] font-semibold mb-2 inline-block">
                         ← Back to Users
                     </Link>
                     <h1 className="text-3xl font-bold">{user.name}</h1>
@@ -173,7 +173,7 @@ export default function UserDetailPage() {
                         {user.banned ? (
                             <span className="text-red-600">Banned</span>
                         ) : (
-                            <span className="text-green-600">Active</span>
+                            <span className="text-[#310101]">Active</span>
                         )}
                     </p>
                 </div>
@@ -186,7 +186,7 @@ export default function UserDetailPage() {
                         <button
                             onClick={() => setActiveTab('details')}
                             className={`px-6 py-3 font-medium ${activeTab === 'details'
-                                ? 'border-b-2 border-blue-600 text-blue-600'
+                                ? 'border-b-2 border-[#310101] text-[#310101]'
                                 : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
@@ -195,7 +195,7 @@ export default function UserDetailPage() {
                         <button
                             onClick={() => setActiveTab('orders')}
                             className={`px-6 py-3 font-medium ${activeTab === 'orders'
-                                ? 'border-b-2 border-blue-600 text-blue-600'
+                                ? 'border-b-2 border-[#310101] text-[#310101]'
                                 : 'text-gray-600 hover:text-gray-900'
                                 }`}
                         >
@@ -215,7 +215,7 @@ export default function UserDetailPage() {
                                         type="text"
                                         value={editForm.name}
                                         onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                                         required
                                     />
                                 </div>
@@ -226,7 +226,7 @@ export default function UserDetailPage() {
                                         type="email"
                                         value={editForm.email}
                                         onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                                         required
                                     />
                                 </div>
@@ -237,7 +237,7 @@ export default function UserDetailPage() {
                                         type="text"
                                         value={editForm.phone}
                                         onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                                     />
                                 </div>
 
@@ -247,7 +247,7 @@ export default function UserDetailPage() {
                                         type="text"
                                         value={editForm.country}
                                         onChange={(e) => setEditForm({ ...editForm, country: e.target.value })}
-                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                                     />
                                 </div>
 
@@ -256,7 +256,7 @@ export default function UserDetailPage() {
                                     <select
                                         value={editForm.role}
                                         onChange={(e) => setEditForm({ ...editForm, role: e.target.value as any })}
-                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#310101]"
                                     >
                                         <option value="user">User</option>
                                         <option value="admin">Admin</option>
@@ -273,7 +273,7 @@ export default function UserDetailPage() {
                                     </button>
                                     <button
                                         type="submit"
-                                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                        className="flex-1 px-4 py-2 bg-[#310101] text-white rounded-lg hover:bg-[#500202]"
                                     >
                                         Save Changes
                                     </button>
@@ -330,7 +330,7 @@ export default function UserDetailPage() {
 
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                                    className="px-4 py-2 bg-[#310101] text-white rounded-lg hover:bg-[#500202]"
                                 >
                                     Edit User
                                 </button>
@@ -359,9 +359,9 @@ export default function UserDetailPage() {
                                                 className={`px-2 py-1 text-xs font-semibold rounded-full ${order.status === 'completed'
                                                     ? 'bg-green-100 text-green-800'
                                                     : order.status === 'shipped'
-                                                        ? 'bg-blue-100 text-blue-800'
+                                                        ? 'bg-[#310101]/10 text-[#310101]'
                                                         : order.status === 'paid'
-                                                            ? 'bg-purple-100 text-purple-800'
+                                                            ? 'bg-[#310101]/20 text-[#310101]'
                                                             : 'bg-yellow-100 text-yellow-800'
                                                     }`}
                                             >
@@ -373,7 +373,7 @@ export default function UserDetailPage() {
                                         </p>
                                         <Link
                                             href={`/admin/orders?search=${order.orderNumber}`}
-                                            className="text-blue-600 hover:underline text-sm mt-2 inline-block"
+                                            className="text-[#310101] hover:text-[#500202] font-semibold text-sm mt-2 inline-block"
                                         >
                                             View Order →
                                         </Link>
