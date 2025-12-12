@@ -9,24 +9,10 @@ import NewLandingProductCard from './NewLandingProductCard';
 export default function JewelrySection() {
     const { products, loading } = useCategoryProducts('jewlerys', 12);
 
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [itemsToShow, setItemsToShow] = useState(1);
     const [isVisible, setIsVisible] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);
-
-    // Responsive items per view
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth >= 1280) setItemsToShow(5);
-            else if (window.innerWidth >= 1024) setItemsToShow(4);
-            else if (window.innerWidth >= 640) setItemsToShow(2);
-            else setItemsToShow(1);
-        };
-
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const mobileScrollRef = useRef<HTMLDivElement>(null);
 
     // Observer for animation
     useEffect(() => {
@@ -38,7 +24,7 @@ export default function JewelrySection() {
                     }
                 });
             },
-            { threshold: 0.1 } // Lower threshold for earlier trigger
+            { threshold: 0.1 }
         );
 
         if (sectionRef.current) {
@@ -52,26 +38,35 @@ export default function JewelrySection() {
         };
     }, []);
 
-    const nextSlide = () => {
-        setCurrentIndex((prev) => {
-            // Ensure we don't scroll past the end
-            // If we have fewer items than itemsToShow, we can't scroll
-            if (products.length <= itemsToShow) return 0;
-            const maxIndex = products.length - itemsToShow;
-            return prev >= maxIndex ? 0 : prev + 1;
-        });
+    // Desktop scroll functions
+    const scrollDesktop = (direction: 'left' | 'right') => {
+        if (scrollContainerRef.current) {
+            const scrollAmount = 350;
+            const newScrollLeft = direction === 'left'
+                ? scrollContainerRef.current.scrollLeft - scrollAmount
+                : scrollContainerRef.current.scrollLeft + scrollAmount;
+
+            scrollContainerRef.current.scrollTo({
+                left: newScrollLeft,
+                behavior: 'smooth'
+            });
+        }
     };
 
-    const prevSlide = () => {
-        setCurrentIndex((prev) => {
-            if (products.length <= itemsToShow) return 0;
-            const maxIndex = products.length - itemsToShow;
-            return prev <= 0 ? maxIndex : prev - 1;
-        });
-    };
+    // Mobile scroll functions
+    const scrollMobile = (direction: 'left' | 'right') => {
+        if (mobileScrollRef.current) {
+            const cardWidth = mobileScrollRef.current.offsetWidth * 0.85;
+            const newScrollLeft = direction === 'left'
+                ? mobileScrollRef.current.scrollLeft - cardWidth
+                : mobileScrollRef.current.scrollLeft + cardWidth;
 
-    // Removed early return so section renders and refs attach properly
-    // if (loading) return null;
+            mobileScrollRef.current.scrollTo({
+                left: newScrollLeft,
+                behavior: 'smooth'
+            });
+        }
+    };
 
     return (
         <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden bg-[#310101] py-20">
@@ -139,35 +134,94 @@ export default function JewelrySection() {
                 </div>
             </div>
 
-            {/* Slider Container */}
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 mt-24">
+            {/* Desktop: Horizontal Scroll Container with Curved Layout */}
+            <div className="hidden md:block relative z-10 w-full max-w-7xl mx-auto px-4 mt-24">
                 <div
                     className={`relative px-12 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                         }`}
                 >
-                    {/* Added overflow-visible and padding to allow for curve items to stick out */}
-                    <div className="overflow-visible py-12 md:py-20 no-scrollbar">
+                    <div className="relative group">
                         <div
-                            className="flex transition-transform duration-500 ease-in-out"
+                            ref={scrollContainerRef}
+                            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-12 pt-8"
                             style={{
-                                transform: `translateX(-${currentIndex * (100 / itemsToShow)}%)`,
+                                scrollSnapType: 'x mandatory',
+                                WebkitOverflowScrolling: 'touch'
+                            }}
+                        >
+                            {products.map((product, index) => {
+                                // Calculate INVERTED curve - creates arch/rainbow shape
+                                // Middle cards HIGH, edge cards LOW
+                                const totalProducts = products.length;
+                                const middle = totalProducts / 2;
+                                const distanceFromMiddle = Math.abs(index - middle);
+                                const maxOffset = 100; // Increased for more visible curve
+                                const curveOffset = maxOffset - (distanceFromMiddle * 20); // Increased multiplier
+
+                                return (
+                                    <div
+                                        key={product.id}
+                                        className={`flex-shrink-0 w-[280px] transition-all duration-700 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                                            }`}
+                                        style={{
+                                            transitionDelay: `${(index % 5) * 150}ms`,
+                                            scrollSnapAlign: 'start',
+                                            transform: `translateY(-${curveOffset}px)`, // Negative for upward
+                                            transition: 'transform 0.3s ease-in-out, opacity 0.7s, scale 0.3s'
+                                        }}
+                                    >
+                                        <NewLandingProductCard
+                                            product={product}
+                                            variant="light"
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Desktop Navigation Arrows */}
+                        <button
+                            onClick={() => scrollDesktop('left')}
+                            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                            aria-label="Scroll left"
+                        >
+                            <ChevronLeft size={28} />
+                        </button>
+                        <button
+                            onClick={() => scrollDesktop('right')}
+                            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                            aria-label="Scroll right"
+                        >
+                            <ChevronRight size={28} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile: Horizontal Scroll with Peek Effect */}
+            <div className="md:hidden relative z-10 w-full mt-24">
+                <div
+                    className={`relative transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                        }`}
+                >
+                    <div className="relative group">
+                        <div
+                            ref={mobileScrollRef}
+                            className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-6 pb-8"
+                            style={{
+                                scrollSnapType: 'x mandatory',
+                                WebkitOverflowScrolling: 'touch'
                             }}
                         >
                             {products.map((product, index) => (
                                 <div
                                     key={product.id}
-                                    style={{ flex: `0 0 ${100 / itemsToShow}%` }}
-                                    className={`px-4 transform transition-all duration-500 ease-in-out ${
-                                        // Dynamic Bowl Curve for Desktop (itemsToShow >= 4)
-                                        itemsToShow >= 4 ? (
-                                            Math.abs(index - currentIndex - 2) === 0 ? 'lg:translate-y-12' : // Center (Low)
-                                                Math.abs(index - currentIndex - 2) === 1 ? 'lg:translate-y-0' : // Mid
-                                                    'lg:-translate-y-12' // Sides (High)
-                                        ) : (
-                                            // Simple alternating for Tablet/Mobile
-                                            index % 2 === 0 ? 'translate-y-0' : 'translate-y-4'
-                                        )
+                                    className={`flex-shrink-0 w-[85%] max-w-[320px] transition-all duration-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
                                         }`}
+                                    style={{
+                                        transitionDelay: `${index * 100}ms`,
+                                        scrollSnapAlign: 'start'
+                                    }}
                                 >
                                     <NewLandingProductCard
                                         product={product}
@@ -176,33 +230,46 @@ export default function JewelrySection() {
                                 </div>
                             ))}
                         </div>
+
+                        {/* Mobile Navigation Arrows */}
+                        <button
+                            onClick={() => scrollMobile('left')}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 text-[#310101] p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:scale-110 z-10"
+                            aria-label="Scroll left"
+                        >
+                            <ChevronLeft size={24} />
+                        </button>
+                        <button
+                            onClick={() => scrollMobile('right')}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 text-[#310101] p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:scale-110 z-10"
+                            aria-label="Scroll right"
+                        >
+                            <ChevronRight size={24} />
+                        </button>
                     </div>
-
-                    {/* Navigation Arrows */}
-                    <button
-                        onClick={prevSlide}
-                        className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full backdrop-blur-sm transition-all border border-white/20 z-20"
-                    >
-                        <ChevronLeft size={32} />
-                    </button>
-                    <button
-                        onClick={nextSlide}
-                        className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/10 hover:bg-white/20 text-white p-2 rounded-full backdrop-blur-sm transition-all border border-white/20 z-20"
-                    >
-                        <ChevronRight size={32} />
-                    </button>
-                </div>
-
-                {/* Free Shipping Text */}
-                <div
-                    className={`text-center mt-20 transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                        }`}
-                >
-                    <h2 className="text-white text-4xl md:text-5xl font-bold" style={{ fontFamily: 'Fredoka One, cursive' }}>
-                        Free shiping
-                    </h2>
                 </div>
             </div>
+
+            {/* Free Shipping Text */}
+            <div
+                className={`text-center mt-20 transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                    }`}
+            >
+                <h2 className="text-white text-4xl md:text-5xl font-bold" style={{ fontFamily: 'Fredoka One, cursive' }}>
+                    Free shipping
+                </h2>
+            </div>
+
+            {/* Custom Scrollbar Hide */}
+            <style jsx global>{`
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            `}</style>
         </section>
     );
 }

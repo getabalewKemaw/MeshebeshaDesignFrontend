@@ -10,10 +10,12 @@ export default function MensCouplesSection() {
     const { products: menProducts, loading: menLoading } = useCategoryProducts('mens', 6);
     const { products: coupleProducts, loading: coupleLoading } = useCategoryProducts('couples', 10);
 
-    const [currentMenIndex, setCurrentMenIndex] = useState(0);
-    const [currentCoupleIndex, setCurrentCoupleIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);
+    const menScrollRef = useRef<HTMLDivElement>(null);
+    const coupleScrollRef = useRef<HTMLDivElement>(null);
+    const menMobileScrollRef = useRef<HTMLDivElement>(null);
+    const coupleMobileScrollRef = useRef<HTMLDivElement>(null);
 
     // Intersection Observer for scroll-based animation
     useEffect(() => {
@@ -25,7 +27,7 @@ export default function MensCouplesSection() {
                     }
                 });
             },
-            { threshold: 0.1 } // Lower threshold to trigger earlier
+            { threshold: 0.1 }
         );
 
         if (sectionRef.current) {
@@ -37,34 +39,40 @@ export default function MensCouplesSection() {
                 observer.unobserve(sectionRef.current);
             }
         };
-    }, []); // Run once on mount
+    }, []);
 
-    const handleMenPrev = () => {
-        setCurrentMenIndex((prev) => (prev > 0 ? prev - 1 : menProducts.length - 1));
+    // Desktop scroll functions
+    const scrollDesktop = (ref: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
+        if (ref.current) {
+            const scrollAmount = 350;
+            const newScrollLeft = direction === 'left'
+                ? ref.current.scrollLeft - scrollAmount
+                : ref.current.scrollLeft + scrollAmount;
+
+            ref.current.scrollTo({
+                left: newScrollLeft,
+                behavior: 'smooth'
+            });
+        }
     };
 
-    const handleMenNext = () => {
-        setCurrentMenIndex((prev) => (prev < menProducts.length - 1 ? prev + 1 : 0));
+    // Mobile scroll functions
+    const scrollMobile = (ref: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
+        if (ref.current) {
+            const cardWidth = ref.current.offsetWidth * 0.85;
+            const newScrollLeft = direction === 'left'
+                ? ref.current.scrollLeft - cardWidth
+                : ref.current.scrollLeft + cardWidth;
+
+            ref.current.scrollTo({
+                left: newScrollLeft,
+                behavior: 'smooth'
+            });
+        }
     };
-
-    const handleCouplePrev = () => {
-        setCurrentCoupleIndex((prev) => (prev > 0 ? prev - 1 : coupleProducts.length - 1));
-    };
-
-    const handleCoupleNext = () => {
-        setCurrentCoupleIndex((prev) => (prev < coupleProducts.length - 1 ? prev + 1 : 0));
-    };
-
-    // Subset for Men's Desktop (Show 3)
-    const menDesktop = menProducts.slice(0, 3);
-    // Subset for Couple's Desktop (Show 5)
-    const coupleDesktop = coupleProducts.slice(0, 5);
-
-    // Removed early return to ensure ref is attached and observer runs
-    // if (menLoading || coupleLoading) return null; 
 
     return (
-        <section ref={sectionRef} className="relative w-full  min-h-screen overflow-hidden py-20">
+        <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden py-20">
             {/* Background Image - Desktop */}
             <div className="absolute inset-0 z-0 hidden md:block">
                 <Image
@@ -114,7 +122,7 @@ export default function MensCouplesSection() {
                         {/* 25% Badge - Left - Infinite Spin Animation */}
                         <div className="absolute left-0 top-1/2 -translate-y-1/2 hidden xl:block z-20">
                             <div
-                                className={`w-64 h-64 rounded-full bg-[#310101] flex flex-col items-center justify-center text-white border-4 border-[#D4AF37] shadow-2xl transition-all duration-1000 animate-spin-slow ${isVisible ? 'opacity-100' : 'opacity-0'
+                                className={`w-64 h-64 rounded-full bg-[#310101] flex flex-col items-center justify-center text-white border-4 border-[#D4AF37] shadow-2xl transition-all duration-1000 animate-spin-slow ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
                                     }`}
                             >
                                 <span className="text-5xl font-black" style={{ fontFamily: 'Fredoka One, cursive' }}>25%</span>
@@ -122,61 +130,102 @@ export default function MensCouplesSection() {
                             </div>
                         </div>
 
-                        {/* Desktop: Horizontal Slider (3 items visible) */}
+                        {/* Desktop: Horizontal Scroll */}
                         <div className="hidden md:block w-full max-w-5xl md:ml-64">
-                            <div className="relative">
-                                <div className="grid grid-cols-3 gap-8">
-                                    {menDesktop.map((product, index) => (
-                                        <NewLandingProductCard
-                                            key={`men-${product.id}`}
-                                            product={product}
-                                            variant="dark"
-                                            className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                                            style={{ transitionDelay: `${index * 150}ms` }}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Mobile: Horizontal Slider (1 item at a time) */}
-                        {/* Mobile: Horizontal Slider - Track */}
-                        <div className="md:hidden relative">
-                            <div className="overflow-hidden px-4">
+                            <div className="relative group">
                                 <div
-                                    className="flex transition-transform duration-500 ease-in-out"
-                                    style={{ transform: `translateX(-${currentMenIndex * 100}%)` }}
+                                    ref={menScrollRef}
+                                    className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4"
+                                    style={{
+                                        scrollSnapType: 'x mandatory',
+                                        WebkitOverflowScrolling: 'touch'
+                                    }}
                                 >
-                                    {menProducts.map((product) => (
-                                        <div key={`men-mobile-${product.id}`} className="min-w-full flex-shrink-0 flex flex-col items-center px-2">
-                                            <div className="w-full max-w-sm mx-auto">
-                                                <NewLandingProductCard
-                                                    product={product}
-                                                    variant="dark"
-                                                />
-                                            </div>
+                                    {menProducts.map((product, index) => (
+                                        <div
+                                            key={`men-${product.id}`}
+                                            className={`flex-shrink-0 w-[300px] transition-all duration-1000 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                                                }`}
+                                            style={{
+                                                transitionDelay: `${index * 150}ms`,
+                                                scrollSnapAlign: 'start'
+                                            }}
+                                        >
+                                            <NewLandingProductCard
+                                                product={product}
+                                                variant="dark"
+                                            />
                                         </div>
                                     ))}
                                 </div>
-                            </div>
 
-                            {/* Navigation Arrows */}
-                            <button
-                                onClick={handleMenPrev}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
-                            >
-                                <ChevronLeft size={24} className="text-[#310101]" />
-                            </button>
-                            <button
-                                onClick={handleMenNext}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
-                            >
-                                <ChevronRight size={24} className="text-[#310101]" />
-                            </button>
+                                {/* Desktop Navigation Arrows */}
+                                <button
+                                    onClick={() => scrollDesktop(menScrollRef, 'left')}
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                                    aria-label="Scroll left"
+                                >
+                                    <ChevronLeft size={28} />
+                                </button>
+                                <button
+                                    onClick={() => scrollDesktop(menScrollRef, 'right')}
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                                    aria-label="Scroll right"
+                                >
+                                    <ChevronRight size={28} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Mobile: Horizontal Scroll with Peek Effect */}
+                        <div className="md:hidden relative w-full">
+                            <div className="relative group">
+                                <div
+                                    ref={menMobileScrollRef}
+                                    className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-6 pb-4"
+                                    style={{
+                                        scrollSnapType: 'x mandatory',
+                                        WebkitOverflowScrolling: 'touch'
+                                    }}
+                                >
+                                    {menProducts.map((product, index) => (
+                                        <div
+                                            key={`men-mobile-${product.id}`}
+                                            className={`flex-shrink-0 w-[85%] max-w-[320px] transition-all duration-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
+                                                }`}
+                                            style={{
+                                                transitionDelay: `${index * 100}ms`,
+                                                scrollSnapAlign: 'start'
+                                            }}
+                                        >
+                                            <NewLandingProductCard
+                                                product={product}
+                                                variant="dark"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Mobile Navigation Arrows */}
+                                <button
+                                    onClick={() => scrollMobile(menMobileScrollRef, 'left')}
+                                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 text-[#310101] p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:scale-110 z-10"
+                                    aria-label="Scroll left"
+                                >
+                                    <ChevronLeft size={24} />
+                                </button>
+                                <button
+                                    onClick={() => scrollMobile(menMobileScrollRef, 'right')}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 text-[#310101] p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:scale-110 z-10"
+                                    aria-label="Scroll right"
+                                >
+                                    <ChevronRight size={24} />
+                                </button>
+                            </div>
                         </div>
 
                         {/* Mobile 25% Badge */}
-                        <div className="flex justify-center mt-8">
+                        <div className="md:hidden flex justify-center mt-8">
                             <div className="w-40 h-40 rounded-full bg-[#310101] flex flex-col items-center justify-center text-white border-4 border-[#D4AF37] shadow-2xl animate-spin-slow">
                                 <span className="text-3xl font-black" style={{ fontFamily: 'Fredoka One, cursive' }}>25%</span>
                                 <span className="text-xl font-bold" style={{ fontFamily: 'Fredoka One, cursive' }}>OFF</span>
@@ -184,6 +233,7 @@ export default function MensCouplesSection() {
                         </div>
                     </div>
                 </div>
+
                 {/* --- COUPLE'S COLLECTION --- */}
                 <div className="relative">
                     {/* Title */}
@@ -202,69 +252,124 @@ export default function MensCouplesSection() {
                         </h2>
                     </div>
 
-                    {/* Desktop: Horizontal Grid (5 items) */}
-                    <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-5 gap-6 px-4 md:px-8">
-                        {coupleDesktop.map((product, index) => (
-                            <NewLandingProductCard
-                                key={`couple-${product.id}`}
-                                product={product}
-                                variant="dark"
-                                className={`transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-                                style={{ transitionDelay: `${(index + 3) * 150}ms` }}
-                            />
-                        ))}
-                    </div>
-
-                    {/* Mobile: Horizontal Slider (1 item at a time) */}
-                    {/* Mobile: Horizontal Slider - Track */}
-                    <div className="md:hidden relative">
-                        <div className="overflow-hidden px-4">
+                    {/* Desktop: Horizontal Scroll */}
+                    <div className="hidden md:block">
+                        <div className="relative group">
                             <div
-                                className="flex transition-transform duration-500 ease-in-out"
-                                style={{ transform: `translateX(-${currentCoupleIndex * 100}%)` }}
+                                ref={coupleScrollRef}
+                                className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4 px-4"
+                                style={{
+                                    scrollSnapType: 'x mandatory',
+                                    WebkitOverflowScrolling: 'touch'
+                                }}
                             >
-                                {coupleProducts.map((product) => (
-                                    <div key={`couple-mobile-${product.id}`} className="min-w-full flex-shrink-0 flex flex-col items-center px-2">
-                                        <div className="w-full max-w-sm mx-auto">
-                                            <NewLandingProductCard
-                                                product={product}
-                                                variant="dark"
-                                            />
-                                        </div>
+                                {coupleProducts.map((product, index) => (
+                                    <div
+                                        key={`couple-${product.id}`}
+                                        className={`flex-shrink-0 w-[280px] transition-all duration-1000 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                                            }`}
+                                        style={{
+                                            transitionDelay: `${(index + 3) * 150}ms`,
+                                            scrollSnapAlign: 'start'
+                                        }}
+                                    >
+                                        <NewLandingProductCard
+                                            product={product}
+                                            variant="dark"
+                                        />
                                     </div>
                                 ))}
                             </div>
+
+                            {/* Desktop Navigation Arrows */}
+                            <button
+                                onClick={() => scrollDesktop(coupleScrollRef, 'left')}
+                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                                aria-label="Scroll left"
+                            >
+                                <ChevronLeft size={28} />
+                            </button>
+                            <button
+                                onClick={() => scrollDesktop(coupleScrollRef, 'right')}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                                aria-label="Scroll right"
+                            >
+                                <ChevronRight size={28} />
+                            </button>
                         </div>
+                    </div>
 
-                        {/* Navigation Arrows */}
-                        <button
-                            onClick={handleCouplePrev}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
-                        >
-                            <ChevronLeft size={24} className="text-[#310101]" />
-                        </button>
-                        <button
-                            onClick={handleCoupleNext}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 p-2 bg-white/80 rounded-full shadow-lg hover:bg-white transition-colors z-10"
-                        >
-                            <ChevronRight size={24} className="text-[#310101]" />
-                        </button>
+                    {/* Mobile: Horizontal Scroll with Peek Effect */}
+                    <div className="md:hidden relative">
+                        <div className="relative group">
+                            <div
+                                ref={coupleMobileScrollRef}
+                                className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-6 pb-4"
+                                style={{
+                                    scrollSnapType: 'x mandatory',
+                                    WebkitOverflowScrolling: 'touch'
+                                }}
+                            >
+                                {coupleProducts.map((product, index) => (
+                                    <div
+                                        key={`couple-mobile-${product.id}`}
+                                        className={`flex-shrink-0 w-[85%] max-w-[320px] transition-all duration-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
+                                            }`}
+                                        style={{
+                                            transitionDelay: `${index * 100}ms`,
+                                            scrollSnapAlign: 'start'
+                                        }}
+                                    >
+                                        <NewLandingProductCard
+                                            product={product}
+                                            variant="dark"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
 
-                        {/* Indicator Dots */}
-                        <div className="flex justify-center gap-2 mt-6">
-                            {coupleProducts.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setCurrentCoupleIndex(index)}
-                                    className={`w-2 h-2 rounded-full transition-all ${index === currentCoupleIndex ? 'bg-[#310101] w-6' : 'bg-[#310101]/50'
-                                        }`}
-                                />
-                            ))}
+                            {/* Mobile Navigation Arrows */}
+                            <button
+                                onClick={() => scrollMobile(coupleMobileScrollRef, 'left')}
+                                className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 text-[#310101] p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:scale-110 z-10"
+                                aria-label="Scroll left"
+                            >
+                                <ChevronLeft size={24} />
+                            </button>
+                            <button
+                                onClick={() => scrollMobile(coupleMobileScrollRef, 'right')}
+                                className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 text-[#310101] p-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 hover:scale-110 z-10"
+                                aria-label="Scroll right"
+                            >
+                                <ChevronRight size={24} />
+                            </button>
                         </div>
                     </div>
                 </div>
 
             </div>
+
+            {/* Custom Scrollbar Hide */}
+            <style jsx global>{`
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                @keyframes spin-slow {
+                    from {
+                        transform: rotate(0deg);
+                    }
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+                .animate-spin-slow {
+                    animation: spin-slow 20s linear infinite;
+                }
+            `}</style>
         </section>
     );
 }

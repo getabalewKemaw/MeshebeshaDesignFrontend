@@ -6,7 +6,7 @@ export default function ProductsHeader() {
                     Shop
                 </span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1E2A55] mb-4">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#310101] mb-4">
                 All Products
             </h1>
             <p className="text-lg text-gray-600">

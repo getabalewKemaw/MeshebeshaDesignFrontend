@@ -45,17 +45,35 @@ export default function NewLandingProductCard({
                 </div>
             </div>
 
-            {/* Description */}
-            <p
-                className={`text-center mb-4 leading-relaxed line-clamp-3 px-2 font-serif transition-colors
+            {/* Description with Scrollbar */}
+            <div
+                className={`text-center mb-4 leading-relaxed px-2 font-serif transition-colors max-h-20 overflow-y-auto custom-product-scrollbar
                     ${isLight
                         ? 'text-white text-sm'
-                        : 'text-[#310101] text-xs font-semibold bg-white/60 backdrop-blur-sm rounded p-1'
+                        : 'text-[#310101] text-xs font-semibold bg-white/60 backdrop-blur-sm rounded p-2'
                     }`}
                 style={{ fontFamily: 'Abhaya Libre, serif' }}
             >
                 {description}
-            </p>
+            </div>
+
+            {/* Custom Scrollbar for Product Description */}
+            <style jsx global>{`
+                .custom-product-scrollbar::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .custom-product-scrollbar::-webkit-scrollbar-track {
+                    background: rgba(49, 1, 1, 0.1);
+                    border-radius: 10px;
+                }
+                .custom-product-scrollbar::-webkit-scrollbar-thumb {
+                    background: #310101;
+                    border-radius: 10px;
+                }
+                .custom-product-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: #500202;
+                }
+            `}</style>
 
             {/* Shop Button */}
             <Link

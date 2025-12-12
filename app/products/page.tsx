@@ -102,7 +102,7 @@ export default function ProductsPage() {
       <NewNavBar />
 
       <main className="min-h-screen bg-gradient-to-b from-[#FFF9F0] to-white pt-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-7xl mx-auto sm:px-6  py-12">
           <ProductsHeader />
 
           <ProductsFilterBar

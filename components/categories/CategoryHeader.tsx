@@ -14,7 +14,7 @@ export default function CategoryHeader({ categoryName, currentCount, totalCount 
                     Category
                 </span>
             </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1E2A55] mb-4">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#310101] mb-4">
                 {categoryName}
             </h1>
             <p className="text-lg text-gray-600">
@@ -27,19 +27,19 @@ export default function CategoryHeader({ categoryName, currentCount, totalCount 
 
             {/* Breadcrumb */}
             <div className="flex items-center justify-center gap-2 mt-6 text-sm text-gray-600">
-                <Link href="/" className="hover:text-[#CFAE56] transition-colors">
+                <Link href="/" className="hover:text-[#310101] transition-colors">
                     Home
                 </Link>
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-                <Link href="/products" className="hover:text-[#CFAE56] transition-colors">
+                <Link href="/products" className="hover:text-[#310101] transition-colors">
                     Products
                 </Link>
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-                <span className="text-[#CFAE56] font-medium">{categoryName}</span>
+                <span className="text-[#310101] font-medium">{categoryName}</span>
             </div>
         </div>
     );

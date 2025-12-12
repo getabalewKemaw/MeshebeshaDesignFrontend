@@ -96,13 +96,13 @@ export default function NewHeroSection() {
                 />
             </div>
 
-            {/* Hero Content - Right Side on Desktop, Centered on Mobile */}
+            {/* Hero Content - Right Side and Top on Mobile, Right Side on Desktop */}
             {/* Increased max-width to allow huge text to breathe */}
-            <div className="relative z-10 h-full flex items-center justify-center md:justify-end px-8 md:px-16 lg:px-24">
-                <div className="max-w-4xl text-center md:text-right space-y-2 md:space-y-4">
+            <div className="relative z-10 h-full flex items-start md:items-center justify-end px-12 md:px-24 lg:px-24  sm:pt-0 md:pt-0">
+                <div className="max-w-4xl text-right space-y-2 md:space-y-4">
 
                     {/* Tagline - Modern Cinematic Expansion with Rotation */}
-                    <div className="overflow-visible transform -rotate-2 origin-bottom-center md:origin-bottom-right">
+                    <div className="overflow-visible transform -rotate-2 origin-bottom-right">
                         <h2
                             className="text-white text-base sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase tracking-[0.2em] animate-tracking-expand"
                             style={{
@@ -117,7 +117,7 @@ export default function NewHeroSection() {
                     </div>
 
                     {/* Main Heading - Masked Rotated Reveal (Shocking Impact) */}
-                    <h1 className="text-white font-normal uppercase leading-[0.9] flex flex-col items-center md:items-end w-full">
+                    <h1 className="text-white font-normal uppercase leading-[0.9] flex flex-col items-end w-full">
                         {/* Line 1 */}
                         <span className="block overflow-hidden pb-2 pl-2 pr-2">
                             <span
@@ -163,7 +163,7 @@ export default function NewHeroSection() {
 
                     {/* Sign Up Button & Search - Fade/Blur In with Delay */}
                     <div
-                        className="pt-8 flex flex-col items-center md:items-end gap-6 animate-blur-slide"
+                        className="pt-8 flex flex-col items-end gap-6 animate-blur-slide"
                         style={{
                             opacity: 0,
                             animationFillMode: 'forwards',

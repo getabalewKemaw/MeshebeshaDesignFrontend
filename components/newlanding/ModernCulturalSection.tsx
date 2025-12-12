@@ -61,17 +61,6 @@ export default function ModernCulturalSection() {
                 <div className="absolute inset-0 bg-black/10" />
             </div>
 
-            {/* Decorative Left Border Pattern */}
-            <div className="absolute left-0 top-0 bottom-0 w-24 z-10 hidden md:block">
-                <div
-                    className="w-full h-full bg-repeat-y opacity-90"
-                    style={{
-                        backgroundImage: 'url(/ui/pattern-border.png)',
-                        backgroundSize: 'contain',
-                    }}
-                />
-            </div>
-
             {/* SALE NOW Badge - Top Center with Bounce Animation */}
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-20">
                 <div
@@ -93,12 +82,26 @@ export default function ModernCulturalSection() {
                     }`}
             >
                 <h2
-                    className="text-white text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-normal tracking-wide leading-tight drop-shadow-2xl"
+                    className="text-white text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-normal tracking-wide leading-tight drop-shadow-2xl mb-12"
                     style={{ fontFamily: 'Abril Fatface, cursive' }}
                 >
                     MODERN CULTURAL<br />
                     ETHIOPIAN CLOTHES
                 </h2>
+
+                {/* Shop Now Button with Floating Animation */}
+                <div
+                    className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                        }`}
+                >
+                    <a
+                        href="/products"
+                        className="inline-block bg-white text-[#310101] px-12 py-4 rounded-full font-black text-lg md:text-xl uppercase hover:bg-[#310101] hover:text-white transition-all duration-300 shadow-2xl hover:shadow-[0_0_30px_rgba(49,1,1,0.5)] hover:scale-110 animate-float border-4 border-[#310101]"
+                        style={{ fontFamily: 'Fredoka One, cursive' }}
+                    >
+                        SHOP NOW
+                    </a>
+                </div>
             </div>
 
             {/* 25% OFF Circle Badge - Right Side with Infinite Spin Animation */}
@@ -134,6 +137,32 @@ export default function ModernCulturalSection() {
                     </div>
                 </div>
             </div>
+
+            {/* Animations */}
+            <style jsx global>{`
+                @keyframes float {
+                    0%, 100% {
+                        transform: translateY(0px);
+                    }
+                    50% {
+                        transform: translateY(-10px);
+                    }
+                }
+                .animate-float {
+                    animation: float 3s ease-in-out infinite;
+                }
+                @keyframes spin-slow {
+                    from {
+                        transform: rotate(0deg);
+                    }
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+                .animate-spin-slow {
+                    animation: spin-slow 20s linear infinite;
+                }
+            `}</style>
         </section>
     );
 }
