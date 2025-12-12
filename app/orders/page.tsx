@@ -51,23 +51,23 @@ export default function OrdersPage() {
     }, [isAuthenticated]);
 
     // if the user logout or it not authenticatd then  set the orders to the  empty  data.
- useEffect(() => {
-  if (!isAuthenticated) {
-    setOrders([]);
-    setError(null);
-  }
-}, [isAuthenticated]);
+    useEffect(() => {
+        if (!isAuthenticated) {
+            setOrders([]);
+            setError(null);
+        }
+    }, [isAuthenticated]);
 
-// memoized callbacks  to prevent child re renders.
-const handleViewDetails = useCallback((order: OrderSummary) => {
-  setSelectedOrder(order);
-  setIsModalOpen(true);
-}, []);
+    // memoized callbacks  to prevent child re renders.
+    const handleViewDetails = useCallback((order: OrderSummary) => {
+        setSelectedOrder(order);
+        setIsModalOpen(true);
+    }, []);
 
-const handleCloseModal = useCallback(() => {
-  setIsModalOpen(false);
-  setTimeout(() => setSelectedOrder(null), 300);
-}, []);
+    const handleCloseModal = useCallback(() => {
+        setIsModalOpen(false);
+        setTimeout(() => setSelectedOrder(null), 300);
+    }, []);
 
 
 
@@ -80,7 +80,7 @@ const handleCloseModal = useCallback(() => {
             <div className="min-h-screen bg-[#F8F9FC]">
                 <NewNavBar />
 
-                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32 py-10 sm:py-16">
                     <OrdersHeader
                         statusFilter={statusFilter}
                         setStatusFilter={setStatusFilter}

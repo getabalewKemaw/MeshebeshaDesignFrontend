@@ -11,6 +11,7 @@ import { useState } from "react";
 import type { ToastType } from "@/components/ui/Toast";
 import Link from "next/link";
 import NewNavBar from "@/components/newlanding/NewNavBar";
+import FooterSection from "@/components/newlanding/FooterSection";
 
 
 // to prevent unnnessary computation on evert rende
@@ -54,32 +55,35 @@ export default function CartPage() {
   return (
     <>
       <NewNavBar />
-      <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 pt-32 pb-16">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6">
           <div>
-            <h1 className="text-3xl font-semibold text-gray-900">Your Cart</h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <h1 className="text-4xl font-bold text-[#310101] tracking-tight">Your Cart</h1>
+            <p className="text-gray-500 text-sm mt-2">
               {itemCount > 0
                 ? `${itemCount} item${itemCount === 1 ? "" : "s"} ready for checkout`
                 : "Review items and continue to checkout."}
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Link href="/products" className="form-button-secondary">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/products" className="px-6 py-2.5 border border-[#310101]  text-sm font-medium text-gray-700 transition-colors">
               Continue Shopping
             </Link>
             {items.length > 0 && (
               <button
                 type="button"
                 onClick={handleClearCart}
-                className="form-button-secondary"
+                className="px-6 py-2.5 border border-[#310101]  text-sm font-medium text-[#510505] hover:bg-gray-50 transition-colors"
               >
                 Clear cart
               </button>
             )}
           </div>
         </div>
+
+        {/* Divider Line */}
+        <div className="h-px bg-[#310101]" />
 
         {/* Loading State */}
         {!hasHydrated ? (
@@ -95,19 +99,32 @@ export default function CartPage() {
           />
         ) : (
           /* Cart Content */
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-4">
-              {items.map((item, index) => (
-                <CartItemCard
-                  key={item.key}
-                  item={item}
-                  formatPrice={(price) => formatPrice.format(price)}
-                  onRemove={handleRemoveItem}
-                  onQuantityChange={handleQuantityChange}
-                  showDivider={index < items.length - 1}
-                />
-              ))}
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                {/* Table Header */}
+                <div className="grid grid-cols-[auto_1fr_auto_auto] gap-6 px-6 py-4 bg-gray-50 border-b border-gray-200">
+                  <div className="text-sm font-semibold text-[#310101]">Product</div>
+                  <div></div>
+                  <div className="text-sm font-semibold text-[#310101]">Quantity</div>
+                  <div className="text-sm font-semibold text-[#310101] text-right min-w-[100px]">Total</div>
+                </div>
+
+                {/* Cart Items */}
+                <div className="px-6">
+                  {items.map((item, index) => (
+                    <CartItemCard
+                      key={item.key}
+                      item={item}
+                      formatPrice={(price) => formatPrice.format(price)}
+                      onRemove={handleRemoveItem}
+                      onQuantityChange={handleQuantityChange}
+                      showDivider={index < items.length - 1}
+                    />
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Order Summary */}
@@ -130,7 +147,11 @@ export default function CartPage() {
           onClose={() => setToast(null)}
         />
       )}
+
+
+      <div className="h-px bg-[#310101]" />
+
+      <FooterSection />
     </>
   );
 }
-

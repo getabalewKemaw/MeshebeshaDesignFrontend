@@ -14,9 +14,9 @@ export default function OrdersHeader({ statusFilter, setStatusFilter }: OrdersHe
     ];
 
     return (
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10  pt-32">
             <div>
-                <h1 className="text-4xl font-bold text-[#1E2A55] tracking-tight">My Orders</h1>
+                <h1 className="text-4xl font-bold text-[#310101] tracking-tight">My Orders</h1>
                 <p className="text-gray-500 mt-2 text-lg">
                     View and track your order history
                 </p>
@@ -29,7 +29,7 @@ export default function OrdersHeader({ statusFilter, setStatusFilter }: OrdersHe
                         key={option.value}
                         onClick={() => setStatusFilter(option.value)}
                         className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 ${statusFilter === option.value
-                            ? "bg-[#1E2A55] text-white shadow-md transform scale-105"
+                            ? "bg-[#310101] text-white shadow-md transform scale-105"
                             : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
                             }`}
                     >

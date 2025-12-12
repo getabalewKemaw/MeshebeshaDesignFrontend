@@ -23,7 +23,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
             <div className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <div className="flex items-center gap-3 mb-1">
-                        <span className="text-lg font-bold text-[#1E2A55]">#{order.orderNumber || order.id.slice(0, 8)}</span>
+                        <span className="text-lg font-bold text-[#310101]">#{order.orderNumber || order.id.slice(0, 8)}</span>
                         <OrderStatusBadge status={order.status} />
                     </div>
                     <div className="text-sm text-gray-500">
@@ -31,7 +31,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
                     </div>
                 </div>
                 <div className="text-right hidden sm:block">
-                    <div className="text-xl font-bold text-[#1E2A55]">
+                    <div className="text-xl font-bold text-[#310101]">
                         {formatCurrency(order.total, order.currency)}
                     </div>
                 </div>
@@ -44,7 +44,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
             <div className="p-6">
                 <div className="mb-4 sm:hidden flex justify-between items-center pb-4 border-b border-gray-50">
                     <span className="text-sm text-gray-500">Total</span>
-                    <span className="text-lg font-bold text-[#1E2A55]">
+                    <span className="text-lg font-bold text-[#310101]">
                         {formatCurrency(order.total, order.currency)}
                     </span>
                 </div>
@@ -96,7 +96,7 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, onViewDetails }) => {
             <div className="px-6 py-4 bg-gray-50 flex justify-end">
                 <button
                     onClick={() => onViewDetails(order)}
-                    className="text-sm font-semibold text-[#1E2A55] hover:text-[#CFAE56] transition-colors flex items-center gap-2"
+                    className="text-sm font-semibold text-[#310101] hover:text-[#500202] transition-colors flex items-center gap-2"
                 >
                     View Order Details
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

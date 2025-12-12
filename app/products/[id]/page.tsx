@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Navbar from "@/components/NavBar";
+
 import ProductMediaSlider from "@/components/products/ProductMediaSlider";
 import { getPublicProductById, recordProductView } from "@/lib/api/products";
 import type { ProductWithDetails, ProductMedia, ProductVariant } from "@/types/product";
@@ -16,6 +16,7 @@ import ProductActions from "@/components/products/details/ProductActions";
 import ProductVariantsList from "@/components/products/details/ProductVariantsList";
 import ProductReviewModalWrapper from "@/components/products/details/ProductReviewModalWrapper";
 import NewNavBar from "@/components/newlanding/NewNavBar";
+import FooterSection from "@/components/newlanding/FooterSection";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
@@ -295,7 +296,7 @@ export default function ProductDetailPage() {
   return (
     <>
       <NewNavBar />
-      <div className="max-w-5xl mx-auto px-4 pt-32">
+      <div className="max-w-5xl mx-auto pt-32">
         {loading ? (
           <div className="py-10 text-center">Loading...</div>
         ) : error ? (
@@ -392,6 +393,7 @@ export default function ProductDetailPage() {
           setReviewsKey((k) => k + 1);
         }}
       />
+      <FooterSection />
     </>
   );
 }

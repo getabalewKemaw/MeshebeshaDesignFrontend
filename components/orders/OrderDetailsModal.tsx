@@ -45,7 +45,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
                     {/* Header */}
                     <div className="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
                         <div>
-                            <h3 className="text-xl font-bold text-[#1E2A55]" id="modal-title">
+                            <h3 className="text-xl font-bold text-[#310101]" id="modal-title">
                                 Order Details
                             </h3>
                             <p className="text-sm text-gray-500 mt-1">
@@ -75,7 +75,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
                                     {formatDateTime(order.createdAt)}
                                 </span>
                             </div>
-                            <div className="text-xl font-bold text-[#1E2A55]">
+                            <div className="text-xl font-bold text-[#310101]">
                                 {formatCurrency(order.total, order.currency)}
                             </div>
                         </div>
@@ -134,7 +134,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
                                             <span>Shipping</span>
                                             <span className="font-medium text-green-600">Free</span>
                                         </div>
-                                        <div className="flex justify-between pt-2 mt-2 border-t border-gray-100 font-bold text-[#1E2A55]">
+                                        <div className="flex justify-between pt-2 mt-2 border-t border-gray-100 font-bold text-[#310101]">
                                             <span>Total</span>
                                             <span>{formatCurrency(order.total, order.currency)}</span>
                                         </div>
@@ -200,7 +200,7 @@ const OrderDetailsModal: React.FC<OrderDetailsModalProps> = ({ order, isOpen, on
                         </button>
                         <button
                             type="button"
-                            className="px-4 py-2 text-sm font-semibold text-[#1E2A55] hover:text-[#CFAE56] transition-colors flex items-center gap-2"
+                            className="px-4 py-2 text-sm font-semibold text-[#310101] hover:text-[#500202] transition-colors flex items-center gap-2"
                             onClick={() => window.print()}
                         >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
