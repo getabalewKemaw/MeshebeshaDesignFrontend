@@ -1,5 +1,4 @@
 'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { Facebook, Instagram, Linkedin } from 'lucide-react';
@@ -94,8 +93,9 @@ export default function FooterSection() {
                         <ul className="space-y-2 text-gray-300 text-sm" style={{ fontFamily: 'Abhaya Libre, serif' }}>
                             <li><Link href="/refund-policy" className="hover:text-white transition-colors">- Refund policy</Link></li>
                             <li><Link href="/privacy-policy" className="hover:text-white transition-colors">- Privacy policy</Link></li>
-                            <li><Link href="/terms" className="hover:text-white transition-colors">- Terms of service</Link></li>
+                            <li><Link href="/terms-of-service" className="hover:text-white transition-colors">- Terms of service</Link></li>
                             <li><Link href="/shipping" className="hover:text-white transition-colors">- Shipping policy</Link></li>
+                            <li><Link href="/faq" className="hover:text-white transition-colors">- FAQ</Link></li>
                             <li><Link href="/contact" className="hover:text-white transition-colors">- Contact information</Link></li>
                         </ul>
                     </div>
@@ -107,7 +107,7 @@ export default function FooterSection() {
                         </h3>
                         <ul className="space-y-2 text-gray-300 text-sm" style={{ fontFamily: 'Abhaya Libre, serif' }}>
                             <li><Link href="/about" className="hover:text-white transition-colors">About us</Link></li>
-                            <li><Link href="/privacy" className="hover:text-white transition-colors">privacy</Link></li>
+                            <li><Link href="/privacy-policy" className="hover:text-white transition-colors">privacy</Link></li>
                             <li><Link href="/press" className="hover:text-white transition-colors">press</Link></li>
                             <li><Link href="/careers" className="hover:text-white transition-colors">careers</Link></li>
                         </ul>

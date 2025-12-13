@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useAuth } from "@/lib/hooks/useAuth";
-import Navbar from "@/components/NavBar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import NewNavBar from "@/components/newlanding/NewNavBar";
+import Image from "next/image";
+import FooterSection from "@/components/newlanding/FooterSection";
 
 export default function ProfilePage() {
   const { user,refreshUser } = useAuth();
@@ -93,28 +94,30 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-gray-50">
         <NewNavBar />
 
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           {/* Profile Header */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-            <div className="h-32 bg-gradient-to-r from-purple-500 to-pink-500"></div>
+            <div className="h-32 bg-[#310101]"></div>
             <div className="px-8 pb-8">
               <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 -mt-16">
                 {/* Profile Image */}
                 <div className="relative w-32 h-32">
                   {user?.image ? (
-                    <img
+                    <Image
                       src={user.image}
+                      width={32}
+                      height={32}
                       alt="Profile"
                       className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-xl"
                     />
                   ) : (
-                    <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-5xl font-bold shadow-xl border-4 border-white">
+                    <div className="w-32 h-32 rounded-full bg-[#310101] flex items-center justify-center text-white text-5xl font-bold shadow-xl border-4 border-white">
                       {getUserInitials()}
                     </div>
                   )}
 
                   {isEditing && (
-                    <label className="absolute bottom-0 right-0 bg-purple-600 text-white p-2 rounded-full cursor-pointer hover:bg-purple-700">
+                    <label className="absolute bottom-0 right-0 bg-[#310101] text-white p-2 rounded-full cursor-pointer hover:bg-[#6f0909]">
                       <input
                         type="file"
                         accept="image/*"
@@ -131,7 +134,7 @@ export default function ProfilePage() {
 
                 {/* User Info */}
                 <div className="text-center sm:text-left mb-4 sm:mb-0">
-                  <h1 className="text-3xl font-bold text-gray-900">{user?.name}</h1>
+                  <h1 className="text-3xl font-bold text-white">{user?.name}</h1>
                   <p className="text-gray-600 mt-1">{user?.email}</p>
                   <div className="flex items-center gap-2 mt-2 justify-center sm:justify-start">
                     <span
@@ -141,7 +144,7 @@ export default function ProfilePage() {
                     >
                       {user?.emailVerified ? "✓ Verified" : "Pending Verification"}
                     </span>
-                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-700 capitalize">
+                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-[#310101] capitalize">
                       {user?.role || "User"}
                     </span>
                   </div>
@@ -165,7 +168,7 @@ export default function ProfilePage() {
               {!isEditing && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  className="px-4 py-2 bg-[#310101] text-white rounded-lg hover:bg-[#5c0505] transition-colors"
                 >
                   Edit Profile
                 </button>
@@ -248,7 +251,10 @@ export default function ProfilePage() {
             </form>
           </div>
         </main>
+
+        <FooterSection />
       </div>
+
     </ProtectedRoute>
   );
 }
