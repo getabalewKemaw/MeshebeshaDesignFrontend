@@ -14,7 +14,7 @@ export default function EmptyState() {
             </p>
             <Link
                 href="/products"
-                className="inline-flex items-center justify-center px-6 py-3 bg-[#1E2A55] text-white rounded-full font-semibold hover:bg-[#2A3A65] transition-colors"
+                className="inline-flex items-center justify-center px-6 py-3 bg-[#310101] text-white rounded-full font-semibold hover:bg-[#5a0606] transition-colors"
             >
                 Browse All Products
             </Link>

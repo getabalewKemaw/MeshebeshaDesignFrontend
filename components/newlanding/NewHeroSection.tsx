@@ -98,7 +98,7 @@ export default function NewHeroSection() {
 
             {/* Hero Content - Right Side and Top on Mobile, Right Side on Desktop */}
             {/* Increased max-width to allow huge text to breathe */}
-            <div className="relative z-10 h-full flex items-start md:items-center justify-end px-12 md:px-24 lg:px-24  sm:pt-0 md:pt-0">
+            <div className="relative z-10 h-full flex items-start md:items-center justify-end px-89 md:px-30 lg:px-24  sm:pt-0 md:pt-0">
                 <div className="max-w-4xl text-right space-y-2 md:space-y-4">
 
                     {/* Tagline - Modern Cinematic Expansion with Rotation */}
