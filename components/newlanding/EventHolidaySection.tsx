@@ -197,8 +197,7 @@ export default function EventHolidaySection() {
 
                         {/* Title */}
                         <div
-                            className={`text-center mt-9 md:mt-9 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-                                }`}
+                            className="text-center mt-9 md:mt-9 relative z-20"
                         >
                             <h2
                                 className="text-[#310101] text-3xl md:text-5xl font-bold uppercase tracking-wider border-b-4 border-[#310101] pb-2 inline-block"

@@ -44,8 +44,8 @@ export default function ModernCulturalSection() {
                     quality={100}
                     priority
                 />
-                {/* Slight overlay for text readability */}
-                <div className="absolute inset-0 bg-black/10" />
+                {/* Stronger overlay for text readability */}
+                <div className="absolute inset-0 bg-black/40" />
             </div>
 
             {/* Background Image - Mobile */}
@@ -58,8 +58,8 @@ export default function ModernCulturalSection() {
                     quality={100}
                     priority
                 />
-                {/* Slight overlay for text readability */}
-                <div className="absolute inset-0 bg-black/10" />
+                {/* Stronger overlay for text readability */}
+                <div className="absolute inset-0 bg-black/40" />
             </div>
 
             {/* SALE NOW Badge - Top Center with Bounce Animation */}
@@ -97,8 +97,8 @@ export default function ModernCulturalSection() {
                 >
                     <Link
                         href="/products"
-                        className="inline-block bg-white text-[#310101] px-12 py-4 rounded-full font-black text-lg md:text-xl uppercase hover:bg-[#310101] hover:text-white transition-all duration-300 shadow-2xl hover:shadow-[0_0_30px_rgba(49,1,1,0.5)] hover:scale-110 animate-float border-4 border-[#310101]"
-                        style={{ fontFamily: 'Fredoka One, cursive' }}
+                        className="inline-block bg-white text-black px-12 py-4 rounded-full font-black text-lg md:text-xl uppercase hover:bg-[#310101] hover:text-black transition-all duration-300 shadow-2xl hover:shadow-[0_0_30px_rgba(49,1,1,0.5)] hover:scale-110 animate-float border-4 border-[#310101]"
+                        style={{ fontFamily: 'Fredoka One, cursive', color: '#310101' }}
                     >
                         SHOP NOW
                     </Link>

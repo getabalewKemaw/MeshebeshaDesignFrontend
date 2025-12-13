@@ -150,24 +150,33 @@ export default function JewelrySection() {
                             }}
                         >
                             {products.map((product, index) => {
-                                // Calculate INVERTED curve - creates arch/rainbow shape
-                                // Middle cards HIGH, edge cards LOW
+                                // Implement "U-shape" / Bowl curve: Edges High, Center Low
                                 const totalProducts = products.length;
-                                const middle = totalProducts / 2;
-                                const distanceFromMiddle = Math.abs(index - middle);
-                                const maxOffset = 100; // Increased for more visible curve
-                                const curveOffset = maxOffset - (distanceFromMiddle * 20); // Increased multiplier
+                                const middle = (totalProducts - 1) / 2;
+                                const indexFromMiddle = index - middle;
+
+                                // Angle spread - fanning out slightly
+                                const angleStep = 5;
+                                const rotateAngle = indexFromMiddle * angleStep;
+
+                                // Parabolic Curve: y = k * x^2
+                                // We want edges to be HIGHER (negative Y translate) than the center.
+                                // Or center to be LOWER (positive Y translate).
+                                // Let's keep the baseline at the bottom and push edges UP.
+                                const yOffset = Math.abs(indexFromMiddle) * Math.abs(indexFromMiddle) * 12; // Adjusted multiplier for curve depth
 
                                 return (
                                     <div
                                         key={product.id}
-                                        className={`flex-shrink-0 w-[280px] transition-all duration-700 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                                        className={`flex-shrink-0 w-[260px] transition-all duration-700 hover:scale-110 hover:z-20 ${isVisible ? 'opacity-100' : 'opacity-0'
                                             }`}
                                         style={{
-                                            transitionDelay: `${(index % 5) * 150}ms`,
-                                            scrollSnapAlign: 'start',
-                                            transform: `translateY(-${curveOffset}px)`, // Negative for upward
-                                            transition: 'transform 0.3s ease-in-out, opacity 0.7s, scale 0.3s'
+                                            transitionDelay: `${(index % 5) * 100}ms`,
+                                            scrollSnapAlign: 'center',
+                                            transform: `rotate(${rotateAngle}deg) translateY(-${yOffset}px)`, // Negative Y pushes edges UP
+                                            transformOrigin: 'center 150%', // Pivot point below the card
+                                            marginTop: `${yOffset}px`, // Add margin top so the whole container height accommodates the lift
+                                            zIndex: 10
                                         }}
                                     >
                                         <NewLandingProductCard

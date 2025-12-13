@@ -163,7 +163,7 @@ export default function NewHeroSection() {
 
                     {/* Sign Up Button & Search - Fade/Blur In with Delay */}
                     <div
-                        className="pt-8 flex flex-col items-end gap-6 animate-blur-slide"
+                        className="pt-8 flex flex-col items-end gap-6 animate-blur-slide sm:pt-32  md:pt-8 "
                         style={{
                             opacity: 0,
                             animationFillMode: 'forwards',

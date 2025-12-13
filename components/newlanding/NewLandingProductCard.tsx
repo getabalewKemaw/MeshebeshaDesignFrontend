@@ -32,18 +32,21 @@ export default function NewLandingProductCard({
             style={style}
         >
             {/* Image Container */}
-            <div className={`relative w-full aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-2 border-white/20 shadow-2xl group-hover:shadow-3xl transition-shadow ${!isLight ? 'bg-white border-[#310101]/20' : ''}`}>
-                <Image
-                    src={image}
-                    alt={product.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                {/* SALE Tag */}
-                <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold tracking-wider">
-                    SALE
+            {/* Image Container - Clickable */}
+            <Link href={`/products/${product.id}`} className="w-full">
+                <div className={`relative w-full aspect-[3/4] rounded-3xl overflow-hidden mb-4 border-2 border-white/20 shadow-2xl group-hover:shadow-3xl transition-shadow ${!isLight ? 'bg-white border-[#310101]/20' : ''}`}>
+                    <Image
+                        src={image}
+                        alt={product.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    {/* SALE Tag */}
+                    <div className="absolute bottom-3 left-3 bg-[#310101] text-white px-3 py-1 rounded text-xs font-bold tracking-wider">
+                        SALE
+                    </div>
                 </div>
-            </div>
+            </Link>
 
             {/* Description with Scrollbar */}
             <div
