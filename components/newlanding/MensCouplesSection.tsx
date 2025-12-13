@@ -72,7 +72,7 @@ export default function MensCouplesSection() {
     };
 
     return (
-        <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden py-20">
+        <section ref={sectionRef} className="relative w-full min-h-screen  overflow-hidden py-20">
             {/* Background Image - Desktop */}
             <div className="absolute inset-0 z-0 hidden md:block">
                 <Image
@@ -120,9 +120,9 @@ export default function MensCouplesSection() {
 
                     <div className="flex flex-col lg:flex-row items-center justify-center gap-12 relative">
                         {/* 25% Badge - Left - Infinite Spin Animation */}
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 hidden xl:block z-20">
+                        <div className="absolute left-0 top-1/2 -translate-y-1/2 hidden xl:block z-20 sm:hidden">
                             <div
-                                className={`w-64 h-64 rounded-full bg-[#310101] flex flex-col items-center justify-center text-white border-4 border-[#D4AF37] shadow-2xl transition-all duration-1000 animate-spin-slow ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+                                className={`w-64 h-64 rounded-full bg-[#310101] flex flex-col items-center justify-center text-white  border-white   border-9  shadow-2xl transition-all duration-1000 animate-spin-slow ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
                                     }`}
                             >
                                 <span className="text-5xl font-black" style={{ fontFamily: 'Fredoka One, cursive' }}>25%</span>
@@ -225,12 +225,12 @@ export default function MensCouplesSection() {
                         </div>
 
                         {/* Mobile 25% Badge */}
-                        <div className="md:hidden flex justify-center mt-8">
+                  {/*       <div className="md:hidden flex justify-center mt-8">
                             <div className="w-40 h-40 rounded-full bg-[#310101] flex flex-col items-center justify-center text-white border-4 border-[#D4AF37] shadow-2xl animate-spin-slow">
                                 <span className="text-3xl font-black" style={{ fontFamily: 'Fredoka One, cursive' }}>25%</span>
                                 <span className="text-xl font-bold" style={{ fontFamily: 'Fredoka One, cursive' }}>OFF</span>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
@@ -285,7 +285,7 @@ export default function MensCouplesSection() {
                             <button
                                 onClick={() => scrollDesktop(coupleScrollRef, 'left')}
                                 className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
-                                aria-label="Scroll left"
+                                aria-label="Scroll left" 
                             >
                                 <ChevronLeft size={28} />
                             </button>

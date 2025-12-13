@@ -91,12 +91,12 @@ export default function EventHolidaySection() {
                     </div>
 
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row items-center justify-between mb-8 px-4 md:px-8">
-                        {/* 25% OFF Badge - Left - Always Animated */}
+<div className="relative mb-8 px-4 md:px-8 flex items-center justify-center">
+                        {/* 25% OFF Badge - Left Edge - Always Animated */}
                         <div
-                            className="bg-[#310101] text-white px-6 py-2 rounded-full border-2 border-[#310101] shadow-lg transform rotate-[-2deg] animate-pulse"
+                            className="absolute left-0 top-0 bg-[#310101] text-white px-8 py-3 md:px-10 md:py-4 rounded-r-full rounded-l-none border-2 border-[#310101] border-l-0 shadow-lg transform rotate-[-2deg] animate-pulse z-20"
                         >
-                            <span className="font-black text-xl md:text-2xl" style={{ fontFamily: 'Fredoka One, cursive' }}>
+                            <span className="font-black text-2xl md:text-3xl lg:text-4xl" style={{ fontFamily: 'Fredoka One, cursive' }}>
                                 25% OFF
                             </span>
                         </div>
@@ -104,7 +104,7 @@ export default function EventHolidaySection() {
                         {/* Title */}
                         <div className="text-center mt-4 md:mt-0">
                             <h2
-                                className="text-[#310101] text-3xl md:text-5xl font-bold uppercase tracking-wider border-b-4 border-[#310101] pb-2 inline-block"
+                                className="text-[#310101] text-3xl md:text-5xl font-bold uppercase tracking-wider border-b-4 border-[#310101] pb-2 inline-block text-center"
                                 style={{
                                     fontFamily: 'ADLaM Display, cursive',
                                     WebkitTextStroke: '1px #310101'
@@ -192,7 +192,7 @@ export default function EventHolidaySection() {
                     </div>
 
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row items-center justify-between mb-8 px-4 md:px-8">
+<div className="relative mb-8 px-4 md:px-8 flex items-center justify-center">
                         <div className="w-[120px] hidden md:block"></div>
 
                         {/* Title */}
@@ -210,12 +210,12 @@ export default function EventHolidaySection() {
                             </h2>
                         </div>
 
-                        {/* 25% OFF Badge - Right - Animated */}
+                        {/* 25% OFF Badge - Right Edge - Animated */}
                         <div
-                            className={`bg-[#310101] text-white px-6 py-2 rounded-full border-2 border-[#310101] shadow-lg transform rotate-[2deg] mt-4 md:mt-0 transition-all duration-700 delay-300 animate-pulse ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+                            className={`absolute right-0 top-0 bg-[#310101] text-white px-8 py-3 md:px-10 md:py-4 rounded-l-full rounded-r-none border-2 border-[#310101] border-r-0 shadow-lg transform rotate-[2deg] animate-pulse z-20 transition-all duration-700 delay-300 ${isVisible ? 'scale-100' : 'scale-50'
                                 }`}
                         >
-                            <span className="font-black text-xl md:text-2xl" style={{ fontFamily: 'Fredoka One, cursive' }}>
+                            <span className="font-black text-2xl md:text-3xl lg:text-4xl" style={{ fontFamily: 'Fredoka One, cursive' }}>
                                 25% OFF
                             </span>
                         </div>

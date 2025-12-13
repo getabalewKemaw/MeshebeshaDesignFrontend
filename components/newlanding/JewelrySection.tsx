@@ -82,13 +82,20 @@ export default function JewelrySection() {
             </div>
 
             {/* Top Curved Section (Dark Brown) */}
-            <div className="relative z-10 w-full h-[50vh] bg-[#310101] rounded-b-[50%] flex flex-col items-center justify-center shadow-2xl mt-[-80px]">
+            <div className="relative z-10 w-[85%] max-w-[1400px] mx-auto h-[55vh] bg-[#310101] border-white text-white border-b-4 border-l-5 border-r-5 border-t-5 rounded-b-[100%] flex flex-col items-center justify-start pt-24 shadow-2xl mt-[-100px] box-border"
+                style={{
+                    borderBottomLeftRadius: '50% 100%',
+                    borderBottomRightRadius: '50% 100%',
+                    borderBottomWidth: '6px',
+                    borderColor: 'white'
+                }}
+            >
                 <div
-                    className={`text-center text-white mt-10 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                    className={`text-center transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                         }`}
                 >
                     <h3
-                        className="text-xl md:text-2xl font-bold tracking-widest mb-2"
+                        className="text-xl md:text-5xl font-bold tracking-widest mb-2 pl-15"
                         style={{
                             fontFamily: 'Abhaya Libre, serif',
                             WebkitTextStroke: '0.5px #310101'
@@ -97,9 +104,9 @@ export default function JewelrySection() {
                         TRADITIONAL CULTURAL
                     </h3>
                     <h1
-                        className="text-5xl md:text-7xl lg:text-8xl font-bold serif mb-2"
+                        className="text-5xl md:text-8xl lg:text-8xl font-bold serif mb-2 text-white"
                         style={{
-                            fontFamily: 'Abril Fatface, cursive',
+                            fontFamily: 'Abril Fatface',
                             WebkitTextStroke: '2px #310101'
                         }}
                     >
@@ -117,8 +124,8 @@ export default function JewelrySection() {
                 </div>
 
                 {/* Decorative Leafs - Arranged in a curve along the bottom edge */}
-                <div
-                    className={`absolute bottom-[-40px] left-0 right-0 flex justify-center items-end gap-2 md:gap-4 overflow-hidden px-4 transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+            {/*     <div
+                    className={`relative bottom-[10%] left-0 right-0  -top-10 flex justify-center items-end gap-2 md:gap-4 overflow-hidden px-4 transition-all duration-1000 delay-300  pt-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                         }`}
                 >
                     {[...Array(9)].map((_, i) => (
@@ -131,11 +138,11 @@ export default function JewelrySection() {
                             />
                         </div>
                     ))}
-                </div>
+                </div> */}
             </div>
 
             {/* Desktop: Horizontal Scroll Container with Curved Layout */}
-            <div className="hidden md:block relative z-10 w-full max-w-7xl mx-auto px-4 mt-24">
+            <div className="hidden md:block relative z-10 w-full max-w-[1600px] mx-auto px-4 -mt-20">
                 <div
                     className={`relative px-12 transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                         }`}
@@ -143,7 +150,7 @@ export default function JewelrySection() {
                     <div className="relative group">
                         <div
                             ref={scrollContainerRef}
-                            className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-12 pt-8"
+                            className="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth pb-20 pt-32 px-10"
                             style={{
                                 scrollSnapType: 'x mandatory',
                                 WebkitOverflowScrolling: 'touch'
@@ -156,14 +163,15 @@ export default function JewelrySection() {
                                 const indexFromMiddle = index - middle;
 
                                 // Angle spread - fanning out slightly
-                                const angleStep = 5;
+                                const angleStep = 4;
                                 const rotateAngle = indexFromMiddle * angleStep;
 
                                 // Parabolic Curve: y = k * x^2
-                                // We want edges to be HIGHER (negative Y translate) than the center.
-                                // Or center to be LOWER (positive Y translate).
-                                // Let's keep the baseline at the bottom and push edges UP.
-                                const yOffset = Math.abs(indexFromMiddle) * Math.abs(indexFromMiddle) * 12; // Adjusted multiplier for curve depth
+                                // We want edges to be HIGHER (negative Y relative to center).
+                                // Let's use a standard U-shape.
+                                // We will push the center DOWN (positive Y) or edges UP (negative Y).
+                                // To avoid overlap with the banner above, let's push edges UP (negative Y).
+                                const yOffset = Math.abs(indexFromMiddle) * Math.abs(indexFromMiddle) * 10;
 
                                 return (
                                     <div
@@ -174,8 +182,7 @@ export default function JewelrySection() {
                                             transitionDelay: `${(index % 5) * 100}ms`,
                                             scrollSnapAlign: 'center',
                                             transform: `rotate(${rotateAngle}deg) translateY(-${yOffset}px)`, // Negative Y pushes edges UP
-                                            transformOrigin: 'center 150%', // Pivot point below the card
-                                            marginTop: `${yOffset}px`, // Add margin top so the whole container height accommodates the lift
+                                            transformOrigin: 'center 150%', // Pivot point below
                                             zIndex: 10
                                         }}
                                     >
@@ -193,6 +200,7 @@ export default function JewelrySection() {
                             onClick={() => scrollDesktop('left')}
                             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
                             aria-label="Scroll left"
+                            disabled={!scrollContainerRef.current}
                         >
                             <ChevronLeft size={28} />
                         </button>
@@ -200,12 +208,15 @@ export default function JewelrySection() {
                             onClick={() => scrollDesktop('right')}
                             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
                             aria-label="Scroll right"
+                            disabled={!scrollContainerRef.current}
                         >
                             <ChevronRight size={28} />
                         </button>
                     </div>
                 </div>
             </div>
+
+
 
             {/* Mobile: Horizontal Scroll with Peek Effect */}
             <div className="md:hidden relative z-10 w-full mt-24">
