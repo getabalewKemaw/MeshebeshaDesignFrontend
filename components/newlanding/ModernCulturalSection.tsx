@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Link } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ModernCulturalSection() {
     const [isVisible, setIsVisible] = useState(false);
@@ -65,7 +65,7 @@ export default function ModernCulturalSection() {
             {/* SALE NOW Badge - Top Center with Bounce Animation */}
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-20">
                 <div
-                    className={`bg-white border-[3px] border-[#310101] px-4 py-6 rounded-b-3xl shadow-lg flex flex-col items-center justify-center leading-tight transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0 animate-bounce' : 'opacity-0 -translate-y-10'
+                    className={`bg-white border-[3px] border-[#310101] px-4 py-6 rounded-b-3xl shadow-lg flex flex-col items-center justify-center leading-tight transition-all duration-700 ${isVisible ? 'translate-y-0 animate-bounce' : '-translate-y-10'
                         }`}
                 >
                     <span className="text-[#310101] font-black text-xl uppercase" style={{ fontFamily: 'Fredoka One, cursive' }}>
@@ -79,7 +79,7 @@ export default function ModernCulturalSection() {
 
             {/* Main Text Content - Fade In with Scale */}
             <div
-                className={`relative z-10 text-center px-4 max-w-5xl mx-auto mt-20 transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-90'
+                className={`relative z-10 text-center px-2 max-w-5xl mx-auto mt-20 transition-all duration-1000 ${isVisible ? ' scale-100' : 'scale-90'
                     }`}
             >
                 <h2
@@ -92,12 +92,12 @@ export default function ModernCulturalSection() {
 
                 {/* Shop Now Button with Floating Animation */}
                 <div
-                    className={`transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                    className={`transition-all duration-1000 delay-300 ${isVisible ? 'translate-y-0' : 'translate-y-10'
                         }`}
                 >
                     <Link
                         href="/products"
-                        className="inline-block bg-white text-black px-12 py-4 rounded-full font-black text-lg md:text-xl uppercase hover:bg-[#310101] hover:text-black transition-all duration-300 shadow-2xl hover:shadow-[0_0_30px_rgba(49,1,1,0.5)] hover:scale-110 animate-float border-4 border-[#310101]"
+                        className="inline-block bg-white px-12 py-4 rounded-full font-black text-lg md:text-xl uppercase  hover:text-white transition-all duration-300 shadow-2xl hover:shadow-[0_0_30px_rgba(49,1,1,0.5)] hover:scale-110 animate-float border-4 border-[#310101]"
                         style={{ fontFamily: 'Fredoka One, cursive', color: '#310101' }}
                     >
                         SHOP NOW
@@ -108,7 +108,7 @@ export default function ModernCulturalSection() {
             {/* 25% OFF Circle Badge - Right Side with Infinite Spin Animation */}
             <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/3 z-20 hidden md:block">
                 <div
-                    className={`w-64 h-64 md:w-80 md:h-80 bg-white rounded-full border-[12px] border-[#310101] flex flex-col items-center justify-center shadow-2xl relative right-12 transition-all duration-1000 animate-spin-slow ${isVisible ? 'opacity-100' : 'opacity-0'
+                    className={`w-64 h-64 md:w-80 md:h-80 bg-white rounded-full border-[12px] border-[#310101] flex flex-col items-center justify-center shadow-2xl relative right-12 transition-all duration-1000 animate-spin-slow ${isVisible ? 'scale-100' : 'scale-50'
                         }`}
                 >
                     <div className="text-center transform -translate-x-4">
@@ -125,7 +125,7 @@ export default function ModernCulturalSection() {
             {/* Mobile 25% OFF Badge - Right Side with Infinite Spin */}
             <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-1/4 z-20 md:hidden">
                 <div
-                    className={`w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-full border-[6px] sm:border-[8px] border-[#310101] flex flex-col items-center justify-center shadow-2xl transition-all duration-1000 animate-spin-slow ${isVisible ? 'opacity-100' : 'opacity-0'
+                    className={`w-32 h-32 sm:w-40 sm:h-40 bg-white rounded-full border-[6px] sm:border-[8px] border-[#310101] flex flex-col items-center justify-center shadow-2xl transition-all duration-1000 animate-spin-slow ${isVisible ? 'scale-100' : 'scale-50'
                         }`}
                 >
                     <div className="text-center">

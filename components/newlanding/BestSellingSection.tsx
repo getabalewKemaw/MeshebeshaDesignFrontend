@@ -98,7 +98,7 @@ export default function BestSellingSection() {
 
             {/* Content Container */}
             <div className="relative z-10 w-full h-full flex flex-col">
-                <div className="max-w-[1400px] w-full mx-auto px-4 md:px-16 lg:px-24 py-8 md:ml-16 lg:ml-24 sm:ml-24">
+                <div className="max-w-[1400px] w-full mx-auto px-2 md:px-16 lg:px-24 py-8 md:ml-16 lg:ml-24 sm:ml-24">
          {/* Section Title */}
                     <div className="text-center mb-45 relative">
                         <h2
@@ -112,7 +112,7 @@ export default function BestSellingSection() {
               
 
                     {/* 25% OFF Badge - Infinite Pulse Animation */}
-                    <div className="absolute top-8 right-8 md:right-16 z-20">
+                    <div className="absolute top-8 right-0  z-20">
                         <div
                             className={`bg-white px-6 py-2 rounded-full shadow-lg transform rotate-[-2deg] transition-all duration-700 ${isVisible ? 'opacity-100 scale-100 animate-pulse' : 'opacity-0 scale-50'
                                 }`}
