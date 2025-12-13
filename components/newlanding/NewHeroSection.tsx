@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { getProductSuggestions } from '@/lib/api/products';
 import { ProductWithDetails } from '@/types/product';
 import { Loader2, Search } from 'lucide-react';
+import { useTypingAnimation } from '@/hooks/useTypingAnimation';
 
 export default function NewHeroSection() {
     const router = useRouter();
@@ -15,6 +16,36 @@ export default function NewHeroSection() {
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
+
+    // Typing animations for text elements
+    const taglineText = "ALL YOU NEED IS HERE";
+    const brandName1 = "MASHABESHA";
+    const brandName2 = "DESIGN";
+    const descriptionText = "Mashabesha Design celebrates culture through beautifully handcrafted traditional clothing made with timeless artistry";
+
+    const { displayedText: displayedTagline } = useTypingAnimation({
+        text: taglineText,
+        speed: 80,
+        delay: 200,
+    });
+
+    const { displayedText: displayedBrand1 } = useTypingAnimation({
+        text: brandName1,
+        speed: 100,
+        delay: 700,
+    });
+
+    const { displayedText: displayedBrand2 } = useTypingAnimation({
+        text: brandName2,
+        speed: 100,
+        delay: 1100,
+    });
+
+    const { displayedText: displayedDescription } = useTypingAnimation({
+        text: descriptionText,
+        speed: 30,
+        delay: 1500,
+    });
 
     // Debounce logic
     useEffect(() => {
@@ -96,78 +127,79 @@ export default function NewHeroSection() {
                 />
             </div>
 
-            {/* Hero Content - Right Side and Top on Mobile, Right Side on Desktop */}
-            {/* Increased max-width to allow huge text to breathe */}
-            <div className="relative z-10 h-full flex items-start md:items-center justify-end px-89 md:px-30 lg:px-24  sm:pt-0 md:pt-0">
-                <div className="max-w-4xl text-right space-y-2 md:space-y-4">
+            {/* Hero Content - Top/Center on Mobile, Right/Center on Desktop */}
+            <div className="relative z-10 h-full flex flex-col justify-between md:flex-row md:items-center md:justify-end px-6 md:px-12 lg:px-20 py-2 md:py-0">
+                {/* Text Content - Top/Center on Mobile, Right on Desktop */}
+                <div className="max-w-4xl text-center md:text-right space-y-2 md:space-y-4 flex-1 flex flex-col md:block">
 
-                    {/* Tagline - Modern Cinematic Expansion with Rotation */}
-                    <div className="overflow-visible transform -rotate-2 origin-bottom-right">
+                    {/* Tagline - Typing Animation */}
+                    <div className="overflow-visible origin-center md:origin-bottom-right">
                         <h2
-                            className="text-white text-base sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl font-bold uppercase tracking-[0.2em] animate-tracking-expand"
+                            className="text-white text-base sm:text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold uppercase tracking-[0.2em]"
                             style={{
                                 fontFamily: 'ADLaM Display, cursive',
-                                opacity: 0,
-                                animationFillMode: 'forwards',
-                                animationDelay: '0.2s'
                             }}
                         >
-                            ALL YOU NEED IS HERE
+                            {displayedTagline}
+                            {displayedTagline.length < taglineText.length && (
+                                <span className="animate-pulse">|</span>
+                            )}
                         </h2>
                     </div>
 
-                    {/* Main Heading - Masked Rotated Reveal (Shocking Impact) */}
-                    <h1 className="text-white font-normal uppercase leading-[0.9] flex flex-col items-end w-full">
+                    {/* Main Heading - Typing Animation */}
+                    <h1 className="text-white uppercase leading-[0.9] flex flex-col items-center md:items-end w-full">
                         {/* Line 1 */}
-                        <span className="block overflow-hidden pb-2 pl-2 pr-2">
+                        <span className="block pb-2">
                             <span
-                                className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl animate-reveal-rotate"
+                                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
                                 style={{
                                     fontFamily: 'Abril Fatface, cursive',
-                                    transform: 'translateY(110%) rotate(5deg)',
-                                    animationDelay: '0.7s'
                                 }}
                             >
-                                MASHABESHA
+                                {displayedBrand1}
+                                {displayedBrand1.length < brandName1.length && (
+                                    <span className="animate-pulse">|</span>
+                                )}
                             </span>
                         </span>
 
                         {/* Line 2 */}
-                        <span className="block overflow-hidden pb-4 pl-2 pr-2">
+                        <span className="block pb-4">
                             <span
-                                className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl animate-reveal-rotate"
+                                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
                                 style={{
                                     fontFamily: 'Abril Fatface, cursive',
-                                    transform: 'translateY(110%) rotate(5deg)',
-                                    animationDelay: '1.1s'
                                 }}
                             >
-                                DESIGN
+                                {displayedBrand2}
+                                {displayedBrand2.length < brandName2.length && (
+                                    <span className="animate-pulse">|</span>
+                                )}
                             </span>
                         </span>
                     </h1>
 
-                    {/* Description - Blur Slide In with Delay */}
+                    {/* Description - Typing Animation */}
                     <p
-                        className="text-white text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium tracking-wide leading-relaxed animate-blur-slide max-w-2xl ml-auto"
+                        className="text-white text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-medium tracking-wide leading-relaxed max-w-2xl mx-auto md:ml-auto md:mr-0"
                         style={{
                             fontFamily: 'Abhaya Libre, serif',
-                            opacity: 0,
-                            animationFillMode: 'forwards',
-                            animationDelay: '1.5s'
                         }}
                     >
-                        Mashabesha Design celebrates culture through beautifully handcrafted
-                        traditional clothing made with timeless artistry
+                        {displayedDescription}
+                        {displayedDescription.length < descriptionText.length && (
+                            <span className="animate-pulse">|</span>
+                        )}
                     </p>
 
-                    {/* Sign Up Button & Search - Fade/Blur In with Delay */}
+                    {/* Sign Up Button & Search - Bottom Center on Mobile, Right on Desktop */}
                     <div
-                        className="pt-8 flex flex-col items-end gap-6 animate-blur-slide sm:pt-32  md:pt-8 "
+                        className="pt-8 flex flex-col items-center md:items-end gap-6 md:pt-8 animate-fade-in-up mt-auto md:mt-0"
                         style={{
+                            animationDelay: '2.5s',
                             opacity: 0,
                             animationFillMode: 'forwards',
-                            animationDelay: '1.8s'
                         }}
                     >
                         <Link
@@ -188,7 +220,7 @@ export default function NewHeroSection() {
                                     onFocus={() => searchQuery.length >= 2 && setShowSuggestions(true)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
                                     placeholder="Search products..."
-                                    className="w-full h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/30 text-white placeholder-white/70 px-8 pr-14 focus:ring-2 focus:ring-white/50 focus:bg-white/20 outline-none transition-all duration-300 shadow-lg"
+                                    className="w-full h-14 rounded-full bg-white/56 backdrop-blur-md border border-white/30 text-white placeholder-white/70 px-8 pr-14 focus:ring-2 focus:ring-white/50 focus:bg-white/20 outline-none transition-all duration-300 shadow-lg"
                                 />
                                 <button
                                     onClick={() => handleSearchSubmit()}
@@ -211,7 +243,7 @@ export default function NewHeroSection() {
                                             onClick={() => handleSuggestionClick(product.id)}
                                             className="flex items-center gap-4 p-3 hover:bg-gray-50 cursor-pointer border-b last:border-none border-gray-100 transition-colors"
                                         >
-                                            <div className="relative h-12 w-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
+                                            <div className="relative h-12 w-12 rounded-lg overflow-hidden shrink-0 bg-gray-100">
                                                 {product.media && product.media[0] ? (
                                                     <Image
                                                         src={product.media[0].url}

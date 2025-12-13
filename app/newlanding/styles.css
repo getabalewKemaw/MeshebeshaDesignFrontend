@@ -161,3 +161,17 @@
 .animate-spin-slow {
     animation: spin-slow 8s linear infinite;
 }
+
+/* Typing Cursor Blink Animation */
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0;
+    }
+}
+
+.animate-pulse {
+    animation: blink 1s step-end infinite;
+}
