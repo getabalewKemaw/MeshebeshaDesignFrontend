@@ -255,13 +255,13 @@ export default function AdminDashboard() {
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead>
+            <thead className="bg-[#310101] text-white">
               <tr className="border-b-2 border-gray-200">
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">Order #</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">Customer</th>
-                <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">Status</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-600">Total</th>
-                <th className="text-right py-3 px-4 text-sm font-semibold text-gray-600">Date</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold ">Order #</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold ">Customer</th>
+                <th className="text-left py-3 px-4 text-sm font-semibold ">Status</th>
+                <th className="text-right py-3 px-4 text-sm font-semibold ">Total</th>
+                <th className="text-right py-3 px-4 text-sm font-semibold ">Date</th>
               </tr>
             </thead>
             <tbody>

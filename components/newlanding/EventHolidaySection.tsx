@@ -14,9 +14,14 @@ export default function EventHolidaySection() {
     const [currentWeddingIndex, setCurrentWeddingIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
     const sectionRef = useRef<HTMLElement>(null);
+    const eventScrollRef = useRef<HTMLDivElement>(null);
+    const weddingScrollRef = useRef<HTMLDivElement>(null);
 
     // Intersection Observer for scroll-based animation
     useEffect(() => {
+        // Fallback to ensure visibility
+        const timer = setTimeout(() => setIsVisible(true), 100);
+
         const observer = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
@@ -25,7 +30,7 @@ export default function EventHolidaySection() {
                     }
                 });
             },
-            { threshold: 0.2 }
+            { threshold: 0.1 }
         );
 
         if (sectionRef.current) {
@@ -33,6 +38,7 @@ export default function EventHolidaySection() {
         }
 
         return () => {
+            clearTimeout(timer);
             if (sectionRef.current) {
                 observer.unobserve(sectionRef.current);
             }
@@ -55,9 +61,20 @@ export default function EventHolidaySection() {
         setCurrentWeddingIndex((prev) => (prev < weddingProducts.length - 1 ? prev + 1 : 0));
     };
 
-    // Subsets for Desktop (Show 5)
-    const eventDesktop = eventProducts.slice(0, 5);
-    const weddingDesktop = weddingProducts.slice(0, 5);
+    // Desktop scroll functions
+    const scrollDesktop = (ref: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
+        if (ref.current) {
+            const scrollAmount = 350;
+            const newScrollLeft = direction === 'left'
+                ? ref.current.scrollLeft - scrollAmount
+                : ref.current.scrollLeft + scrollAmount;
+
+            ref.current.scrollTo({
+                left: newScrollLeft,
+                behavior: 'smooth'
+            });
+        }
+    };
 
     if (eventLoading || weddingLoading) return null;
 
@@ -117,19 +134,54 @@ export default function EventHolidaySection() {
                         <div className="w-[120px] hidden md:block"></div>
                     </div>
 
-                    {/* Desktop Grid */}
-                    <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-5 gap-6 px-8 md:px-16">
-                        {eventDesktop.map((product, index) => (
-                            <NewLandingProductCard
-                                key={`event-${product.id}`}
-                                product={product}
-                                variant="dark"
-                            />
-                        ))}
+                    {/* Desktop Slider (Matches Couples Collection Style) */}
+                    <div className="hidden md:block">
+                        <div className="relative group">
+                            <div
+                                ref={eventScrollRef}
+                                className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4 px-4"
+                                style={{
+                                    scrollSnapType: 'x mandatory',
+                                    WebkitOverflowScrolling: 'touch'
+                                }}
+                            >
+                                {eventProducts.map((product, index) => (
+                                    <div
+                                        key={`event-${product.id}`}
+                                        className={`flex-shrink-0 w-[280px] transition-all duration-1000 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                                            }`}
+                                        style={{
+                                            transitionDelay: `${index * 150}ms`,
+                                            scrollSnapAlign: 'start'
+                                        }}
+                                    >
+                                        <NewLandingProductCard
+                                            product={product}
+                                            variant="dark"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Navigation Arrows */}
+                            <button
+                                onClick={() => scrollDesktop(eventScrollRef, 'left')}
+                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                                aria-label="Scroll left"
+                            >
+                                <ChevronLeft size={28} />
+                            </button>
+                            <button
+                                onClick={() => scrollDesktop(eventScrollRef, 'right')}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                                aria-label="Scroll right"
+                            >
+                                <ChevronRight size={28} />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Mobile Horizontal Slider */}
-                    {/* Mobile Horizontal Slider - Track */}
                     <div className="md:hidden relative">
                         <div className="overflow-hidden px-4">
                             <div
@@ -221,19 +273,54 @@ export default function EventHolidaySection() {
                         </div>
                     </div>
 
-                    {/* Desktop Grid */}
-                    <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-5 gap-6 px-8 md:px-16">
-                        {weddingDesktop.map((product, index) => (
-                            <NewLandingProductCard
-                                key={`wedding-${product.id}`}
-                                product={product}
-                                variant="dark"
-                            />
-                        ))}
+                    {/* Desktop Slider (Matches Couples Collection Style) */}
+                    <div className="hidden md:block">
+                        <div className="relative group">
+                            <div
+                                ref={weddingScrollRef}
+                                className="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth pb-4 px-4"
+                                style={{
+                                    scrollSnapType: 'x mandatory',
+                                    WebkitOverflowScrolling: 'touch'
+                                }}
+                            >
+                                {weddingProducts.map((product, index) => (
+                                    <div
+                                        key={`wedding-${product.id}`}
+                                        className={`flex-shrink-0 w-[280px] transition-all duration-1000 hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                                            }`}
+                                        style={{
+                                            transitionDelay: `${index * 150}ms`,
+                                            scrollSnapAlign: 'start'
+                                        }}
+                                    >
+                                        <NewLandingProductCard
+                                            product={product}
+                                            variant="dark"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* Navigation Arrows */}
+                            <button
+                                onClick={() => scrollDesktop(weddingScrollRef, 'left')}
+                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                                aria-label="Scroll left"
+                            >
+                                <ChevronLeft size={28} />
+                            </button>
+                            <button
+                                onClick={() => scrollDesktop(weddingScrollRef, 'right')}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white/90 hover:bg-white text-[#310101] p-3 rounded-full shadow-xl opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 z-10"
+                                aria-label="Scroll right"
+                            >
+                                <ChevronRight size={28} />
+                            </button>
+                        </div>
                     </div>
 
                     {/* Mobile Horizontal Slider */}
-                    {/* Mobile Horizontal Slider - Track */}
                     <div className="md:hidden relative">
                         <div className="overflow-hidden px-4">
                             <div
@@ -282,6 +369,17 @@ export default function EventHolidaySection() {
                 </div>
 
             </div>
+
+            {/* Styles for hiding scrollbar */}
+            <style jsx global>{`
+                .scrollbar-hide::-webkit-scrollbar {
+                    display: none;
+                }
+                .scrollbar-hide {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            `}</style>
         </section>
     );
 }

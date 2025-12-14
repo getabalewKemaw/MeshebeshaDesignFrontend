@@ -144,8 +144,7 @@ export interface FilterOptions {
 // Stock Update Request
 export interface StockUpdateRequest {
   variantId: string;
-  quantity: number;
-  operation: 'increment' | 'decrement' | 'set';
+  stock: number;
 }
 
 // API Response wrapper

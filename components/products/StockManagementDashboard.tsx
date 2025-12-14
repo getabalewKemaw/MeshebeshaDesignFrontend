@@ -78,8 +78,7 @@ export default function StockManagementDashboard() {
     try {
       const updates = bulkUpdates.map((item) => ({
         variantId: item.variantId,
-        quantity: item.newStock - item.currentStock,
-        operation: 'set' as const,
+        stock: item.newStock,
       }));
 
       const response = await productApi.bulkUpdateStock(updates);
