@@ -40,7 +40,7 @@ export default function CheckoutOrderItem({
             <div className="flex-1 min-w-0">
                 <Link
                     href={`/products/${item.productId}`}
-                    className="hover:text-purple-600 transition-colors"
+                    className="hover:text-[#310101] transition-colors"
                 >
                     <p className="text-sm font-medium text-gray-900 truncate">
                         {item.title}

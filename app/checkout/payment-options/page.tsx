@@ -276,51 +276,58 @@ export default function PaymentOptionsPage() {
           <div className="lg:col-span-1">
             <div className="bg-white border border-gray-200 rounded-xl p-6 space-y-4 sticky top-4">
               <h2 className="text-xl font-semibold text-gray-900">Order Summary</h2>
-              <div className="space-y-3">
-                {items.map((item) => (
-                  <div key={item.key} className="flex items-start gap-3">
-                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-50 shrink-0">
-                      {item.image ? (
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
-                          No image
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
-                      <p className="text-xs text-gray-500">
-                        {item.quantity} × {priceFormatter.format(item.unitPrice)}
-                      </p>
-                      {(item.color || item.size) && (
-                        <p className="text-xs text-gray-400">
-                          {item.color}
-                          {item.color && item.size ? " / " : ""}
-                          {item.size}
+              <div className="space-y-0">
+                {items.map((item, index) => (
+                  <div key={item.key}>
+                    <div className="flex items-start gap-3 py-4">
+                      <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-50 shrink-0">
+                        {item.image ? (
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-xs text-gray-400">
+                            No image
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
+                        <p className="text-xs text-gray-500">
+                          {item.quantity} × {priceFormatter.format(item.unitPrice)}
                         </p>
-                      )}
+                        {(item.color || item.size) && (
+                          <p className="text-xs text-gray-400">
+                            {item.color}
+                            {item.color && item.size ? " / " : ""}
+                            {item.size}
+                          </p>
+                        )}
+                      </div>
+                      <p className="text-sm font-semibold text-gray-900 shrink-0">
+                        {priceFormatter.format(item.unitPrice * item.quantity)}
+                      </p>
                     </div>
-                    <p className="text-sm font-semibold text-gray-900 shrink-0">
-                      {priceFormatter.format(item.unitPrice * item.quantity)}
-                    </p>
+                    {index < items.length - 1 && (
+                      <div className="h-px bg-[#310101]"></div>
+                    )}
                   </div>
                 ))}
               </div>
-              <div className="border-t border-gray-200 pt-4 space-y-2">
-                <div className="flex justify-between text-sm text-gray-600">
+              <div className="border-t border-[#310101] pt-4 space-y-0">
+                <div className="flex justify-between text-sm text-gray-600 py-2">
                   <span>Subtotal ({itemCount} items)</span>
                   <span>{priceFormatter.format(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
+                <div className="h-px bg-[#310101]"></div>
+                <div className="flex justify-between text-sm text-gray-600 py-2">
                   <span>Shipping</span>
                   <span>Calculated at next step</span>
                 </div>
-                <div className="border-t border-gray-200 pt-2 flex justify-between text-lg font-semibold text-gray-900">
+                <div className="h-px bg-[#310101]"></div>
+                <div className="flex justify-between text-lg font-semibold text-gray-900 pt-2">
                   <span>Total</span>
                   <span>{priceFormatter.format(subtotal)}</span>
                 </div>
@@ -417,12 +424,24 @@ function TelebirrForm({ onSubmit, isSubmitting, totalAmount, currency }: Telebir
     <div className="bg-white border border-gray-200 rounded-xl p-6">
       <h3 className="text-lg font-semibold text-gray-900 mb-4">Telebirr Payment Details</h3>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
-          <p className="text-sm font-medium text-gray-700">Client Number:</p>
-          <div className="space-y-1 text-sm text-gray-600">
-            <p><strong>Full Name:</strong> Maswal Fisha</p>
-            <p><strong>Phone Number:</strong> +0923 42 75 64</p>
-            <p><strong>Total Amount:</strong> {currency} {totalAmount.toFixed(2)}</p>
+        <div className="bg-linear-to-br from-[#310101]/5 to-[#310101]/10 border-2 border-[#310101]/20 rounded-xl p-6 space-y-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full bg-[#310101]"></div>
+            <p className="text-base font-semibold text-[#310101]">Payment Details</p>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-start justify-between py-2 border-b border-[#310101]/10">
+              <span className="text-sm font-medium text-gray-600">Full Name:</span>
+              <span className="text-sm font-semibold text-[#310101] text-right">Maswal Fisha</span>
+            </div>
+            <div className="flex items-start justify-between py-2 border-b border-[#310101]/10">
+              <span className="text-sm font-medium text-gray-600">Phone Number:</span>
+              <span className="text-sm font-semibold text-[#310101] text-right font-mono">+0923 42 75 64</span>
+            </div>
+            <div className="flex items-start justify-between py-2">
+              <span className="text-sm font-medium text-gray-600">Total Amount:</span>
+              <span className="text-base font-bold text-[#310101] text-right">{currency} {totalAmount.toFixed(2)}</span>
+            </div>
           </div>
         </div>
 
@@ -534,12 +553,28 @@ function DirectBankForm({ onSubmit, isSubmitting, totalAmount, currency }: Direc
         </div>
 
         {selectedBank && (
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
-            <p className="text-sm font-medium text-gray-700">Account Details:</p>
-            <div className="space-y-1 text-sm text-gray-600">
-              <p><strong>Full Name:</strong> Mastewal fisha</p>
-              <p><strong>Account Number:</strong> {bankAccounts[selectedBank]}</p>
-              <p><strong>Total Amount:</strong> {currency} {totalAmount.toFixed(2)}</p>
+          <div className="bg-linear-to-br from-[#310101]/5 to-[#310101]/10 border-2 border-[#310101]/20 rounded-xl p-6 space-y-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-2 h-2 rounded-full bg-[#310101]"></div>
+              <p className="text-base font-semibold text-[#310101]">Account Details</p>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-start justify-between py-2 border-b border-[#310101]/10">
+                <span className="text-sm font-medium text-gray-600">Full Name:</span>
+                <span className="text-sm font-semibold text-[#310101] text-right">Mastewal fisha</span>
+              </div>
+              <div className="flex items-start justify-between py-2 border-b border-[#310101]/10">
+                <span className="text-sm font-medium text-gray-600">Bank:</span>
+                <span className="text-sm font-semibold text-[#310101] text-right">{selectedBank}</span>
+              </div>
+              <div className="flex items-start justify-between py-2 border-b border-[#310101]/10">
+                <span className="text-sm font-medium text-gray-600">Account Number:</span>
+                <span className="text-sm font-semibold text-[#310101] text-right font-mono">{bankAccounts[selectedBank]}</span>
+              </div>
+              <div className="flex items-start justify-between py-2">
+                <span className="text-sm font-medium text-gray-600">Total Amount:</span>
+                <span className="text-base font-bold text-[#310101] text-right">{currency} {totalAmount.toFixed(2)}</span>
+              </div>
             </div>
           </div>
         )}
