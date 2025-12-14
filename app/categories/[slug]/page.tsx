@@ -11,6 +11,9 @@ import EmptyState from "@/components/categories/EmptyState";
 import ProductsGrid from "@/components/categories/ProductsGrid";
 import Pagination from "@/components/categories/Pagination";
 import NewNavBar from "@/components/newlanding/NewNavBar";
+import FooterSection from "@/components/newlanding/FooterSection";
+
+import ProductBottomBackground from "@/components/newlanding/ProductBottomBackground";
 
 export default function CategoryPage() {
     const params = useParams();
@@ -84,6 +87,10 @@ export default function CategoryPage() {
                         </>
                     ) : null}
                 </div>
+
+
+<ProductBottomBackground/>
+                <FooterSection />
             </main>
         </>
     );

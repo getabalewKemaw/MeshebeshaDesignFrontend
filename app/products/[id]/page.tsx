@@ -20,6 +20,7 @@ import ProductAccordion from "@/components/products/details/ProductAccordion";
 import SizeChartModal from "@/components/products/details/SizeChartModal";
 import NewNavBar from "@/components/newlanding/NewNavBar";
 import FooterSection from "@/components/newlanding/FooterSection";
+import ProductBottomBackground from "@/components/newlanding/ProductBottomBackground";
 
 export default function ProductDetailPage() {
   const params = useParams<{ id: string }>();
@@ -109,8 +110,8 @@ export default function ProductDetailPage() {
         initialVariant.availableSizes && initialVariant.availableSizes.length > 0
           ? initialVariant.availableSizes
           : initialVariant.size
-          ? [initialVariant.size]
-          : [];
+            ? [initialVariant.size]
+            : [];
       setSelectedSize((prev) => prev ?? (initialSizes[0] ?? null));
     } else {
       setSelectedColor(null);
@@ -401,16 +402,16 @@ export default function ProductDetailPage() {
                   fallbackAlt={product.title}
                   contextNote={
                     selectedVariant?.media &&
-                  selectedVariant.media.length > 0 &&
-                  product.media &&
+                      selectedVariant.media.length > 0 &&
+                      product.media &&
                       product.media.length > 0 ? (
                       <p className="mt-2 text-xs text-gray-400">
                         Showing media for{" "}
                         <span className="font-medium">
-                        {selectedVariant.color || "Default"}
-                      </span>{" "}
-                      variant.
-                    </p>
+                          {selectedVariant.color || "Default"}
+                        </span>{" "}
+                        variant.
+                      </p>
                     ) : null
                   }
                 />
@@ -473,7 +474,7 @@ export default function ProductDetailPage() {
                 variantColor={selectedColor}
                 onWriteReview={() => setShowReviewForm(true)}
               />
-                </div>
+            </div>
           </div>
         ) : null}
       </div>
@@ -494,6 +495,7 @@ export default function ProductDetailPage() {
         isOpen={showSizeChart}
         onClose={() => setShowSizeChart(false)}
       />
+      <ProductBottomBackground />
       <FooterSection />
     </>
   );

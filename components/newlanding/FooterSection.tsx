@@ -6,11 +6,21 @@ import { Facebook, Instagram, Linkedin } from 'lucide-react';
 export default function FooterSection() {
     return (
         <footer className="relative w-full overflow-hidden bg-black">
-            {/* Background Image */}
-            <div className="absolute inset-0 z-0 opacity-30">
+            {/* Background Image - Desktop */}
+            <div className="absolute inset-0 z-0 opacity-30 hidden md:block">
                 <Image
                     src="/footerbg.png"
                     alt="Footer Background"
+                    fill
+                    className="object-cover"
+                    quality={100}
+                />
+            </div>
+            {/* Background Image - Mobile */}
+            <div className="absolute inset-0 z-0 opacity-30 md:hidden">
+                <Image
+                    src="/footermobilebg.png"
+                    alt="Footer Background Mobile"
                     fill
                     className="object-cover"
                     quality={100}
@@ -24,7 +34,7 @@ export default function FooterSection() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 md:gap-12 mb-12">
 
                     {/* Column 1: Proudly Ethiopian */}
-                    <div className="lg:col-span-1">
+                    <div className="lg:col-span-1 text-center md:text-left">
                         <h3 className="text-white text-lg md:text-xl font-bold mb-4 uppercase" style={{ fontFamily: 'Fredoka One, cursive' }}>
                             PROUDLY ETHIOPIAN
                         </h3>
@@ -33,7 +43,7 @@ export default function FooterSection() {
                         </p>
 
                         {/* Social Media Icons */}
-                        <div className="flex gap-4 mt-6">
+                        <div className="flex gap-4 mt-6 justify-center md:justify-start">
                             <Link href="https://facebook.com" target="_blank" className="w-10 h-10 bg-white rounded flex items-center justify-center hover:bg-gray-200 transition-colors">
                                 <Facebook size={20} className="text-[#310101]" />
                             </Link>
@@ -52,7 +62,7 @@ export default function FooterSection() {
                     </div>
 
                     {/* Column 2: Contact Us */}
-                    <div className="lg:col-span-1">
+                    <div className="lg:col-span-1 text-center md:text-left">
                         <h3 className="text-white text-lg md:text-xl font-bold mb-4 uppercase" style={{ fontFamily: 'Fredoka One, cursive' }}>
                             CONTACT US
                         </h3>
@@ -73,7 +83,7 @@ export default function FooterSection() {
                     </div>
 
                     {/* Column 3: Products */}
-                    <div className="lg:col-span-1">
+                    <div className="lg:col-span-1 text-center md:text-left">
                         <h3 className="text-white text-lg md:text-xl font-bold mb-4 uppercase" style={{ fontFamily: 'Fredoka One, cursive' }}>
                             PRODUCTS
                         </h3>
@@ -86,7 +96,7 @@ export default function FooterSection() {
                     </div>
 
                     {/* Column 4: Support */}
-                    <div className="lg:col-span-1">
+                    <div className="lg:col-span-1 text-center md:text-left">
                         <h3 className="text-white text-lg md:text-xl font-bold mb-4 uppercase" style={{ fontFamily: 'Fredoka One, cursive' }}>
                             SUPPORT
                         </h3>
@@ -101,7 +111,7 @@ export default function FooterSection() {
                     </div>
 
                     {/* Column 5: Company */}
-                    <div className="lg:col-span-1">
+                    <div className="lg:col-span-1 text-center md:text-left">
                         <h3 className="text-white text-lg md:text-xl font-bold mb-4 uppercase" style={{ fontFamily: 'Fredoka One, cursive' }}>
                             COMPANY
                         </h3>

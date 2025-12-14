@@ -12,6 +12,7 @@ import ProductsError from "@/components/products/listing/ProductsError";
 import ProductsEmpty from "@/components/products/listing/ProductsEmpty";
 import NewNavBar from "@/components/newlanding/NewNavBar";
 import FooterSection from "@/components/newlanding/FooterSection";
+import ProductBottomBackground from "@/components/newlanding/ProductBottomBackground";
 
 const DEFAULT_FILTERS = {
   q: "",

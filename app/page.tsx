@@ -34,6 +34,7 @@ export default function HomePage() {
       <CustomProductSection />
       <InfiniteTextDivider />
       <AboutSection />
+         <InfiniteTextDivider />
       <FooterSection />
       <ChatPopup />
     </div>

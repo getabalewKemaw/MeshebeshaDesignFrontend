@@ -104,11 +104,23 @@ export default function CustomProductSection() {
 
     return (
         <section className="relative w-full min-h-screen overflow-hidden py-20 flex items-center justify-center">
-            {/* Background Image */}
-            <div className="absolute inset-0 z-0">
+            {/* Background Image - Desktop */}
+            <div className="absolute inset-0 z-0 hidden md:block">
                 <Image
                     src="/ui/customprbg.png"
                     alt="Custom Products Background"
+                    fill
+                    className="object-cover"
+                    priority
+                    quality={100}
+                />
+            </div>
+
+            {/* Background Image - Mobile */}
+            <div className="absolute inset-0 z-0 md:hidden">
+                <Image
+                    src="/mobilebgcusotomProducts.png"
+                    alt="Custom Products Background Mobile"
                     fill
                     className="object-cover"
                     priority
@@ -283,8 +295,8 @@ export default function CustomProductSection() {
                             {/* Submit Message */}
                             {submitMessage.text && (
                                 <div className={`text-center font-semibold p-3 rounded-lg ${submitMessage.type === 'success'
-                                        ? 'bg-green-100 text-green-700'
-                                        : 'bg-red-100 text-red-700'
+                                    ? 'bg-green-100 text-green-700'
+                                    : 'bg-red-100 text-red-700'
                                     }`}>
                                     {submitMessage.text}
                                 </div>
