@@ -15,6 +15,9 @@ import ProductInfo from "@/components/products/details/ProductInfo";
 import ProductActions from "@/components/products/details/ProductActions";
 import ProductVariantsList from "@/components/products/details/ProductVariantsList";
 import ProductReviewModalWrapper from "@/components/products/details/ProductReviewModalWrapper";
+import TrustBadges from "@/components/products/details/TrustBadges";
+import ProductAccordion from "@/components/products/details/ProductAccordion";
+import SizeChartModal from "@/components/products/details/SizeChartModal";
 import NewNavBar from "@/components/newlanding/NewNavBar";
 import FooterSection from "@/components/newlanding/FooterSection";
 
@@ -35,6 +38,7 @@ export default function ProductDetailPage() {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [reviewOrderId, setReviewOrderId] = useState<string | null>(null);
   const [reviewsKey, setReviewsKey] = useState(0); // Force re-render after review creation
+  const [showSizeChart, setShowSizeChart] = useState(false);
   const addItemToCart = useCartStore((state) => state.addItem);
   const { isAuthenticated } = useAuth();
 
@@ -54,23 +58,16 @@ export default function ProductDetailPage() {
         if (isAuthenticated) {
           try {
             const eligibilityRes = await checkReviewEligibility(id);
-            console.log("DEBUG: Review eligibility check response:", eligibilityRes);
-
             if (eligibilityRes.success && eligibilityRes.data?.canReview && eligibilityRes.data.orderId) {
-              console.log("DEBUG: User is eligible to review. Order ID:", eligibilityRes.data.orderId);
               setReviewOrderId(eligibilityRes.data.orderId);
             } else {
-              console.log("DEBUG: User is NOT eligible to review.", eligibilityRes.data);
-              // User is authenticated but not eligible - clear any previous orderId
               setReviewOrderId(null);
             }
           } catch (err) {
             console.error('Failed to check review eligibility:', err);
-            // Silently fail - don't show review button if check fails
             setReviewOrderId(null);
           }
         } else {
-          // User not authenticated - clear orderId
           setReviewOrderId(null);
         }
       } else {
@@ -112,8 +109,8 @@ export default function ProductDetailPage() {
         initialVariant.availableSizes && initialVariant.availableSizes.length > 0
           ? initialVariant.availableSizes
           : initialVariant.size
-            ? [initialVariant.size]
-            : [];
+          ? [initialVariant.size]
+          : [];
       setSelectedSize((prev) => prev ?? (initialSizes[0] ?? null));
     } else {
       setSelectedColor(null);
@@ -215,6 +212,17 @@ export default function ProductDetailPage() {
     setQuantity(1);
   }, [selectedVariant?.id, selectedSize]);
 
+  // Listen for size chart open event
+  useEffect(() => {
+    const handleOpenSizeChart = () => {
+      setShowSizeChart(true);
+    };
+    window.addEventListener('openSizeChart', handleOpenSizeChart);
+    return () => {
+      window.removeEventListener('openSizeChart', handleOpenSizeChart);
+    };
+  }, []);
+
   const handleAddToCart = async () => {
     if (!product) return;
     if (!selectedVariant && variants.length === 0) {
@@ -297,6 +305,83 @@ export default function ProductDetailPage() {
     }
   };
 
+  const handleBuyWithChapa = async () => {
+    if (!product) return;
+    if (!selectedVariant && variants.length === 0) {
+      alert("This product is currently unavailable.");
+      return;
+    }
+    if (sizeOptions.length > 0 && !selectedSize) {
+      alert("Please select a size.");
+      return;
+    }
+    if (isOutOfStock) {
+      alert("This variant is currently out of stock.");
+      return;
+    }
+    setIsBuyingNow(true);
+    try {
+      addItemToCart(
+        {
+          productId: product.id,
+          variantId: selectedVariant?.id ?? null,
+          title: product.title,
+          subtitle: selectedVariant?.sku,
+          color: selectedVariant?.color ?? selectedColor,
+          size: selectedSize,
+          image:
+            selectedVariant?.media?.[0]?.url ??
+            product.media?.[0]?.url ??
+            displayMedia?.[0]?.url ??
+            null,
+          currency: product.currency,
+          unitPrice: currentPrice,
+          stock: selectedVariant?.stock ?? null,
+        },
+        quantity
+      );
+      router.push("/checkout?payment=chapa");
+    } finally {
+      setIsBuyingNow(false);
+    }
+  };
+
+  const handleMorePaymentOptions = () => {
+    if (!product) return;
+    if (!selectedVariant && variants.length === 0) {
+      alert("This product is currently unavailable.");
+      return;
+    }
+    if (sizeOptions.length > 0 && !selectedSize) {
+      alert("Please select a size.");
+      return;
+    }
+    if (isOutOfStock) {
+      alert("This variant is currently out of stock.");
+      return;
+    }
+    addItemToCart(
+      {
+        productId: product.id,
+        variantId: selectedVariant?.id ?? null,
+        title: product.title,
+        subtitle: selectedVariant?.sku,
+        color: selectedVariant?.color ?? selectedColor,
+        size: selectedSize,
+        image:
+          selectedVariant?.media?.[0]?.url ??
+          product.media?.[0]?.url ??
+          displayMedia?.[0]?.url ??
+          null,
+        currency: product.currency,
+        unitPrice: currentPrice,
+        stock: selectedVariant?.stock ?? null,
+      },
+      quantity
+    );
+    router.push("/checkout/payment-options");
+  };
+
   return (
     <>
       <NewNavBar />
@@ -316,16 +401,16 @@ export default function ProductDetailPage() {
                   fallbackAlt={product.title}
                   contextNote={
                     selectedVariant?.media &&
-                      selectedVariant.media.length > 0 &&
-                      product.media &&
+                  selectedVariant.media.length > 0 &&
+                  product.media &&
                       product.media.length > 0 ? (
                       <p className="mt-2 text-xs text-gray-400">
                         Showing media for{" "}
                         <span className="font-medium">
-                          {selectedVariant.color || "Default"}
-                        </span>{" "}
-                        variant.
-                      </p>
+                        {selectedVariant.color || "Default"}
+                      </span>{" "}
+                      variant.
+                    </p>
                     ) : null
                   }
                 />
@@ -358,8 +443,16 @@ export default function ProductDetailPage() {
                   variantsLength={variants.length}
                   onBuyNow={handleBuyNow}
                   onAddToCart={handleAddToCart}
+                  onBuyWithChapa={handleBuyWithChapa}
+                  onMorePaymentOptions={handleMorePaymentOptions}
                   feedback={feedback}
                 />
+
+                {/* Trust Badges */}
+                <TrustBadges />
+
+                {/* Product Accordion */}
+                <ProductAccordion product={product} />
               </div>
             </div>
 
@@ -380,7 +473,7 @@ export default function ProductDetailPage() {
                 variantColor={selectedColor}
                 onWriteReview={() => setShowReviewForm(true)}
               />
-            </div>
+                </div>
           </div>
         ) : null}
       </div>
@@ -397,11 +490,11 @@ export default function ProductDetailPage() {
           setReviewsKey((k) => k + 1);
         }}
       />
+      <SizeChartModal
+        isOpen={showSizeChart}
+        onClose={() => setShowSizeChart(false)}
+      />
       <FooterSection />
     </>
   );
 }
-
-
-
-

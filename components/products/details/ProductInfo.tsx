@@ -62,15 +62,28 @@ export default function ProductInfo({
 
             {sizeOptions.length > 0 && (
                 <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700" htmlFor="size-select">
-                        Size
-                    </label>
+                    <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-gray-700" htmlFor="size-select">
+                            Size
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                // This will be handled by parent component
+                                const event = new CustomEvent('openSizeChart');
+                                window.dispatchEvent(event);
+                            }}
+                            className="text-xs text-[#310101] hover:underline font-medium"
+                        >
+                            Learn more about sizes
+                        </button>
+                    </div>
                     <select
                         id="size-select"
                         value={selectedSize ?? ""}
                         onChange={(event) => onSizeChange(event.target.value)}
                         disabled={isOutOfStock}
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#310101] focus:ring-2 focus:ring-purple-200 disabled:opacity-50"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-[#310101] focus:ring-2 focus:ring-[#310101]/20 disabled:opacity-50"
                     >
                         {sizeOptions.map((size) => (
                             <option key={size} value={size}>

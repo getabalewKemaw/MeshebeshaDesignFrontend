@@ -38,7 +38,7 @@ export default function ColorSelect({
         value={selectedValue}
         onChange={handleChange}
         disabled={disabled}
-        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-purple-500 focus:ring-2 focus:ring-purple-200 disabled:opacity-50"
+        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-[#310101] focus:ring-2 focus:ring-[#310101]/20 disabled:opacity-50"
       >
         {colors.map((color) => (
           <option key={color} value={color}>

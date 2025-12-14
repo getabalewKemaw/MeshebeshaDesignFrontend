@@ -1,5 +1,5 @@
 import QuantitySelector from "@/components/ui/QuantitySelector";
-import { ShoppingCart, Zap } from "lucide-react";
+import { ShoppingCart, Zap, CreditCard } from "lucide-react";
 import type { ProductVariant } from "@/types/product";
 
 interface ProductActionsProps {
@@ -14,6 +14,8 @@ interface ProductActionsProps {
     variantsLength: number;
     onBuyNow: () => void;
     onAddToCart: () => void;
+    onBuyWithChapa: () => void;
+    onMorePaymentOptions: () => void;
     feedback: string | null;
 }
 
@@ -29,8 +31,12 @@ export default function ProductActions({
     variantsLength,
     onBuyNow,
     onAddToCart,
+    onBuyWithChapa,
+    onMorePaymentOptions,
     feedback,
 }: ProductActionsProps) {
+    const isDisabled = isOutOfStock || (sizeOptionsLength > 0 && !selectedSize);
+
     return (
         <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
@@ -49,51 +55,49 @@ export default function ProductActions({
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3">
-                <div className="flex flex-col sm:flex-row gap-3">
-                    {/* Buy Now Button - Primary CTA */}
-                    <button
-                        type="button"
-                        onClick={onBuyNow}
-                        disabled={
-                            isOutOfStock ||
-                            isBuyingNow ||
-                            (sizeOptionsLength > 0 && !selectedSize)
-                        }
-                        className="form-button-primary flex-1 gap-2"
-                    >
-                        {isOutOfStock
-                            ? "Out of Stock"
-                            : isBuyingNow
-                                ? "Processing..."
-                                : (
-                                    <>
-                                        <Zap size={18} />
-                                        Buy Now
-                                    </>
-                                )}
-                    </button>
+                {/* Add to Cart Button */}
+                <button
+                    type="button"
+                    onClick={onAddToCart}
+                    disabled={isDisabled || isAdding}
+                    className="w-full bg-[#310101] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#4a0202] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                    {isAdding ? (
+                        "Adding..."
+                    ) : (
+                        <>
+                            <ShoppingCart size={18} />
+                            Add to cart
+                        </>
+                    )}
+                </button>
 
-                    {/* Add to Cart Button - Secondary CTA */}
-                    <button
-                        type="button"
-                        onClick={onAddToCart}
-                        disabled={
-                            isOutOfStock ||
-                            isAdding ||
-                            (sizeOptionsLength > 0 && !selectedSize)
-                        }
-                        className="form-button-secondary flex-1 gap-2"
-                    >
-                        {isAdding ? (
-                            "Adding..."
-                        ) : (
-                            <>
-                                <ShoppingCart size={18} />
-                                Add to Cart
-                            </>
-                        )}
-                    </button>
-                </div>
+                {/* Buy with Chapa Button */}
+                <button
+                    type="button"
+                    onClick={onBuyWithChapa}
+                    disabled={isDisabled || isBuyingNow}
+                    className="w-full bg-[#310101] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#4a0202] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                    {isBuyingNow ? (
+                        "Processing..."
+                    ) : (
+                        <>
+                            Buy with <span className="text-green-400">Chapa</span>
+                        </>
+                    )}
+                </button>
+
+                {/* More Payment Options Button */}
+                <button
+                    type="button"
+                    onClick={onMorePaymentOptions}
+                    disabled={isDisabled}
+                    className="w-full bg-[#310101] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#4a0202] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                    <CreditCard size={18} />
+                    More Payment option
+                </button>
 
                 {/* Feedback Messages */}
                 <div className="text-sm text-center">

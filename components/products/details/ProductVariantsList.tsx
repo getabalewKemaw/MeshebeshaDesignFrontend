@@ -22,8 +22,8 @@ export default function ProductVariantsList({ variants, selectedVariantId, curre
                             <div
                                 key={variant.id}
                                 className={`border rounded-lg p-4 bg-white transition ${isActive
-                                    ? "border-purple-400 ring-2 ring-purple-100"
-                                    : "border-gray-200 hover:border-purple-300"
+                                    ? "border-[#310101] ring-2 ring-[#310101]/20"
+                                    : "border-gray-200 hover:border-[#310101]/40"
                                     }`}
                             >
                                 <div className="flex items-center justify-between mb-2">
@@ -31,7 +31,7 @@ export default function ProductVariantsList({ variants, selectedVariantId, curre
                                         {variant.color || variant.sku || "Variant"}
                                     </span>
                                     {variant.priceOverride ? (
-                                        <span className="text-sm text-purple-600 font-semibold">
+                                        <span className="text-sm text-[#310101] font-semibold">
                                             {currency}{" "}
                                             {variant.priceOverride.toFixed(2)}
                                         </span>

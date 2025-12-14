@@ -7,7 +7,7 @@ import CheckoutTextArea from "./CheckoutTextArea";
 
 interface DeliveryPreferenceSectionProps {
     deliveryPreference: DeliveryPreference;
-    onUpdate: (preference: DeliveryPreference) => void;
+    onUpdate: (preference: Partial<DeliveryPreference>) => void;
 }
 
 export default function DeliveryPreferenceSection({
@@ -30,8 +30,8 @@ export default function DeliveryPreferenceSection({
                         type="button"
                         onClick={() => handleChange("speed", "standard")}
                         className={`p-4 border-2 rounded-lg transition-all ${deliveryPreference.speed === "standard"
-                            ? "border-purple-600 bg-purple-50"
-                            : "border-gray-200 hover:border-gray-300"
+                            ? "border-[#310101] bg-[#310101]/5"
+                            : "border-gray-200 hover:border-[#310101]/20"
                             }`}
                     >
                         <div className="text-left">
@@ -43,8 +43,8 @@ export default function DeliveryPreferenceSection({
                         type="button"
                         onClick={() => handleChange("speed", "express")}
                         className={`p-4 border-2 rounded-lg transition-all ${deliveryPreference.speed === "express"
-                            ? "border-purple-600 bg-purple-50"
-                            : "border-gray-200 hover:border-gray-300"
+                            ? "border-[#310101] bg-[#310101]/5"
+                            : "border-gray-200 hover:border-[#310101]/20"
                             }`}
                     >
                         <div className="text-left">

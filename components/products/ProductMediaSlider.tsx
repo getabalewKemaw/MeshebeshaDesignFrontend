@@ -91,7 +91,7 @@ export default function ProductMediaSlider({
               onClick={() => onChangeActiveIndex(index)}
               className={`h-20 w-20 shrink-0 overflow-hidden rounded-lg border ${
                 index === clampedIndex
-                  ? "border-purple-500 ring-2 ring-purple-200"
+                  ? "border-[#310101] ring-2 ring-[#310101]/20"
                   : "border-transparent"
               }`}
             >

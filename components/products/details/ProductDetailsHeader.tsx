@@ -10,7 +10,7 @@ export default function ProductDetailsHeader({ product }: ProductDetailsHeaderPr
         <div className="space-y-6">
             <div className="flex items-center gap-3">
                 {product.category?.name && (
-                    <span className="px-3 py-1 bg-purple-100 text-purple-700 text-xs uppercase tracking-wide rounded-full">
+                    <span className="px-3 py-1 bg-[#310101]/10 text-[#310101] text-xs uppercase tracking-wide rounded-full">
                         {product.category.name}
                     </span>
                 )}
