@@ -121,7 +121,7 @@ export default function CategoriesPage() {
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
+          <h1 className="text-3xl font-bold text-[#310101]">Categories</h1>
           <p className="text-gray-600 mt-1">Organize your products</p>
         </div>
         <button

@@ -3,16 +3,27 @@
 import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Package, Plus, Search, Edit, Trash2, Image as ImageIcon, Copy, Archive, RotateCcw, Layers } from "lucide-react";
+import {
+  Package,
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  Image as ImageIcon,
+  Copy,
+  Archive,
+  RotateCcw,
+  Layers
+} from "lucide-react";
 import Image from 'next/image';
-import { Product } from "@/types/product";
+import { ProductWithDetails } from "@/types/product";
 import * as productApi from "@/lib/api/products";
 import { formatCurrency, getStatusBadge } from "@/lib/utils/product-utils";
 
 export default function ProductsPage() {
   const { isAdmin, isLoading } = useAuth();
   const router = useRouter();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
 
@@ -32,7 +43,8 @@ export default function ProductsPage() {
     try {
       const response = await productApi.getProducts();
       if (response.success && response.data) {
-        setProducts(response.data);
+        // Cast or ensure the data matches ProductWithDetails (it usually does from backend inclusions)
+        setProducts(response.data as ProductWithDetails[]);
       }
     } catch (error) {
       console.error("Failed to fetch products:", error);
@@ -106,6 +118,11 @@ export default function ProductsPage() {
     product.title.toLowerCase().includes(search.toLowerCase())
   );
 
+  const calculateTotalStock = (product: ProductWithDetails) => {
+    if (!product.variants || product.variants.length === 0) return 0;
+    return product.variants.reduce((sum, variant) => sum + variant.stock, 0);
+  };
+
   if (isLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -119,16 +136,18 @@ export default function ProductsPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="max-w-7xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Products</h1>
-          <p className="text-gray-600 mt-1">Manage your product catalog</p>
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#3D0C11] to-[#6b252bc0] font-heading drop-shadow-sm">
+            Product Management
+          </h1>
+          <p className="text-gray-600 mt-2 font-medium">Manage all products in your store from here.</p>
         </div>
         <a
           href="/admin/products/new"
-          className="form-button-primary flex items-center gap-2"
+          className="bg-[#3D0C11] hover:bg-[#500e14] text-white px-5 py-2.5 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center gap-2 font-medium"
         >
           <Plus className="h-5 w-5" />
           Add Product
@@ -136,169 +155,183 @@ export default function ProductsPage() {
       </div>
 
       {/* Search Bar */}
-      <div className="bg-white p-4 mb-6 shadow-sm">
-        <div className="relative">
+      <div className="bg-white p-4 mb-6 rounded-xl shadow-sm border border-gray-100">
+        <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search products..."
-            className="form-input-base pl-10"
+            placeholder="Search products by name..."
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#3D0C11] focus:border-transparent outline-none transition-all"
           />
         </div>
       </div>
 
-      {/* Products Grid */}
-      {filteredProducts.length === 0 ? (
-        <div className="bg-white p-12 text-center shadow-sm">
-          <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            No products found
-          </h3>
-          <p className="text-gray-600 mb-6">
-            {search
-              ? "Try adjusting your search"
-              : "Get started by adding your first product"}
-          </p>
-          {!search && (
-            <a
-              href="/admin/products/new"
-              className="form-button-primary inline-flex items-center gap-2"
-            >
-              <Plus className="h-5 w-5" />
-              Add Your First Product
-            </a>
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProducts.map((product) => {
-            const statusBadge = getStatusBadge(product.status || 'active');
-            const isArchived = product.status === 'archived';
-
-            return (
-              <div
-                key={product.id}
-                className={`bg-white shadow-sm hover:shadow-md transition-shadow ${isArchived ? 'opacity-75' : ''
-                  }`}
+      {/* Products Table */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        {filteredProducts.length === 0 ? (
+          <div className="p-16 text-center">
+            <div className="bg-red-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Package className="h-10 w-10 text-[#3D0C11]" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              No products found
+            </h3>
+            <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+              {search
+                ? "We couldn't find any products matching your search. Try adjusting your keywords."
+                : "Get started by adding your first product to your catalog."}
+            </p>
+            {!search && (
+              <a
+                href="/admin/products/new"
+                className="inline-flex items-center gap-2 bg-[#3D0C11] text-white px-6 py-3 rounded-full hover:bg-[#500e14] transition-colors font-medium shadow-md"
               >
-                <div className="relative h-64 bg-gray-100 flex items-center justify-center overflow-hidden rounded-t-lg">
+                <Plus className="h-5 w-5" />
+                Add First Product
+              </a>
+            )}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-[#3D0C11] text-white">
+                  <th className="py-4 px-6 font-semibold text-sm uppercase tracking-wider">Image</th>
+                  <th className="py-4 px-6 font-semibold text-sm uppercase tracking-wider">Name</th>
+                  <th className="py-4 px-6 font-semibold text-sm uppercase tracking-wider">Category</th>
+                  <th className="py-4 px-6 font-semibold text-sm uppercase tracking-wider">Price</th>
+                  <th className="py-4 px-6 font-semibold text-sm uppercase tracking-wider">Stock</th>
+                  <th className="py-4 px-6 font-semibold text-sm uppercase tracking-wider text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {filteredProducts.map((product) => {
+                  const statusBadge = getStatusBadge(product.status || 'active');
+                  const isArchived = product.status === 'archived';
+                  const totalStock = calculateTotalStock(product);
 
-                  {/*  in these if the product have a media we show up the first media  if not we show up the placeholder   so lets do it*/}
-                  {product.media && product.media.length > 0 ? (
-                    <Image
-                      src={product.media[0].url}
-                      alt={product.title}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <ImageIcon className="h-16 w-16 text-gray-400" />
-                  )}
-                </div>
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-bold text-gray-900 line-clamp-2">
-                      {product.title}
-                    </h3>
-                    <div className="flex gap-1">
-                      <span
-                        className={`px-2 py-1 text-xs font-medium ${product.isActive
-                          ? "bg-green-100 text-green-800"
-                          : "bg-gray-100 text-gray-800"
-                          }`}
-                      >
-                        {product.isActive ? "Active" : "Inactive"}
-                      </span>
-                      <span
-                        className={`px-2 py-1 text-xs font-medium ${statusBadge.bgColor} ${statusBadge.textColor}`}
-                      >
-                        {statusBadge.label}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                    {product.description || "No description"}
-                  </p>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-2xl font-bold text-gray-900">
-                      {formatCurrency(product.price, product.currency)}
-                    </span>
-                    {product.isFeatured && (
-                      <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 font-medium">
-                        ⭐ Featured
-                      </span>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <div className="grid grid-cols-2 gap-2">
-                      <a
-                        href={`/admin/products/${product.id}/edit`}
-                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
-                      >
-                        <Edit className="h-4 w-4" />
-                        Edit
-                      </a>
-                      <a
-                        href={`/admin/products/${product.id}/variants`}
-                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
-                      >
-                        <Layers className="h-4 w-4" />
-                        Variants
-                      </a>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <a
-                        href={`/admin/products/${product.id}/media`}
-                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
-                      >
-                        <ImageIcon className="h-4 w-4" />
-                        Media
-                      </a>
-                      <button
-                        onClick={() => handleDuplicate(product.id)}
-                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
-                      >
-                        <Copy className="h-4 w-4" />
-                        Duplicate
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      {!isArchived ? (
-                        <button
-                          onClick={() => handleArchive(product.id)}
-                          className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
-                        >
-                          <Archive className="h-4 w-4" />
-                          Archive
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleRestore(product.id)}
-                          className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2"
-                        >
-                          <RotateCcw className="h-4 w-4" />
-                          Restore
-                        </button>
-                      )}
-                      <button
-                        onClick={() => handleDelete(product.id)}
-                        className="form-button-secondary flex items-center justify-center gap-2 text-sm py-2 text-red-600 hover:text-red-700 hover:border-red-600"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                  return (
+                    <tr
+                      key={product.id}
+                      className={`hover:bg-red-50/30 transition-colors duration-150 ${isArchived ? 'opacity-60 bg-gray-50' : ''}`}
+                    >
+                      <td className="py-4 px-6">
+                        <div className="relative h-16 w-16 bg-gray-100 rounded-lg overflow-hidden shadow-sm border border-gray-200">
+                          {product.media && product.media.length > 0 ? (
+                            <Image
+                              src={product.media[0].url}
+                              alt={product.title}
+                              fill
+                              sizes="64px"
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="flex items-center justify-center h-full w-full">
+                              <ImageIcon className="h-6 w-6 text-gray-300" />
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div>
+                          <p className="font-bold text-gray-900">{product.title}</p>
+                          <div className="flex gap-2 mt-1">
+                            {product.isFeatured && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 border border-yellow-200">
+                                Featured
+                              </span>
+                            )}
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${product.isActive ? 'bg-green-100 text-green-800 border-green-200' : 'bg-gray-100 text-gray-800 border-gray-200'}`}>
+                              {product.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="text-gray-600 font-medium">
+                          {product.category?.name || "Uncategorized"}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="font-bold text-[#8B0000] text-lg">
+                          {formatCurrency(product.price, product.currency).replace('ETB', '')} Birr
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className={`font-semibold ${totalStock === 0 ? 'text-red-500' : 'text-gray-700'}`}>
+                          {totalStock}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <a
+                            href={`/admin/products/${product.id}/edit`}
+                            title="Edit"
+                            className="bg-slate-500 hover:bg-slate-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors shadow-sm"
+                          >
+                            Edit
+                          </a>
+                          <button
+                            onClick={() => handleDelete(product.id)}
+                            title="Delete"
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-md text-sm font-medium transition-colors shadow-sm"
+                          >
+                            Delete
+                          </button>
+
+                          {/* Secondary Actions as Icons to preserve functionality minus clutter */}
+                          <div className="flex items-center gap-1 ml-2 pl-2 border-l border-gray-200">
+                            <a
+                              href={`/admin/products/${product.id}/variants`}
+                              title="Manage Variants"
+                              className="p-1.5 text-gray-400 hover:text-[#3D0C11] hover:bg-red-50 rounded transition-colors"
+                            >
+                              <Layers className="h-4 w-4" />
+                            </a>
+                            <a
+                              href={`/admin/products/${product.id}/media`}
+                              title="Manage Media"
+                              className="p-1.5 text-gray-400 hover:text-[#3D0C11] hover:bg-red-50 rounded transition-colors"
+                            >
+                              <ImageIcon className="h-4 w-4" />
+                            </a>
+                            <button
+                              onClick={() => handleDuplicate(product.id)}
+                              title="Duplicate"
+                              className="p-1.5 text-gray-400 hover:text-[#3D0C11] hover:bg-red-50 rounded transition-colors"
+                            >
+                              <Copy className="h-4 w-4" />
+                            </button>
+                            {!isArchived ? (
+                              <button
+                                onClick={() => handleArchive(product.id)}
+                                title="Archive"
+                                className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded transition-colors"
+                              >
+                                <Archive className="h-4 w-4" />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => handleRestore(product.id)}
+                                title="Restore"
+                                className="p-1.5 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded transition-colors"
+                              >
+                                <RotateCcw className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
-    // </div>
   );
 }

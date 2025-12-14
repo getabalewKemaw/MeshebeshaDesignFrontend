@@ -125,3 +125,5 @@ export default function SizeChartModal({ isOpen, onClose }: SizeChartModalProps)
     );
 }
 
+
+

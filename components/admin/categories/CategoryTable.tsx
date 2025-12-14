@@ -18,21 +18,21 @@ export default function CategoryTable({ categories, onEdit, onDelete }: Category
     return (
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
             <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-[#310101] text-white text-xl">
                     <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left  font-medium uppercase tracking-wider">
                             Name
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left  font-medium uppercase tracking-wider">
                             Slug
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left  font-medium uppercase tracking-wider">
                             Description
                         </th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-left  font-medium uppercase tracking-wider">
                             Created
                         </th>
-                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th className="px-6 py-3 text-right  font-medium  uppercase tracking-wider">
                             Actions
                         </th>
                     </tr>
