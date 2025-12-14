@@ -264,7 +264,7 @@ export default function EventHolidaySection() {
 
                         {/* 25% OFF Badge - Right - Animated */}
                         <div
-                            className={`bg-[#310101] text-white px-0 py-2 rounded-full border-2 border-[#310101] shadow-lg transform rotate-[2deg] mt-4 md:mt-0 transition-all duration-700 delay-300 animate-pulse ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+                            className={`bg-[#310101] text-white  py-2 rounded-full border-2 border-[#310101] shadow-lg transform rotate-[2deg] mt-7 md:mt-9 transition-all duration-700 delay-300 mr-0 animate-pulse ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
                                 }`}
                         >
                             <span className="font-black text-xl md:text-2xl" style={{ fontFamily: 'Fredoka One, cursive' }}>
