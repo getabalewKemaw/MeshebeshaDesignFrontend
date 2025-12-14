@@ -7,33 +7,33 @@ import { useState } from "react";
 interface ProductCardProps {
     id: string;
     title: string;
-    // price: number;
-    // currency?: string;
+    price: number;
+    currency?: string;
     image?: string;
-    // averageRating?: number;
-    // totalReviews?: number;
+    averageRating?: number;
+    totalReviews?: number;
 }
 
 export default function ProductCard({
     id,
     title,
-    // price,
-    // currency = "ETB",
+    price,
+    currency = "ETB",
     image,
-   /*  averageRating,
-    totalReviews, */
+    averageRating,
+    totalReviews,
 }: ProductCardProps) {
     const [imageError, setImageError] = useState(false);
 
-    // // Format price
-    // const formattedPrice = new Intl.NumberFormat("en-ET", {
-    //     style: "decimal",
-    //     minimumFractionDigits: 2,
-    //     maximumFractionDigits: 2,
-    // }).format(price);
+    // Format price
+    const formattedPrice = new Intl.NumberFormat("en-ET", {
+        style: "decimal",
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(price);
 
     // Render star rating - always show even if 0 reviews
-  /*   const renderStars = () => {
+    const renderStars = () => {
         const rating = averageRating || 0;
         const stars = [];
         const fullStars = Math.floor(rating);
@@ -69,7 +69,7 @@ export default function ProductCard({
                 </span>
             </div>
         );
-    }; */
+    };
 
     return (
         <Link
@@ -83,7 +83,7 @@ export default function ProductCard({
                         src={image}
                         alt={title}
                         fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
                         onError={() => setImageError(true)}
                         priority={false}
@@ -118,15 +118,15 @@ export default function ProductCard({
                 </h3>
 
                 {/* Rating - Always displayed */}
-                {/* {renderStars()} */}
+                {renderStars()}
 
                 {/* Price */}
-          {/*       <p className="text-xl font-bold text-[#1E2A55]">
+                <p className="text-xl font-bold text-[#1E2A55]">
                     {formattedPrice}
                     <span className="ml-1 text-sm font-normal text-gray-600">
                         {currency}
                     </span>
-                </p> */}
+                </p>
             </div>
         </Link>
     );
