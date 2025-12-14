@@ -163,7 +163,7 @@ export default function ProductMediaPage() {
   if (isLoading || loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#310101]"></div>
       </div>
     );
   }
@@ -175,7 +175,7 @@ export default function ProductMediaPage() {
         <div className="mb-8">
           <a
             href="/admin/products"
-            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-medium mb-4"
+            className="inline-flex items-center gap-2 text-[#310101] hover:text-[#801212] font-medium mb-4"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Products
@@ -205,7 +205,7 @@ export default function ProductMediaPage() {
                 {media.filter(m => m.mediaType === 'image').length} images
               </span>
             </div>
-            <div className="border-2 border-dashed border-blue-300 rounded-lg p-6 text-center hover:border-blue-500 transition-colors bg-blue-50">
+            <div className="border-2 border-dashed border-[#310101]  rounded-lg p-6 text-center hover:border-blue-500 transition-colors bg-blue-50">
               <input
                 type="file"
                 id="image-upload"
@@ -218,7 +218,7 @@ export default function ProductMediaPage() {
               <label htmlFor="image-upload" className="cursor-pointer flex flex-col items-center">
                 {uploadingImages ? (
                   <>
-                    <Loader2 className="h-12 w-12 text-indigo-600 mb-4 animate-spin" />
+                    <Loader2 className="h-12 w-12 text-[#310101] mb-4 animate-spin" />
                     <p className="text-lg font-semibold text-gray-900 mb-2">Uploading...</p>
                   </>
                 ) : (
@@ -226,7 +226,7 @@ export default function ProductMediaPage() {
                     <Upload className="h-10 w-10 text-blue-400 mb-3" />
                     <p className="text-md font-semibold text-gray-900 mb-1">Click to upload images</p>
                     <p className="text-xs text-gray-600">PNG, JPG, GIF • Up to 10MB each</p>
-                    <p className="text-xs text-blue-600 font-medium mt-2">✨ Select multiple files</p>
+                    <p className="text-xs text-[#310101] font-medium mt-2">✨ Select multiple files</p>
                   </>
                 )}
               </label>
@@ -241,7 +241,7 @@ export default function ProductMediaPage() {
                 {media.filter(m => m.mediaType === 'video').length} videos
               </span>
             </div>
-            <div className="border-2 border-dashed border-purple-300 rounded-lg p-6 text-center hover:border-purple-500 transition-colors bg-purple-50">
+            <div className="border-2 border-dashed border-[#310101] rounded-lg p-6 text-center hover:border-purple-500 transition-colors bg-purple-50">
               <input
                 type="file"
                 id="video-upload"
@@ -254,7 +254,7 @@ export default function ProductMediaPage() {
               <label htmlFor="video-upload" className="cursor-pointer flex flex-col items-center">
                 {uploadingVideos ? (
                   <>
-                    <Loader2 className="h-12 w-12 text-purple-600 mb-4 animate-spin" />
+                    <Loader2 className="h-12 w-12 text-[#310101] mb-4 animate-spin" />
                     <p className="text-lg font-semibold text-gray-900 mb-2">Uploading...</p>
                   </>
                 ) : (
@@ -262,7 +262,7 @@ export default function ProductMediaPage() {
                     <Upload className="h-10 w-10 text-purple-400 mb-3" />
                     <p className="text-md font-semibold text-gray-900 mb-1">Click to upload videos</p>
                     <p className="text-xs text-gray-600">MP4, MOV, AVI • Up to 100MB each</p>
-                    <p className="text-xs text-purple-600 font-medium mt-2">✨ Select multiple files</p>
+                    <p className="text-xs text-[#310101] font-medium mt-2">✨ Select multiple files</p>
                   </>
                 )}
               </label>
@@ -337,8 +337,8 @@ export default function ProductMediaPage() {
                       <span
                         className={`text-xs px-2 py-1 rounded-full font-medium ${
                           item.mediaType === "video"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-blue-100 text-blue-700"
+                            ? "bg-purple-100 text-[#310101]"
+                            : "bg-blue-100 text-[#550e0e]"
                         }`}
                       >
                         {item.mediaType === "video" ? "🎥 Video" : "📸 Image"}

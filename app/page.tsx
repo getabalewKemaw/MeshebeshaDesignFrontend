@@ -15,6 +15,8 @@ import InfiniteTextDivider from '@/components/newlanding/InfiniteTextDivider';
 import ChatPopup from '@/components/landing/ChatPopup';
 
 import FresShipingDivder from '@/components/newlanding/FreshipingAnimated';
+import CustomerFeedbackSection from '@/components/newlanding/CustomerFeedbackSection';
+
 export default function HomePage() {
   return (
     <div className="min-h-screen">
@@ -31,10 +33,14 @@ export default function HomePage() {
       <InfiniteTextDivider />
       <JewelrySection />
       <FresShipingDivder />
+      
+      <CustomerFeedbackSection />
+      <InfiniteTextDivider />
+      
       <CustomProductSection />
       <InfiniteTextDivider />
       <AboutSection />
-         <InfiniteTextDivider />
+      <InfiniteTextDivider />
       <FooterSection />
       <ChatPopup />
     </div>

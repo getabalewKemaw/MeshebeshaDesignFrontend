@@ -161,4 +161,18 @@ export async function deleteReview(
   });
 }
 
+/**
+ * Get recent reviews for landing page
+ */
+export async function getRecentReviews(limit = 5, rating?: number): Promise<ApiResponse<Review[]>> {
+  const params = new URLSearchParams();
+  if (limit) params.append('limit', limit.toString());
+  if (rating) params.append('rating', rating.toString());
 
+  const queryString = params.toString();
+  const endpoint = `/api/v1/reviews/recent${queryString ? `?${queryString}` : ''}`;
+
+  return apiRequest<Review[]>(endpoint, {
+    method: 'GET',
+  });
+}
