@@ -8,6 +8,8 @@ import { ArrowLeft, Save, Loader2 } from "lucide-react";
 interface Category {
   id: string;
   name: string;
+  parentId: string | null;
+  children?: Category[];
 }
 
 export default function NewProductPage() {
@@ -16,7 +18,9 @@ export default function NewProductPage() {
   const [loading, setLoading] = useState(false);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [error, setError] = useState("");
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [parentCategories, setParentCategories] = useState<Category[]>([]);
+  const [subCategories, setSubCategories] = useState<Category[]>([]);
+  const [selectedParentId, setSelectedParentId] = useState<string>("");
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -49,7 +53,9 @@ export default function NewProductPage() {
       );
       const data = await response.json();
       if (data.success) {
-        setCategories(data.data);
+        // Filter to only parent categories (no parentId)
+        const parents = data.data.filter((cat: Category) => !cat.parentId);
+        setParentCategories(parents);
       }
     } catch (error) {
       console.error("Failed to fetch categories:", error);
@@ -58,10 +64,54 @@ export default function NewProductPage() {
     }
   };
 
+  // Fetch sub-categories when a parent is selected
+  const fetchSubCategories = async (parentId: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/categories`,
+        {
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        // Filter to sub-categories of the selected parent
+        const subs = data.data.filter((cat: Category) => cat.parentId === parentId);
+        setSubCategories(subs);
+      }
+    } catch (error) {
+      console.error("Failed to fetch sub-categories:", error);
+    }
+  };
+
+  // Handle parent category selection
+  const handleParentChange = (parentId: string) => {
+    setSelectedParentId(parentId);
+    setFormData({ ...formData, categoryId: parentId }); // Default to parent category
+    
+    if (parentId) {
+      fetchSubCategories(parentId);
+    } else {
+      setSubCategories([]);
+    }
+  };
+
+  // Handle sub-category selection (optional)
+  const handleSubCategoryChange = (subCategoryId: string) => {
+    setFormData({ ...formData, categoryId: subCategoryId });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+
+    // Validate that a category is selected
+    if (!formData.categoryId) {
+      setError("Please select a parent category");
+      setLoading(false);
+      return;
+    }
 
     try {
       const response = await fetch(
@@ -75,6 +125,7 @@ export default function NewProductPage() {
           body: JSON.stringify({
             ...formData,
             price: parseFloat(formData.price),
+            categoryId: formData.categoryId, // Use selected category (parent or sub)
           }),
         }
       );
@@ -162,32 +213,64 @@ export default function NewProductPage() {
               />
             </div>
 
-            {/* Category */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Category
-              </label>
-              <select
-                value={formData.categoryId}
-                onChange={(e) =>
-                  setFormData({ ...formData, categoryId: e.target.value })
-                }
-                className="form-input-base"
-              >
-                <option value="">No Category</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              {categories.length === 0 && !loadingCategories && (
-                <p className="text-sm text-gray-500 mt-1">
-                  No categories available.{" "}
-                  <a href="/admin/categories" className="text-indigo-600 hover:underline">
-                    Create one first
-                  </a>
-                </p>
+            {/* Category Selection */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Parent Category *
+                </label>
+                <select
+                  value={selectedParentId}
+                  onChange={(e) => handleParentChange(e.target.value)}
+                  className="form-input-base"
+                  required
+                >
+                  <option value="">Select a parent category</option>
+                  {parentCategories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+                {parentCategories.length === 0 && !loadingCategories && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    No categories available.{" "}
+                    <a href="/admin/categories" className="text-indigo-600 hover:underline">
+                      Create one first
+                    </a>
+                  </p>
+                )}
+              </div>
+
+              {/* Sub-Category (Optional) */}
+              {selectedParentId && subCategories.length > 0 && (
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Sub-Category (Optional)
+                  </label>
+                  <select
+                    value={formData.categoryId === selectedParentId ? "" : formData.categoryId}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        handleSubCategoryChange(e.target.value);
+                      } else {
+                        // If "No sub-category" is selected, use parent category
+                        setFormData({ ...formData, categoryId: selectedParentId });
+                      }
+                    }}
+                    className="form-input-base"
+                  >
+                    <option value="">No sub-category (use parent category)</option>
+                    {subCategories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Leave as "No sub-category" to assign product directly to the parent category
+                  </p>
+                </div>
               )}
             </div>
 

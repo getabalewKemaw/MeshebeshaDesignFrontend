@@ -14,12 +14,14 @@ interface CategoryModalProps {
     formData: {
         name: string;
         description: string;
+        parentId: string;
     };
     error: string;
     submitting: boolean;
+    parentCategories: Array<{ id: string; name: string }>;
     onClose: () => void;
     onSubmit: (e: React.FormEvent) => void;
-    onFormChange: (field: 'name' | 'description', value: string) => void;
+    onFormChange: (field: 'name' | 'description' | 'parentId', value: string) => void;
 }
 
 export default function CategoryModal({
@@ -28,6 +30,7 @@ export default function CategoryModal({
     formData,
     error,
     submitting,
+    parentCategories,
     onClose,
     onSubmit,
     onFormChange,
@@ -68,6 +71,28 @@ export default function CategoryModal({
                             placeholder="e.g., Traditional Scarves"
                             required
                         />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Parent Category (Optional)
+                        </label>
+                        <select
+                            value={formData.parentId}
+                            onChange={(e) => onFormChange('parentId', e.target.value)}
+                            className="form-input-base"
+                        >
+                            <option value="">None (Top-level Category)</option>
+                            {parentCategories
+                                .filter(cat => !editingCategory || cat.id !== editingCategory.id)
+                                .map((category) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
+                                    </option>
+                                ))}
+                        </select>
+                        <p className="text-xs text-gray-500 mt-1">
+                            Leave empty to create a parent category, or select a parent to create a sub-category
+                        </p>
                     </div>
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">

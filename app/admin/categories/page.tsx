@@ -33,6 +33,8 @@ export default function CategoriesPage() {
 
   // Custom hooks for data and form management
   const { categories, loading, error, fetchCategories, deleteCategory } = useCategories();
+  const [parentCategories, setParentCategories] = useState<Array<{ id: string; name: string }>>([]);
+  
   const {
     showModal,
     editingCategory,
@@ -50,7 +52,30 @@ export default function CategoriesPage() {
       'success'
     );
     fetchCategories();
+    fetchParentCategories();
   });
+
+  // Fetch parent categories for the dropdown
+  const fetchParentCategories = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/categories`,
+        {
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        // Filter to only parent categories (no parentId)
+        const parents = data.data
+          .filter((cat: any) => !cat.parentId)
+          .map((cat: any) => ({ id: cat.id, name: cat.name }));
+        setParentCategories(parents);
+      }
+    } catch (error) {
+      console.error("Failed to fetch parent categories:", error);
+    }
+  };
 
   useEffect(() => {
     if (!isLoading && !isAdmin) {
@@ -61,6 +86,7 @@ export default function CategoriesPage() {
   useEffect(() => {
     if (isAdmin) {
       fetchCategories();
+      fetchParentCategories();
     }
   }, [isAdmin, fetchCategories]);
 
@@ -129,6 +155,7 @@ export default function CategoriesPage() {
         formData={formData}
         error={formError}
         submitting={submitting}
+        parentCategories={parentCategories}
         onClose={closeModal}
         onSubmit={handleSubmit}
         onFormChange={updateFormField}

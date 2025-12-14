@@ -4,9 +4,13 @@ interface CategoryHeaderProps {
     categoryName: string;
     currentCount: number;
     totalCount: number;
+    parentCategory?: {
+        name: string;
+        slug: string;
+    } | null;
 }
 
-export default function CategoryHeader({ categoryName, currentCount, totalCount }: CategoryHeaderProps) {
+export default function CategoryHeader({ categoryName, currentCount, totalCount, parentCategory }: CategoryHeaderProps) {
     return (
         <div className="mb-12 text-center">
             <div className="inline-block mb-4">
@@ -26,7 +30,7 @@ export default function CategoryHeader({ categoryName, currentCount, totalCount 
             </p>
 
             {/* Breadcrumb */}
-            <div className="flex items-center justify-center gap-2 mt-6 text-sm text-gray-600">
+            <div className="flex items-center justify-center gap-2 mt-6 text-sm text-gray-600 flex-wrap">
                 <Link href="/" className="hover:text-[#310101] transition-colors">
                     Home
                 </Link>
@@ -36,6 +40,16 @@ export default function CategoryHeader({ categoryName, currentCount, totalCount 
                 <Link href="/products" className="hover:text-[#310101] transition-colors">
                     Products
                 </Link>
+                {parentCategory && (
+                    <>
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                        <Link href={`/categories/${parentCategory.slug}`} className="hover:text-[#310101] transition-colors">
+                            {parentCategory.name}
+                        </Link>
+                    </>
+                )}
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>

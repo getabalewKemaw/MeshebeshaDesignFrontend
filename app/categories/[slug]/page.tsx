@@ -63,6 +63,10 @@ export default function CategoryPage() {
                                 categoryName={data.category.name}
                                 currentCount={data.products.length}
                                 totalCount={data.pagination.total}
+                                parentCategory={data.category.parent ? {
+                                    name: data.category.parent.name,
+                                    slug: data.category.parent.slug,
+                                } : null}
                             />
 
                             {data.products.length === 0 ? (

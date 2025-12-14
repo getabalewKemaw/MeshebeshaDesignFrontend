@@ -11,6 +11,7 @@ interface Category {
 interface FormData {
     name: string;
     description: string;
+    parentId: string;
 }
 
 export function useCategoryForm(onSuccess: (isUpdate: boolean) => void) {
@@ -19,6 +20,7 @@ export function useCategoryForm(onSuccess: (isUpdate: boolean) => void) {
     const [formData, setFormData] = useState<FormData>({
         name: "",
         description: "",
+        parentId: "",
     });
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
@@ -26,7 +28,7 @@ export function useCategoryForm(onSuccess: (isUpdate: boolean) => void) {
     const openCreateModal = useCallback(() => {
         setShowModal(true);
         setEditingCategory(null);
-        setFormData({ name: "", description: "" });
+        setFormData({ name: "", description: "", parentId: "" });
         setError("");
     }, []);
 
@@ -35,6 +37,7 @@ export function useCategoryForm(onSuccess: (isUpdate: boolean) => void) {
         setFormData({
             name: category.name,
             description: category.description || "",
+            parentId: (category as any).parentId || "",
         });
         setShowModal(true);
         setError("");
@@ -43,11 +46,11 @@ export function useCategoryForm(onSuccess: (isUpdate: boolean) => void) {
     const closeModal = useCallback(() => {
         setShowModal(false);
         setEditingCategory(null);
-        setFormData({ name: "", description: "" });
+        setFormData({ name: "", description: "", parentId: "" });
         setError("");
     }, []);
 
-    const updateFormField = useCallback((field: 'name' | 'description', value: string) => {
+    const updateFormField = useCallback((field: 'name' | 'description' | 'parentId', value: string) => {
         setFormData(prev => ({ ...prev, [field]: value }));
     }, []);
 
@@ -59,10 +62,18 @@ export function useCategoryForm(onSuccess: (isUpdate: boolean) => void) {
         try {
             const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/categories`;
             const method = editingCategory ? 'PUT' : 'POST';
-            const body = {
+            const body: any = {
                 name: formData.name,
                 description: formData.description,
             };
+            
+            // Only include parentId if it's provided
+            if (formData.parentId) {
+                body.parentId = formData.parentId;
+            } else if (editingCategory) {
+                // When editing, explicitly set to null if no parent selected
+                body.parentId = null;
+            }
 
             const response = await fetch(
                 editingCategory ? `${url}/${editingCategory.id}` : url,

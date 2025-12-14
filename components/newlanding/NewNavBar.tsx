@@ -11,6 +11,8 @@ import { useCartStore } from '@/stores/cart';
 import NotificationBell from '@/components/NotificationBell';
 import { fetchCategories, Category } from '@/lib/api/categories';
 
+import { ChevronDown } from 'lucide-react';
+
 export default function NewNavBar() {
     const pathname = usePathname();
     const router = useRouter();
@@ -23,6 +25,8 @@ export default function NewNavBar() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loadingCategories, setLoadingCategories] = useState(true);
     const [scrolled, setScrolled] = useState(false);
+    const [hoveredCategoryId, setHoveredCategoryId] = useState<string | null>(null);
+    const [mobileExpandedCategory, setMobileExpandedCategory] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Handle scroll effect
@@ -117,21 +121,65 @@ export default function NewNavBar() {
                         )}
                     </Link>
 
-                    {/* Dynamic Categories - Limit to 4 */}
-                    {!loadingCategories && categories.slice(0, 4).map((category) => (
-                        <Link
-                            key={category.id}
-                            href={`/categories/${category.slug}`}
-                            className={`relative uppercase text-xs font-bold transition-all hover:text-[#310101] ${pathname === `/categories/${category.slug}` ? 'text-[#310101]' : 'text-[#310101]/70'
-                                }`}
-                            style={{ fontFamily: 'Fredoka One, cursive' }}
-                        >
-                            {category.name}
-                            {pathname === `/categories/${category.slug}` && (
-                                <span className="absolute left-0 right-0 -bottom-1 h-[2px] bg-[#310101]" />
-                            )}
-                        </Link>
-                    ))}
+                    {/* Dynamic Categories - Limit to 4 with Dropdowns */}
+                    {!loadingCategories && categories.slice(0, 4).map((category) => {
+                        const hasSubCategories = category.children && category.children.length > 0;
+                        const isActive = pathname === `/categories/${category.slug}` || 
+                                      (category.children?.some(child => pathname === `/categories/${child.slug}`));
+                        
+                        return (
+                            <div
+                                key={category.id}
+                                className="relative"
+                                onMouseEnter={() => hasSubCategories && setHoveredCategoryId(category.id)}
+                                onMouseLeave={() => setHoveredCategoryId(null)}
+                            >
+                                <Link
+                                    href={`/categories/${category.slug}`}
+                                    className={`relative uppercase text-xs font-bold transition-all hover:text-[#310101] flex items-center gap-1 ${isActive ? 'text-[#310101]' : 'text-[#310101]/70'
+                                        }`}
+                                    style={{ fontFamily: 'Fredoka One, cursive' }}
+                                >
+                                    {category.name}
+                                    {hasSubCategories && (
+                                        <ChevronDown className="h-3 w-3" />
+                                    )}
+                                    {isActive && (
+                                        <span className="absolute left-0 right-0 -bottom-1 h-[2px] bg-[#310101]" />
+                                    )}
+                                </Link>
+                                
+                                {/* Dropdown for Sub-Categories */}
+                                {hasSubCategories && hoveredCategoryId === category.id && (
+                                    <div 
+                                        className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                                    >
+                                        <div className="py-2">
+                                            <Link
+                                                href={`/categories/${category.slug}`}
+                                                className="block px-4 py-2 text-sm font-semibold text-[#310101] hover:bg-[#310101]/5 transition-colors"
+                                                style={{ fontFamily: 'Fredoka One, cursive' }}
+                                                onClick={() => setHoveredCategoryId(null)}
+                                            >
+                                                All {category.name}
+                                            </Link>
+                                            <div className="h-px bg-gray-200 my-1"></div>
+                                            {category.children?.map((subCategory) => (
+                                                <Link
+                                                    key={subCategory.id}
+                                                    href={`/categories/${subCategory.slug}`}
+                                                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-[#310101]/5 hover:text-[#310101] transition-colors"
+                                                    onClick={() => setHoveredCategoryId(null)}
+                                                >
+                                                    {subCategory.name}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
 
                     <Link
                         href="/products"
@@ -310,19 +358,68 @@ export default function NewNavBar() {
                             </Link>
                         </li>
 
-                        {!loadingCategories && categories.map((category) => (
-                            <li key={category.id}>
-                                <Link
-                                    href={`/categories/${category.slug}`}
-                                    onClick={() => setOpen(false)}
-                                    className={`block py-2 text-base font-bold uppercase ${pathname === `/categories/${category.slug}` ? 'text-[#310101]' : 'text-[#310101]/70'
-                                        }`}
-                                    style={{ fontFamily: 'Fredoka One, cursive' }}
-                                >
-                                    {category.name}
-                                </Link>
-                            </li>
-                        ))}
+                        {!loadingCategories && categories.map((category) => {
+                            const hasSubCategories = category.children && category.children.length > 0;
+                            const isExpanded = mobileExpandedCategory === category.id;
+                            
+                            return (
+                                <li key={category.id}>
+                                    {hasSubCategories ? (
+                                        <>
+                                            <button
+                                                onClick={() => setMobileExpandedCategory(isExpanded ? null : category.id)}
+                                                className={`w-full flex items-center justify-between py-2 text-base font-bold uppercase ${pathname === `/categories/${category.slug}` || category.children?.some(child => pathname === `/categories/${child.slug}`) ? 'text-[#310101]' : 'text-[#310101]/70'
+                                                    }`}
+                                                style={{ fontFamily: 'Fredoka One, cursive' }}
+                                            >
+                                                {category.name}
+                                                <ChevronDown className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                                            </button>
+                                            {isExpanded && (
+                                                <div className="pl-4 mt-1 space-y-2">
+                                                    <Link
+                                                        href={`/categories/${category.slug}`}
+                                                        onClick={() => {
+                                                            setOpen(false);
+                                                            setMobileExpandedCategory(null);
+                                                        }}
+                                                        className={`block py-2 text-sm font-semibold ${pathname === `/categories/${category.slug}` ? 'text-[#310101]' : 'text-[#310101]/70'
+                                                            }`}
+                                                        style={{ fontFamily: 'Fredoka One, cursive' }}
+                                                    >
+                                                        All {category.name}
+                                                    </Link>
+                                                    {category.children?.map((subCategory) => (
+                                                        <Link
+                                                            key={subCategory.id}
+                                                            href={`/categories/${subCategory.slug}`}
+                                                            onClick={() => {
+                                                                setOpen(false);
+                                                                setMobileExpandedCategory(null);
+                                                            }}
+                                                            className={`block py-2 text-sm ${pathname === `/categories/${subCategory.slug}` ? 'text-[#310101] font-semibold' : 'text-gray-600'
+                                                                }`}
+                                                        >
+                                                            {subCategory.name}
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <Link
+                                            href={`/categories/${category.slug}`}
+                                            onClick={() => setOpen(false)}
+                                            className={`block py-2 text-base font-bold uppercase ${pathname === `/categories/${category.slug}` ? 'text-[#310101]' : 'text-[#310101]/70'
+                                                }`}
+                                            style={{ fontFamily: 'Fredoka One, cursive' }}
+                                        >
+                                            {category.name}
+                                        </Link>
+                                    )}
+                                </li>
+                            );
+                        })}
 
                         <li>
                             <Link
