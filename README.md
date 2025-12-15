@@ -51,7 +51,7 @@ Bridging the gap between online and in-store service.
 
 | **Live Admin Chat** | **Real-Time Notifications** |
 |:---:|:---:|
-| ![Admin Chat](./public/readme/adminchatpage.png) | ![Notifications](./client/public/readme/adminnotificationpage.png) |
+| ![Admin Chat](./public/readme/adminchatpage.png) | ![Notifications](./public/readme/adminnotificationpage.png) |
 
 ---
 
