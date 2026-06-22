@@ -42,7 +42,7 @@ export default function MensCouplesSection() {
     }, []);
 
     // Desktop scroll functions
-    const scrollDesktop = (ref: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
+    const scrollDesktop = (ref: React.RefObject<HTMLDivElement | null>, direction: 'left' | 'right') => {
         if (ref.current) {
             const scrollAmount = 350;
             const newScrollLeft = direction === 'left'
@@ -57,7 +57,7 @@ export default function MensCouplesSection() {
     };
 
     // Mobile scroll functions
-    const scrollMobile = (ref: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
+    const scrollMobile = (ref: React.RefObject<HTMLDivElement | null>, direction: 'left' | 'right') => {
         if (ref.current) {
             const cardWidth = ref.current.offsetWidth * 0.85;
             const newScrollLeft = direction === 'left'

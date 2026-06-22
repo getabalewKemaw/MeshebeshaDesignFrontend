@@ -15,7 +15,7 @@ interface CheckoutFormSectionsProps {
     onContactUpdate: (info: ContactInformation) => void;
     onShippingUpdate: (address: ShippingAddress) => void;
     onModeChange: (mode: "manual" | "google") => void;
-    onDeliveryUpdate: (preference: DeliveryPreference) => void;
+    onDeliveryUpdate: (preference: Partial<DeliveryPreference>) => void;
     onPaymentUpdate: (note: string) => void;
     onErrorClear: (field: string) => void;
     onGoogleMethodChange: (method: "search" | "map") => void;

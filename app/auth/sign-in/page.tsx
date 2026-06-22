@@ -241,6 +241,7 @@ export default function SignInPage() {
             </>
           )}
 
+
           {/* Divider */}
           <div className="mt-8 relative">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300" /></div>
@@ -263,6 +264,14 @@ export default function SignInPage() {
             </svg>
             Sign in with Google
           </button>
+
+          {/* add privacy policy link */}
+          <div className="mt-4 text-center">
+            <p>by singn up u agrees to our terms and conditions</p>
+            <a href="/privacy-policy" className="text-xs text-gray-600 hover:text-gray-900">
+              Privacy Policy
+            </a>
+          </div>
 
           <div className="mt-8 text-center">
             <a href="/auth/sign-up" className="text-sm text-indigo-600 hover:text-indigo-700 font-medium">

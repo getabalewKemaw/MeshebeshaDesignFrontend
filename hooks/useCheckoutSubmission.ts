@@ -113,6 +113,10 @@ export function useCheckoutSubmission() {
                     throw new Error(paymentResponse.error || "Failed to create payment session. Please try again.");
                 }
 
+                // Clear cart & checkout state — order is already created in DB
+                clearCart();
+                resetCheckout();
+
                 // Redirect to Chapa checkout with a small delay
                 const checkoutUrl = paymentResponse.data.checkoutUrl;
                 setSubmissionMessage("Redirecting to payment...");

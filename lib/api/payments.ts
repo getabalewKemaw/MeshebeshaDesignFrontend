@@ -52,3 +52,20 @@ export async function getOrderPayments(orderId: string): Promise<ApiResponse<Pay
   });
 }
 
+/**
+ * Actively verify payment with Chapa API (fallback when webhook doesn't arrive)
+ */
+export interface VerifyPaymentResult {
+  status: string;
+  payment: PaymentStatus | null;
+  verified: boolean;
+  chapaStatus?: string;
+  error?: string;
+}
+
+export async function verifyPaymentStatus(orderId: string): Promise<ApiResponse<VerifyPaymentResult>> {
+  return apiRequest<VerifyPaymentResult>(`/api/v1/payments/verify/${orderId}`, {
+    method: "POST",
+  });
+}
+

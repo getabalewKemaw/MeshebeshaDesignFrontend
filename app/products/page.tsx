@@ -53,7 +53,7 @@ export default function ProductsPage() {
       ]);
       if (optRes.success && optRes.data) setOptions(optRes.data);
       if (listRes.success) {
-        setProducts(listRes.data);
+        setProducts(listRes.data ?? []);
         setPagination(listRes.pagination);
       } else {
         setProducts([]);

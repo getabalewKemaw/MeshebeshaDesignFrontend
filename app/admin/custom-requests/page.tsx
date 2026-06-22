@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MessageSquare, Eye } from "lucide-react";
+import Image from "next/image";
 
 interface CustomRequest {
   id: string;
@@ -197,7 +198,9 @@ export default function CustomRequestsPage() {
                       {url.includes('/video/') || url.endsWith('.mp4') ? (
                         <video src={url} className="h-full w-full object-cover" />
                       ) : (
-                        <img
+                        <Image
+                         width={500}
+                         height={500}
                           src={url}
                           alt={`Request attachment ${index + 1}`}
                           className="h-full w-full object-cover"

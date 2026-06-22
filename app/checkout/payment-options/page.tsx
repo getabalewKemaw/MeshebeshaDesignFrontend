@@ -133,7 +133,7 @@ export default function PaymentOptionsPage() {
       // For other payment methods, show success and redirect
       clearCart();
       resetCheckout();
-      router.push(`/orders/${response.data.id}?payment=${selectedPayment}`);
+      router.push(`/cart`);
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to place order. Please try again.";
       setError(message);

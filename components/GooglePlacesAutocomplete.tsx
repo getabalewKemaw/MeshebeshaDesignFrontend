@@ -10,12 +10,7 @@ interface GooglePlacesAutocompleteProps {
   className?: string;
 }
 
-declare global {
-  interface Window {
-    google: any;
-    initGooglePlaces: () => void;
-  }
-}
+
 
 export default function GooglePlacesAutocomplete({
   value,
@@ -29,8 +24,9 @@ export default function GooglePlacesAutocomplete({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    const google = (window as any).google;
     // Check if Google Maps is already loaded
-    if (window.google && window.google.maps && window.google.maps.places) {
+    if (google && google.maps && google.maps.places) {
       setIsLoaded(true);
       setIsLoading(false);
       initializeAutocomplete();
@@ -57,15 +53,16 @@ export default function GooglePlacesAutocomplete({
     return () => {
       // Cleanup
       if (autocompleteRef.current) {
-        window.google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
+        (window as any).google?.maps?.event?.clearInstanceListeners?.(autocompleteRef.current);
       }
     };
   }, []);
 
   const initializeAutocomplete = () => {
-    if (!inputRef.current || !window.google?.maps?.places) return;
+    const google = (window as any).google;
+    if (!inputRef.current || !google?.maps?.places) return;
 
-    const autocomplete = new window.google.maps.places.Autocomplete(inputRef.current, {
+    const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
       types: ["address"],
       fields: [
         "formatted_address",

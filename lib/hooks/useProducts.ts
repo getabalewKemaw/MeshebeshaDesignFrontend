@@ -277,7 +277,7 @@ export function useProductSearch(initialFilters: ProductSearchFilters = {}) {
     const response = await productApi.searchProducts(searchFilters);
     
     if (response.success) {
-      setProducts(response.data);
+      setProducts(response.data || []);
       setPagination(response.pagination);
     } else {
       setError('Search failed');

@@ -16,6 +16,7 @@ import ChatPopup from '@/components/landing/ChatPopup';
 
 import FresShipingDivder from '@/components/newlanding/FreshipingAnimated';
 import CustomerFeedbackSection from '@/components/newlanding/CustomerFeedbackSection';
+import SocialShowcaseSection from '@/components/newlanding/SocialShowcaseSection';
 
 export default function HomePage() {
   return (
@@ -33,10 +34,12 @@ export default function HomePage() {
       <InfiniteTextDivider />
       <JewelrySection />
       <FresShipingDivder />
-      
+
+      <SocialShowcaseSection />
+      <InfiniteTextDivider />
       <CustomerFeedbackSection />
       <InfiniteTextDivider />
-      
+
       <CustomProductSection />
       <InfiniteTextDivider />
       <AboutSection />

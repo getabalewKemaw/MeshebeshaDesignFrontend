@@ -1,19 +1,34 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import Navbar from "@/components/NavBar";
+import { useEffect } from "react";
 import { usePaymentStatus } from "@/hooks/usePaymentStatus";
+import { useCartStore } from "@/stores/cart";
+import { useCheckoutStore } from "@/stores/checkout";
 import PaymentLoading from "@/components/payment/return/PaymentLoading";
 import PaymentError from "@/components/payment/return/PaymentError";
 import PaymentSuccess from "@/components/payment/return/PaymentSuccess";
 import PaymentFailed from "@/components/payment/return/PaymentFailed";
 import PaymentPending from "@/components/payment/return/PaymentPending";
 import NewNavBar from "@/components/newlanding/NewNavBar";
+
 export default function PaymentReturnPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 
-  const { paymentStatus, isLoading, error } = usePaymentStatus(orderId);
+  const { paymentStatus, isLoading, error, retryVerification, pollCount } =
+    usePaymentStatus(orderId);
+
+  const clearCart = useCartStore((s) => s.clearCart);
+  const resetCheckout = useCheckoutStore((s) => s.reset);
+
+  // Safety-net: clear cart when payment is confirmed as paid
+  useEffect(() => {
+    if (paymentStatus?.status === "paid") {
+      clearCart();
+      resetCheckout();
+    }
+  }, [paymentStatus?.status, clearCart, resetCheckout]);
 
   // 1. Missing Order ID
   if (!orderId) {
@@ -38,8 +53,8 @@ export default function PaymentReturnPage() {
     );
   }
 
-  // 3. Loading State
-  if (isLoading || !paymentStatus) {
+  // 3. Loading State (initial fetch)
+  if (isLoading && !paymentStatus) {
     return (
       <>
         <NewNavBar />
@@ -49,7 +64,7 @@ export default function PaymentReturnPage() {
   }
 
   // 4. Success State
-  if (paymentStatus.status === "paid") {
+  if (paymentStatus?.status === "paid") {
     return (
       <>
         <NewNavBar />
@@ -59,7 +74,7 @@ export default function PaymentReturnPage() {
   }
 
   // 5. Failed State
-  if (paymentStatus.status === "failed") {
+  if (paymentStatus?.status === "failed") {
     return (
       <>
         <NewNavBar />
@@ -68,13 +83,15 @@ export default function PaymentReturnPage() {
     );
   }
 
-  // 6. Pending State (Default fallback)
+  // 6. Pending State — with retry and progress feedback
   return (
     <>
       <NewNavBar />
-      <PaymentPending />
+      <PaymentPending
+        isStillPolling={isLoading}
+        pollCount={pollCount}
+        onRetry={retryVerification}
+      />
     </>
   );
 }
-
-

@@ -62,7 +62,7 @@ export default function EventHolidaySection() {
     };
 
     // Desktop scroll functions
-    const scrollDesktop = (ref: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
+    const scrollDesktop = (ref: React.RefObject<HTMLDivElement | null>, direction: 'left' | 'right') => {
         if (ref.current) {
             const scrollAmount = 350;
             const newScrollLeft = direction === 'left'
@@ -244,12 +244,12 @@ export default function EventHolidaySection() {
                     </div>
 
                     {/* Header */}
-                    <div className="flex flex-col md:flex-row items-center justify-between mb-8 px-4 md:px-8">
+                    <div className="flex flex-col md:flex-row items-center justify-between mb-5 px-4 md:px-8">
                         <div className="w-[120px] hidden md:block"></div>
 
                         {/* Title */}
                         <div
-                            className="text-center mt-9 md:mt-9 relative z-20"
+                            className="text-center mt-9 md:mt-45 relative z-20"
                         >
                             <h2
                                 className="text-[#310101] text-3xl md:text-5xl font-bold uppercase tracking-wider border-b-4 border-[#310101] pb-2 inline-block"
@@ -264,7 +264,7 @@ export default function EventHolidaySection() {
 
                         {/* 25% OFF Badge - Right - Animated */}
                         <div
-                            className={`bg-[#310101] text-white  py-2 rounded-full border-2 border-[#310101] shadow-lg transform rotate-[2deg] mt-7 md:mt-9 transition-all duration-700 delay-300 mr-0 animate-pulse ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
+                            className={`bg-[#310101] text-white  py-2 rounded-full border-2 border-[#310101] shadow-lg transform rotate-[2deg] mt-7 md:mt-9 transition-all duration-700 delay-300 mr-0 animate-pulse ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50 '
                                 }`}
                         >
                             <span className="font-black text-xl md:text-2xl" style={{ fontFamily: 'Fredoka One, cursive' }}>

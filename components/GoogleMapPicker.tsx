@@ -9,11 +9,7 @@ interface GoogleMapPickerProps {
   className?: string;
 }
 
-declare global {
-  interface Window {
-    google: any;
-  }
-}
+
 
 export default function GoogleMapPicker({
   value,
@@ -29,7 +25,8 @@ export default function GoogleMapPicker({
 
   useEffect(() => {
     // Check if Google Maps is already loaded
-    if (window.google && window.google.maps) {
+    const google = (window as any).google;
+    if (google && google.maps) {
       setIsLoaded(true);
       setIsLoading(false);
       initializeMap();
@@ -60,7 +57,7 @@ export default function GoogleMapPicker({
         markerRef.current.setMap(null);
       }
       if (mapInstanceRef.current) {
-        window.google?.maps?.event?.clearInstanceListeners?.(mapInstanceRef.current);
+        (window as any).google?.maps?.event?.clearInstanceListeners?.(mapInstanceRef.current);
       }
     };
   }, []);
@@ -74,6 +71,7 @@ export default function GoogleMapPicker({
 
   // Update marker when coordinates change externally
   useEffect(() => {
+    const google = (window as any).google;
     if (
       isLoaded &&
       mapInstanceRef.current &&
@@ -83,15 +81,15 @@ export default function GoogleMapPicker({
         markerRef.current.getPosition().lat() !== value.latitude ||
         markerRef.current.getPosition().lng() !== value.longitude)
     ) {
-      const position = new window.google.maps.LatLng(value.latitude, value.longitude);
+      const position = new google.maps.LatLng(value.latitude, value.longitude);
       if (markerRef.current) {
         markerRef.current.setPosition(position);
       } else {
-        markerRef.current = new window.google.maps.Marker({
+        markerRef.current = new google.maps.Marker({
           position,
           map: mapInstanceRef.current,
           draggable: true,
-          animation: window.google.maps.Animation.DROP,
+          animation: google.maps.Animation.DROP,
         });
 
         markerRef.current.addListener("dragend", () => {
@@ -104,14 +102,15 @@ export default function GoogleMapPicker({
   }, [value.latitude, value.longitude, isLoaded]);
 
   const initializeMap = () => {
-    if (!mapRef.current || !window.google?.maps) return;
+    const google = (window as any).google;
+    if (!mapRef.current || !google?.maps) return;
 
     // Default center (can be user's location or a default)
     const defaultCenter = value.latitude && value.longitude
       ? { lat: value.latitude, lng: value.longitude }
       : { lat: 9.145, lng: 38.7667 }; // Default to Addis Ababa, Ethiopia
 
-    const map = new window.google.maps.Map(mapRef.current, {
+    const map = new google.maps.Map(mapRef.current, {
       center: defaultCenter,
       zoom: value.latitude && value.longitude ? 15 : 12,
       mapTypeControl: true,
@@ -130,12 +129,12 @@ export default function GoogleMapPicker({
 
     // If we have existing coordinates, add marker
     if (value.latitude && value.longitude) {
-      const position = new window.google.maps.LatLng(value.latitude, value.longitude);
-      markerRef.current = new window.google.maps.Marker({
+      const position = new google.maps.LatLng(value.latitude, value.longitude);
+      markerRef.current = new google.maps.Marker({
         position,
         map,
         draggable: true,
-        animation: window.google.maps.Animation.DROP,
+        animation: google.maps.Animation.DROP,
       });
 
       markerRef.current.addListener("dragend", () => {
@@ -146,9 +145,10 @@ export default function GoogleMapPicker({
   };
 
   const reverseGeocode = (lat: number, lng: number) => {
-    if (!window.google?.maps) return;
+    const google = (window as any).google;
+    if (!google?.maps) return;
 
-    const geocoder = new window.google.maps.Geocoder();
+    const geocoder = new google.maps.Geocoder();
 
     geocoder.geocode({ location: { lat, lng } }, (results: any[], status: string) => {
       if (status === "OK" && results && results.length > 0) {
@@ -182,11 +182,11 @@ export default function GoogleMapPicker({
 
         // Update marker position
         if (!markerRef.current && mapInstanceRef.current) {
-          markerRef.current = new window.google.maps.Marker({
+          markerRef.current = new google.maps.Marker({
             position: { lat, lng },
             map: mapInstanceRef.current,
             draggable: true,
-            animation: window.google.maps.Animation.DROP,
+            animation: google.maps.Animation.DROP,
           });
 
           markerRef.current.addListener("dragend", () => {

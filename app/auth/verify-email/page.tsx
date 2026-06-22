@@ -35,7 +35,7 @@ export default function VerifyEmailPage() {
       });
 
       if (error) setGeneralError(error.message || "Invalid OTP code");
-      else if (data) router.push("/");
+      else if (data) router.push("/auth/sign-in");
     } catch (err: unknown) {
       const errMsg=err instanceof Error ? err.message : "An unexpected error occurred";
       setGeneralError(errMsg || "An error occurred");

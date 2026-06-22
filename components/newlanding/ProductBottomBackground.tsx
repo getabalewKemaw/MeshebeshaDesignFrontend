@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function ProductBottomBackground() {
     return (
-        <div className="w-full relative bg-white">
+        <div className="w-full relative ">
             {/* Desktop Background */}
             <div className="hidden md:block w-full">
                 <Image

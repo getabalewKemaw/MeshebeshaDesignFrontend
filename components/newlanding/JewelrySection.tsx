@@ -95,7 +95,7 @@ export default function JewelrySection() {
                         }`}
                 >
                     <h3
-                        className="text-xl md:text-5xl font-bold tracking-widest mb-2 pl-15"
+                        className="text-xl md:text-2xl font-bold tracking-widest mb-2"
                         style={{
                             fontFamily: 'Abhaya Libre, serif',
                             WebkitTextStroke: '0.5px #310101'
@@ -104,9 +104,9 @@ export default function JewelrySection() {
                         TRADITIONAL CULTURAL
                     </h3>
                     <h1
-                        className="text-5xl md:text-8xl lg:text-8xl font-bold serif mb-2 text-white"
+                        className="text-5xl md:text-7xl lg:text-8xl font-bold serif mb-2 text-white"
                         style={{
-                            fontFamily: 'Abril Fatface',
+                            fontFamily: 'Abril Fatface, cursive',
                             WebkitTextStroke: '2px #310101'
                         }}
                     >
@@ -124,8 +124,8 @@ export default function JewelrySection() {
                 </div>
 
                 {/* Decorative Leafs - Arranged in a curve along the bottom edge */}
-            {/*     <div
-                    className={`relative bottom-[10%] left-0 right-0  -top-10 flex justify-center items-end gap-2 md:gap-4 overflow-hidden px-4 transition-all duration-1000 delay-300  pt-10 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                <div
+                    className={`absolute bottom-[10%] left-0 right-0 flex justify-center items-end gap-2 md:gap-4 overflow-hidden px-4 transition-all duration-1000 delay-300 pt-5 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                         }`}
                 >
                     {[...Array(9)].map((_, i) => (
@@ -138,7 +138,7 @@ export default function JewelrySection() {
                             />
                         </div>
                     ))}
-                </div> */}
+                </div>
             </div>
 
             {/* Desktop: Horizontal Scroll Container with Curved Layout */}

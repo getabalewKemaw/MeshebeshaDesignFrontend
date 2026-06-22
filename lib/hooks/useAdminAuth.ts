@@ -37,7 +37,7 @@ export function useAdminAuth() {
       loading: false,
       otpSent: !error,
       success: error ? "" : "Verification code sent!",
-      errors: error ? { ...state.errors, general: error.message } : state.errors,
+      errors: error ? { ...state.errors, general: error.message || "An error occurred" } : state.errors,
     });
   };
 
@@ -52,7 +52,7 @@ export function useAdminAuth() {
       otp: state.otp,
     });
 
-    if (error) return update({ loading: false, errors: { ...state.errors, general: error.message } });
+    if (error) return update({ loading: false, errors: { ...state.errors, general: error.message || "An error occurred" } });
 
     const session = await authClient.getSession();
 
