@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/stores/cart";
 import { useCheckoutStore } from "@/stores/checkout";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { createOrder } from "@/lib/api/orders";
 import NewNavBar from "@/components/newlanding/NewNavBar";
 import FooterSection from "@/components/newlanding/FooterSection";
@@ -61,7 +62,16 @@ export default function PaymentOptionsPage() {
     setError(null);
   };
 
+  const { isAuthenticated } = useAuth();
+
   const handleSubmit = async (paymentData: any) => {
+    // Require authentication before placing an order
+    if (!isAuthenticated) {
+      localStorage.setItem("redirectAfterLogin", "/checkout/payment-options");
+      router.push("/auth/sign-in");
+      return;
+    }
+
     if (!selectedPayment) {
       setError("Please select a payment method");
       return;

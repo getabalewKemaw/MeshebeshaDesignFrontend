@@ -61,7 +61,11 @@ export default function SignInPage() {
         setPasswordError(error.message || "Invalid email or password");
       } else {
         const user = data?.user as  User;
-        if (user?.role === "admin") {
+        const redirect = localStorage.getItem("redirectAfterLogin");
+        if (redirect) {
+          localStorage.removeItem("redirectAfterLogin");
+          router.push(redirect);
+        } else if (user?.role === "admin") {
           router.push("/admin");
         } else {
           router.push("/");

@@ -77,7 +77,11 @@ export function useOTPAuth() {
         setErrors(prev => ({ ...prev, general: error.message || "Invalid OTP" }));
       } else {
         const user = data?.user as User;
-        if (user?.role === "admin") {
+        const redirect = localStorage.getItem("redirectAfterLogin");
+        if (redirect) {
+          localStorage.removeItem("redirectAfterLogin");
+          router.push(redirect);
+        } else if (user?.role === "admin") {
           router.push("/admin");
         } else {
           router.push("/");

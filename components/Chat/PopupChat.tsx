@@ -37,6 +37,14 @@ export default function PopupChat({ productId }: { productId?: string }) {
     const audioChunksRef = useRef<Blob[]>([]);
 
 
+    const [guestPhone, setGuestPhone] = useState<string | null>(null);
+    const [guestMessage, setGuestMessage] = useState("");
+    const [guestSubmitted, setGuestSubmitted] = useState(false);
+
+    useEffect(() => {
+        const storedPhone = localStorage.getItem("guestChatPhone");
+        if (storedPhone) setGuestPhone(storedPhone);
+    }, []);
 
     // Auto-scroll to bottom
     const scrollToBottom = () => {
@@ -66,6 +74,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
 
     // Socket events
     useEffect(() => {
+        if (!user) return;
         const socket = socketRef.current;
         if (!socket || !roomId) return;
 
@@ -246,7 +255,7 @@ export default function PopupChat({ productId }: { productId?: string }) {
         setIsRecording(false);
     };
 
-    if (!user || user.role === "admin") return null;
+    if (user?.role === "admin") return null;
 
     return (
         <>
@@ -303,161 +312,215 @@ export default function PopupChat({ productId }: { productId?: string }) {
                         </button>
                     </div>
 
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-white space-y-3 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
-                        {messages.length === 0 && (
-                            <div className="text-center text-gray-500 mt-8">
-                                <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                </svg>
-                                <p className="text-xs sm:text-sm">Start a conversation</p>
-                            </div>
-                        )}
-
-                        {messages.map((msg) => {
-                            const isMine = msg.senderId === user.id;
-                            return (
-                                <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
-                                    <div
-                                        className={`max-w-[85%] sm:max-w-[75%] px-3 sm:px-4 py-2 border ${isMine
-                                            ? "bg-[#310101] text-white border-[#310101]"
-                                            : "bg-white text-gray-800 border-gray-300"
-                                            }`}
-                                    >
-                                        {msg.type === "text" && <p className="text-sm break-words">{msg.content}</p>}
-                                        {msg.type === "image" && (
-                                            <Image
-                                                width={200}
-                                                height={200}
-                                                src={msg.content}
-                                                alt="Image"
-                                                className="max-h-48 object-cover"
-                                            />
-                                        )}
-                                        {msg.type === "video" && (
-                                            <video controls className="max-h-48 w-full">
-                                                <source src={msg.content} />
-                                            </video>
-                                        )}
-                                        {msg.type === "voice" && (
-                                            <audio controls className="w-full">
-                                                <source src={msg.content} />
-                                            </audio>
-                                        )}
-                                        <span className={`text-xs mt-1 block ${isMine ? "text-gray-300" : "text-gray-500"}`}>
-                                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                                        </span>
-                                    </div>
-                                </div>
-                            );
-                        })}
-
-                        {/* Typing Indicator */}
-                        {typingUsers.length > 0 && (
-                            <div className="flex justify-start">
-                                <div className="bg-gray-100 border border-gray-300 px-4 py-2">
-                                    <div className="flex gap-1">
-                                        <span className="w-2 h-2 bg-gray-600 animate-bounce" style={{ animationDelay: "0ms" }}></span>
-                                        <span className="w-2 h-2 bg-gray-600 animate-bounce" style={{ animationDelay: "150ms" }}></span>
-                                        <span className="w-2 h-2 bg-gray-600 animate-bounce" style={{ animationDelay: "300ms" }}></span>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        <div ref={messagesEndRef} />
-                    </div>
-
-                    {/* Preview */}
-                    {previewUrl && (
-                        <div className="p-2 sm:p-3 border-t border-gray-300 bg-gray-50">
-                            <div className="flex items-start gap-2">
-                                {selectedFile?.type.startsWith("image/") && (
-                                    <img src={previewUrl} className="max-h-16 sm:max-h-20 border border-gray-300" alt="preview" />
-                                )}
-                                {selectedFile?.type.startsWith("video/") && (
-                                    <video src={previewUrl} className="max-h-16 sm:max-h-20 border border-gray-300" controls />
-                                )}
-                                {selectedFile?.type.startsWith("audio/") && <audio src={previewUrl} controls className="w-full" />}
-                                <div className="flex flex-col gap-1">
-                                    <button
-                                        className="text-xs sm:text-sm px-2 py-1 bg-[#310101] text-white hover:bg-[#500202]"
-                                        onClick={() => uploadAndSend()}
-                                        disabled={loading}
-                                    >
-                                        {loading ? "Uploading..." : "Send"}
-                                    </button>
-                                    <button
-                                        className="text-xs sm:text-sm px-2 py-1 border border-[#310101] hover:bg-gray-100"
+                    {/* Guest Contact Form or Authenticated Chat */}
+                    {!user ? (
+                        <div className="flex-1 p-4 bg-white flex flex-col justify-center text-center overflow-y-auto">
+                            {!guestSubmitted ? (
+                                <div className="space-y-4">
+                                    <h3 className="font-semibold text-lg text-[#310101]">Leave us a message</h3>
+                                    <p className="text-sm text-gray-600">Please provide your phone number so we can reach back to you.</p>
+                                    <input 
+                                        type="tel" 
+                                        value={guestPhone || ""} 
+                                        onChange={(e) => setGuestPhone(e.target.value)} 
+                                        placeholder="Your phone number" 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#310101]"
+                                    />
+                                    <textarea 
+                                        value={guestMessage} 
+                                        onChange={(e) => setGuestMessage(e.target.value)} 
+                                        placeholder="How can we help you?" 
+                                        rows={4}
+                                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-[#310101]"
+                                    />
+                                    <button 
                                         onClick={() => {
-                                            setPreviewUrl(null);
-                                            setSelectedFile(null);
-                                            setUploadError(null);
+                                            if (guestPhone && guestMessage) {
+                                                localStorage.setItem("guestChatPhone", guestPhone);
+                                                setGuestSubmitted(true);
+                                            }
                                         }}
+                                        disabled={!guestPhone || !guestMessage}
+                                        className="w-full bg-[#310101] text-white py-2 rounded hover:bg-[#500202] disabled:opacity-50"
                                     >
-                                        Cancel
+                                        Send Message
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <svg className="w-16 h-16 text-green-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <h3 className="font-semibold text-lg text-[#310101]">Message Sent!</h3>
+                                    <p className="text-sm text-gray-600">Thank you for reaching out. We will contact you at {guestPhone} shortly.</p>
+                                    <button 
+                                        onClick={() => setIsOpen(false)}
+                                        className="text-[#310101] underline text-sm"
+                                    >
+                                        Close Chat
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <>
+                            {/* Messages */}
+                            <div className="flex-1 overflow-y-auto p-3 sm:p-4 bg-white space-y-3 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+                                {messages.length === 0 && (
+                                    <div className="text-center text-gray-500 mt-8">
+                                        <svg className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                        <p className="text-xs sm:text-sm">Start a conversation</p>
+                                    </div>
+                                )}
+
+                                {messages.map((msg) => {
+                                    const isMine = msg.senderId === user.id;
+                                    return (
+                                        <div key={msg.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
+                                            <div
+                                                className={`max-w-[85%] sm:max-w-[75%] px-3 sm:px-4 py-2 border ${isMine
+                                                    ? "bg-[#310101] text-white border-[#310101]"
+                                                    : "bg-white text-gray-800 border-gray-300"
+                                                    }`}
+                                            >
+                                                {msg.type === "text" && <p className="text-sm break-words">{msg.content}</p>}
+                                                {msg.type === "image" && (
+                                                    <Image
+                                                        width={200}
+                                                        height={200}
+                                                        src={msg.content}
+                                                        alt="Image"
+                                                        className="max-h-48 object-cover"
+                                                    />
+                                                )}
+                                                {msg.type === "video" && (
+                                                    <video controls className="max-h-48 w-full">
+                                                        <source src={msg.content} />
+                                                    </video>
+                                                )}
+                                                {msg.type === "voice" && (
+                                                    <audio controls className="w-full">
+                                                        <source src={msg.content} />
+                                                    </audio>
+                                                )}
+                                                <span className={`text-xs mt-1 block ${isMine ? "text-gray-300" : "text-gray-500"}`}>
+                                                    {new Date(msg.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                                {/* Typing Indicator */}
+                                {typingUsers.length > 0 && (
+                                    <div className="flex justify-start">
+                                        <div className="bg-gray-100 border border-gray-300 px-4 py-2">
+                                            <div className="flex gap-1">
+                                                <span className="w-2 h-2 bg-gray-600 animate-bounce" style={{ animationDelay: "0ms" }}></span>
+                                                <span className="w-2 h-2 bg-gray-600 animate-bounce" style={{ animationDelay: "150ms" }}></span>
+                                                <span className="w-2 h-2 bg-gray-600 animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div ref={messagesEndRef} />
+                            </div>
+
+                            {/* Preview */}
+                            {previewUrl && (
+                                <div className="p-2 sm:p-3 border-t border-gray-300 bg-gray-50">
+                                    <div className="flex items-start gap-2">
+                                        {selectedFile?.type.startsWith("image/") && (
+                                            <img src={previewUrl} className="max-h-16 sm:max-h-20 border border-gray-300" alt="preview" />
+                                        )}
+                                        {selectedFile?.type.startsWith("video/") && (
+                                            <video src={previewUrl} className="max-h-16 sm:max-h-20 border border-gray-300" controls />
+                                        )}
+                                        {selectedFile?.type.startsWith("audio/") && <audio src={previewUrl} controls className="w-full" />}
+                                        <div className="flex flex-col gap-1">
+                                            <button
+                                                className="text-xs sm:text-sm px-2 py-1 bg-[#310101] text-white hover:bg-[#500202]"
+                                                onClick={() => uploadAndSend()}
+                                                disabled={loading}
+                                            >
+                                                {loading ? "Uploading..." : "Send"}
+                                            </button>
+                                            <button
+                                                className="text-xs sm:text-sm px-2 py-1 border border-[#310101] hover:bg-gray-100"
+                                                onClick={() => {
+                                                    setPreviewUrl(null);
+                                                    setSelectedFile(null);
+                                                    setUploadError(null);
+                                                }}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {uploadError && <p className="text-xs text-red-600 mt-1">{uploadError}</p>}
+                                </div>
+                            )}
+
+                            {/* Input */}
+                            <div className="p-2 sm:p-3 bg-white border-t-2 border-[#310101]">
+                                <div className="flex items-center gap-1 sm:gap-2">
+                                    <input
+                                        type="text"
+                                        value={text}
+                                        onChange={(e) => {
+                                            setText(e.target.value);
+                                            handleTypingIndicator();
+                                        }}
+                                        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                                        placeholder="Type your message..."
+                                        className="flex-1 px-2 sm:px-3 py-2 border border-gray-300 focus:outline-none focus:border-[#310101] text-sm"
+                                    />
+
+                                    <input
+                                        ref={fileRef}
+                                        type="file"
+                                        accept="image/*,video/*,audio/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            if (e.target.files?.[0]) onFileSelected(e.target.files[0]);
+                                        }}
+                                    />
+
+                                    <button
+                                        onClick={() => fileRef.current?.click()}
+                                        disabled={loading}
+                                        className="p-1.5 sm:p-2 border border-[#310101] hover:bg-gray-100 disabled:opacity-50"
+                                        title="Attach file"
+                                    >
+                                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                                        </svg>
+                                    </button>
+
+                                    <button
+                                        onClick={isRecording ? stopRecording : startRecording}
+                                        className={`p-1.5 sm:p-2 border ${isRecording ? "bg-red-600 text-white border-red-600" : "border-[#310101] hover:bg-gray-100"}`}
+                                        title={isRecording ? "Stop recording" : "Record voice"}
+                                    >
+                                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                                        </svg>
+                                    </button>
+
+                                    <button
+                                        onClick={sendMessage}
+                                        disabled={!text.trim() || loading}
+                                        className="px-2 sm:px-4 py-2 bg-[#310101] text-white hover:bg-[#500202] disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm"
+                                    >
+                                        Send
                                     </button>
                                 </div>
                             </div>
-                            {uploadError && <p className="text-xs text-red-600 mt-1">{uploadError}</p>}
-                        </div>
+                        </>
                     )}
-
-                    {/* Input */}
-                    <div className="p-2 sm:p-3 bg-white border-t-2 border-[#310101]">
-                        <div className="flex items-center gap-1 sm:gap-2">
-                            <input
-                                type="text"
-                                value={text}
-                                onChange={(e) => {
-                                    setText(e.target.value);
-                                    handleTypingIndicator();
-                                }}
-                                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                                placeholder="Type your message..."
-                                className="flex-1 px-2 sm:px-3 py-2 border border-gray-300 focus:outline-none focus:border-[#310101] text-sm"
-                            />
-
-                            <input
-                                ref={fileRef}
-                                type="file"
-                                accept="image/*,video/*,audio/*"
-                                className="hidden"
-                                onChange={(e) => {
-                                    if (e.target.files?.[0]) onFileSelected(e.target.files[0]);
-                                }}
-                            />
-
-                            <button
-                                onClick={() => fileRef.current?.click()}
-                                disabled={loading}
-                                className="p-1.5 sm:p-2 border border-[#310101] hover:bg-gray-100 disabled:opacity-50"
-                                title="Attach file"
-                            >
-                                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                                </svg>
-                            </button>
-
-                            <button
-                                onClick={isRecording ? stopRecording : startRecording}
-                                className={`p-1.5 sm:p-2 border ${isRecording ? "bg-red-600 text-white border-red-600" : "border-[#310101] hover:bg-gray-100"}`}
-                                title={isRecording ? "Stop recording" : "Record voice"}
-                            >
-                                <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                                </svg>
-                            </button>
-
-                            <button
-                                onClick={sendMessage}
-                                disabled={!text.trim() || loading}
-                                className="px-2 sm:px-4 py-2 bg-[#310101] text-white hover:bg-[#500202] disabled:opacity-50 disabled:cursor-not-allowed text-xs sm:text-sm"
-                            >
-                                Send
-                            </button>
-                        </div>
-                    </div>
                 </div>
             )}
 

@@ -14,6 +14,15 @@ const publicRoutes = [
   "/contact",
   "/services",
   "/products",
+  "/privacy-policy",
+  "/terms-of-service",
+  "/refund-policy",
+  "/shipping",
+  "/faq",
+  "/cart",
+  "/checkout",
+  "/checkout/payment-options",
+  "/newlanding",
 ];
 
 const authRoutes = [
