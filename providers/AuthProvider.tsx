@@ -38,18 +38,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const pathname = usePathname();
   const { isAuthenticated, isAdmin, isLoading } = useAuth();
 
+  const isPublicRoute = publicRoutes.some((route) => pathname === route);
+  const isAuthRoute = authRoutes.some((route) => pathname === route);
+  const isAdminRoute = pathname.startsWith("/admin") && !pathname.startsWith("/auth/admin");
+  const isCategoryRoute = pathname.startsWith("/categories/");
+  const isProductDetailRoute = pathname.match(/^\/products\/[^\/]+$/);
+  const canRenderWithoutAuth =
+    isPublicRoute || isAuthRoute || isCategoryRoute || isProductDetailRoute;
+
   useEffect(() => {
     if (isLoading) return;
-
-    const isPublicRoute = publicRoutes.some((route) => pathname === route);
-    const isAuthRoute = authRoutes.some((route) => pathname === route);
-    const isAdminRoute = pathname.startsWith("/admin") && !pathname.startsWith("/auth/admin");
-
-    // Allow access to category pages (dynamic routes)
-    const isCategoryRoute = pathname.startsWith("/categories/");
-
-    // Allow access to individual product pages
-    const isProductDetailRoute = pathname.match(/^\/products\/[^\/]+$/);
 
     // Allow access to auth pages (sign-in, sign-up, admin sign-in, etc.)
     if (isAuthRoute) {
@@ -63,14 +61,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     // Protect private routes (but allow public routes, category routes, and product detail routes)
-    if (!isPublicRoute && !isCategoryRoute && !isProductDetailRoute && !isAuthenticated) {
+    if (!canRenderWithoutAuth && !isAuthenticated) {
       router.push("/auth/sign-in");
       return;
     }
-  }, [isAuthenticated, isAdmin, isLoading, pathname, router]);
+  }, [
+    canRenderWithoutAuth,
+    isAuthenticated,
+    isAdmin,
+    isAdminRoute,
+    isAuthRoute,
+    isLoading,
+    pathname,
+    router,
+  ]);
 
-  // Show loading spinner during initial auth check
-  if (isLoading) {
+  // Public routes should not wait on the backend session check before showing content.
+  if (isLoading && !canRenderWithoutAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50">
         <div className="text-center">

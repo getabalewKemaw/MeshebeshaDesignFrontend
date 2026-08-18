@@ -87,8 +87,8 @@ export default function EventHolidaySection() {
                     alt="Background"
                     fill
                     className="object-cover"
-                    quality={100}
-                    priority
+                    quality={75}
+                    sizes="100vw"
                 />
             </div>
 

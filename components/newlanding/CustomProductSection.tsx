@@ -111,8 +111,8 @@ export default function CustomProductSection() {
                     alt="Custom Products Background"
                     fill
                     className="object-cover"
-                    priority
-                    quality={100}
+                    quality={75}
+                    sizes="100vw"
                 />
             </div>
 
@@ -123,8 +123,8 @@ export default function CustomProductSection() {
                     alt="Custom Products Background Mobile"
                     fill
                     className="object-cover"
-                    priority
-                    quality={100}
+                    quality={75}
+                    sizes="100vw"
                 />
             </div>
 

@@ -41,8 +41,8 @@ export default function ModernCulturalSection() {
                     alt="Modern Cultural Ethiopian Clothes"
                     fill
                     className="object-cover"
-                    quality={100}
-                    priority
+                    quality={75}
+                    sizes="100vw"
                 />
                 {/* Stronger overlay for text readability */}
                 <div className="absolute inset-0 bg-black/40" />
@@ -55,8 +55,8 @@ export default function ModernCulturalSection() {
                     alt="Modern Cultural Mobile Background"
                     fill
                     className="object-cover"
-                    quality={100}
-                    priority
+                    quality={75}
+                    sizes="100vw"
                 />
                 {/* Stronger overlay for text readability */}
                 <div className="absolute inset-0 bg-black/40" />

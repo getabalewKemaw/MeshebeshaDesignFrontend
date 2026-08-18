@@ -77,8 +77,8 @@ export default function BestSellingSection() {
                     alt="Best Selling Background"
                     fill
                     className="object-cover"
-                    quality={100}
-                    priority
+                    quality={75}
+                    sizes="100vw"
                 />
             </div>
 
@@ -89,8 +89,8 @@ export default function BestSellingSection() {
                     alt="Best Selling Mobile Background"
                     fill
                     className="object-cover"
-                    quality={100}
-                    priority
+                    quality={75}
+                    sizes="100vw"
                 />
             </div>
 

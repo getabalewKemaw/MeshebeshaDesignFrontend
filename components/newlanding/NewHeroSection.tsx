@@ -111,7 +111,8 @@ export default function NewHeroSection() {
                     fill
                     className="object-cover"
                     priority
-                    quality={100}
+                    quality={80}
+                    sizes="100vw"
                 />
             </div>
 
@@ -122,8 +123,8 @@ export default function NewHeroSection() {
                     alt="Mashabesha Design Mobile Background"
                     fill
                     className="object-cover"
-                    priority
-                    quality={100}
+                    quality={80}
+                    sizes="100vw"
                 />
             </div>
 

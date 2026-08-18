@@ -1,22 +1,23 @@
 'use client';
 
 import './newlanding/styles.css';
+import dynamic from 'next/dynamic';
 import NewNavBar from '@/components/newlanding/NewNavBar';
 import NewHeroSection from '@/components/newlanding/NewHeroSection';
-import BestSellingSection from '@/components/newlanding/BestSellingSection';
-import ModernCulturalSection from '@/components/newlanding/ModernCulturalSection';
-import EventHolidaySection from '@/components/newlanding/EventHolidaySection';
-import MensCouplesSection from '@/components/newlanding/MensCouplesSection';
-import JewelrySection from '@/components/newlanding/JewelrySection';
-import CustomProductSection from '@/components/newlanding/CustomProductSection';
-import AboutSection from '@/components/newlanding/AboutSection';
-import FooterSection from '@/components/newlanding/FooterSection';
-import InfiniteTextDivider from '@/components/newlanding/InfiniteTextDivider';
-import ChatPopup from '@/components/landing/ChatPopup';
 
-import FresShipingDivder from '@/components/newlanding/FreshipingAnimated';
-import CustomerFeedbackSection from '@/components/newlanding/CustomerFeedbackSection';
-import SocialShowcaseSection from '@/components/newlanding/SocialShowcaseSection';
+const BestSellingSection = dynamic(() => import('@/components/newlanding/BestSellingSection'));
+const ModernCulturalSection = dynamic(() => import('@/components/newlanding/ModernCulturalSection'));
+const EventHolidaySection = dynamic(() => import('@/components/newlanding/EventHolidaySection'));
+const MensCouplesSection = dynamic(() => import('@/components/newlanding/MensCouplesSection'));
+const JewelrySection = dynamic(() => import('@/components/newlanding/JewelrySection'));
+const CustomProductSection = dynamic(() => import('@/components/newlanding/CustomProductSection'));
+const AboutSection = dynamic(() => import('@/components/newlanding/AboutSection'));
+const FooterSection = dynamic(() => import('@/components/newlanding/FooterSection'));
+const InfiniteTextDivider = dynamic(() => import('@/components/newlanding/InfiniteTextDivider'));
+const FresShipingDivder = dynamic(() => import('@/components/newlanding/FreshipingAnimated'));
+const CustomerFeedbackSection = dynamic(() => import('@/components/newlanding/CustomerFeedbackSection'));
+const SocialShowcaseSection = dynamic(() => import('@/components/newlanding/SocialShowcaseSection'));
+const ChatPopup = dynamic(() => import('@/components/landing/ChatPopup'));
 
 export default function HomePage() {
   return (
