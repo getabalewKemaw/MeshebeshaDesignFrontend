@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MessageSquare, Eye } from "lucide-react";
 import Image from "next/image";
-
 interface CustomRequest {
   id: string;
   userId: string;
@@ -19,7 +18,6 @@ interface CustomRequest {
     email: string;
   };
 }
-
 export default function CustomRequestsPage() {
   const { isAdmin, isLoading } = useAuth();
   const router = useRouter();
@@ -77,7 +75,6 @@ export default function CustomRequestsPage() {
         return "bg-gray-100 text-gray-700";
     }
   };
-
   if (isLoading || loading) {
     return (
       <div className="flex items-center justify-center py-16">
@@ -85,11 +82,9 @@ export default function CustomRequestsPage() {
       </div>
     );
   }
-
   if (!isAdmin) {
     return null;
   }
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Header */}
@@ -97,7 +92,6 @@ export default function CustomRequestsPage() {
         <h1 className="text-3xl font-bold text-gray-900">Custom Requests</h1>
         <p className="text-gray-600 mt-1">Manage customer design requests</p>
       </div>
-
       {/* Filters */}
       <div className="bg-white shadow-sm p-4 mb-6">
         <div className="flex gap-2 flex-wrap">

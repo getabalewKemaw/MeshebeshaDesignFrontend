@@ -1,5 +1,4 @@
 'use client';
-
 import React from 'react';
 import NewNavBar from '@/components/newlanding/NewNavBar';
 import FooterSection from '@/components/newlanding/FooterSection';
