@@ -1,5 +1,6 @@
 import { apiRequest } from "./request";
 import type { Product } from "@/types/product";
+
 export interface Category {
     id: string;
     name: string;
@@ -22,26 +23,36 @@ export interface CategoryWithProducts {
     };
 }
 
+// Client-side in-memory cache for public category responses (5-minute TTL)
+const CATEGORY_CACHE_TTL_MS = 5 * 60 * 1000;
+const categoriesCache: { data: Category[] | null; timestamp: number } = { data: null, timestamp: 0 };
+const categorySlugCache = new Map<string, { data: CategoryWithProducts | null; timestamp: number }>();
+
 /**
  * Fetch all categories from the API
  */
 export async function fetchCategories(): Promise<Category[]> {
+    const now = Date.now();
+    if (categoriesCache.data && now - categoriesCache.timestamp < CATEGORY_CACHE_TTL_MS) {
+        return categoriesCache.data;
+    }
+
     try {
         const response = await apiRequest<Category[]>('/api/v1/categories', {
             method: 'GET',
-            headers: {
-                'Cache-Control': 'no-store',// for  fetchign allways fresh data ,and not tostore the responses
-            },
         });
 
         if (!response.success) {
             throw new Error(response.error || 'Failed to fetch categories');
         }
 
-        return response.data || [];
+        const data = response.data || [];
+        categoriesCache.data = data;
+        categoriesCache.timestamp = now;
+        return data;
     } catch (error) {
         console.error('Error fetching categories:', error);
-        return [];
+        return categoriesCache.data || [];
     }
 }
 
@@ -53,14 +64,19 @@ export async function fetchCategoryBySlug(
     page: number = 1,
     limit: number = 20
 ): Promise<CategoryWithProducts | null> {
+    const cacheKey = `${slug}:${page}:${limit}`;
+    const now = Date.now();
+    const cached = categorySlugCache.get(cacheKey);
+
+    if (cached && now - cached.timestamp < CATEGORY_CACHE_TTL_MS) {
+        return cached.data;
+    }
+
     try {
         const response = await apiRequest<CategoryWithProducts>(
             `/api/v1/categories/${slug}?page=${page}&limit=${limit}`,
             {
                 method: 'GET',
-                headers: {
-                    'Cache-Control': 'no-store',
-                },
             }
         );
 
@@ -68,9 +84,11 @@ export async function fetchCategoryBySlug(
             throw new Error(response.error || 'Failed to fetch category');
         }
 
-        return response.data || null;
+        const data = response.data || null;
+        categorySlugCache.set(cacheKey, { data, timestamp: now });
+        return data;
     } catch (error) {
         console.error('Error fetching category:', error);
-        return null;
+        return cached?.data || null;
     }
 }

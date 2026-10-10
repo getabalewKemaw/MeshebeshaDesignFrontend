@@ -7,12 +7,12 @@ import { useCategoryProducts } from './useCategoryProducts';
 import NewLandingProductCard from './NewLandingProductCard';
 
 export default function EventHolidaySection() {
-    const { products: eventProducts, loading: eventLoading } = useCategoryProducts('eventholiday-dress', 10);
-    const { products: weddingProducts, loading: weddingLoading } = useCategoryProducts('weddiing', 10);
+    const [isVisible, setIsVisible] = useState(false);
+    const { products: weddingProducts, loading: weddingLoading } = useCategoryProducts('weddiing', 10, isVisible);
 
     const [currentEventIndex, setCurrentEventIndex] = useState(0);
     const [currentWeddingIndex, setCurrentWeddingIndex] = useState(0);
-    const [isVisible, setIsVisible] = useState(false);
+    const { products: eventProducts, loading: eventLoading } = useCategoryProducts('eventholiday-dress', 10, isVisible);
     const sectionRef = useRef<HTMLElement>(null);
     const eventScrollRef = useRef<HTMLDivElement>(null);
     const weddingScrollRef = useRef<HTMLDivElement>(null);
@@ -20,7 +20,7 @@ export default function EventHolidaySection() {
     // Intersection Observer for scroll-based animation
     useEffect(() => {
         // Fallback to ensure visibility
-        const timer = setTimeout(() => setIsVisible(true), 100);
+
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -30,7 +30,7 @@ export default function EventHolidaySection() {
                     }
                 });
             },
-            { threshold: 0.1 }
+            { threshold: 0.05, rootMargin: '250px' }
         );
 
         if (sectionRef.current) {
@@ -38,7 +38,7 @@ export default function EventHolidaySection() {
         }
 
         return () => {
-            clearTimeout(timer);
+
             if (sectionRef.current) {
                 observer.unobserve(sectionRef.current);
             }

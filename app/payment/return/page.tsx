@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { usePaymentStatus } from "@/hooks/usePaymentStatus";
 import { useCartStore } from "@/stores/cart";
 import { useCheckoutStore } from "@/stores/checkout";
@@ -12,7 +12,7 @@ import PaymentFailed from "@/components/payment/return/PaymentFailed";
 import PaymentPending from "@/components/payment/return/PaymentPending";
 import NewNavBar from "@/components/newlanding/NewNavBar";
 
-export default function PaymentReturnPage() {
+function PaymentReturnContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 
@@ -93,5 +93,20 @@ export default function PaymentReturnPage() {
         onRetry={retryVerification}
       />
     </>
+  );
+}
+
+export default function PaymentReturnPage() {
+  return (
+    <Suspense
+      fallback={
+        <>
+          <NewNavBar />
+          <PaymentLoading />
+        </>
+      }
+    >
+      <PaymentReturnContent />
+    </Suspense>
   );
 }

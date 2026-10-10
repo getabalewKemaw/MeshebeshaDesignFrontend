@@ -7,9 +7,9 @@ import { useCategoryProducts } from './useCategoryProducts';
 import NewLandingProductCard from './NewLandingProductCard';
 
 export default function JewelrySection() {
-    const { products, loading } = useCategoryProducts('jewlerys', 12);
-
     const [isVisible, setIsVisible] = useState(false);
+
+    const { products, loading } = useCategoryProducts('jewlerys', 12, isVisible);
     const sectionRef = useRef<HTMLElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const mobileScrollRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,7 @@ export default function JewelrySection() {
                     }
                 });
             },
-            { threshold: 0.1 }
+            { threshold: 0.05, rootMargin: '250px' }
         );
 
         if (sectionRef.current) {

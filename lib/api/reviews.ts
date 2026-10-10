@@ -161,10 +161,22 @@ export async function deleteReview(
   });
 }
 
+// In-memory cache for recent reviews
+const REVIEWS_CACHE_TTL = 5 * 60 * 1000;
+const recentReviewsCache = new Map<string, { data: ApiResponse<Review[]>; timestamp: number }>();
+
 /**
  * Get recent reviews for landing page
  */
 export async function getRecentReviews(limit = 5, rating?: number): Promise<ApiResponse<Review[]>> {
+  const cacheKey = `${limit}:${rating || 'all'}`;
+  const now = Date.now();
+  const cached = recentReviewsCache.get(cacheKey);
+
+  if (cached && now - cached.timestamp < REVIEWS_CACHE_TTL) {
+    return cached.data;
+  }
+
   const params = new URLSearchParams();
   if (limit) params.append('limit', limit.toString());
   if (rating) params.append('rating', rating.toString());
@@ -172,7 +184,13 @@ export async function getRecentReviews(limit = 5, rating?: number): Promise<ApiR
   const queryString = params.toString();
   const endpoint = `/api/v1/reviews/recent${queryString ? `?${queryString}` : ''}`;
 
-  return apiRequest<Review[]>(endpoint, {
+  const res = await apiRequest<Review[]>(endpoint, {
     method: 'GET',
   });
+
+  if (res.success) {
+    recentReviewsCache.set(cacheKey, { data: res, timestamp: now });
+  }
+
+  return res;
 }

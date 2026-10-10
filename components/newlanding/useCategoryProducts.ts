@@ -4,29 +4,45 @@ import { useState, useEffect } from 'react';
 import { ProductWithDetails } from '@/types/product';
 import { fetchCategoryBySlug } from '@/lib/api/categories';
 
-export function useCategoryProducts(categorySlug: string, limit: number = 20) {
-    const [products, setProducts] = useState<ProductWithDetails[]>([]);
-    const [loading, setLoading] = useState(true);
+const productsCache = new Map<string, ProductWithDetails[]>();
+
+export function useCategoryProducts(
+    categorySlug: string,
+    limit: number = 20,
+    enabled: boolean = true
+) {
+    const cacheKey = `${categorySlug}:${limit}`;
+    const cachedData = productsCache.get(cacheKey);
+
+    const [products, setProducts] = useState<ProductWithDetails[]>(() => cachedData || []);
+    const [loading, setLoading] = useState<boolean>(() => !cachedData && enabled);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        if (!enabled) return;
+
         let isMounted = true;
 
         const fetchProducts = async () => {
+            // If already cached, populate immediately without showing loading spinner
+            if (productsCache.has(cacheKey)) {
+                if (isMounted) {
+                    setProducts(productsCache.get(cacheKey) || []);
+                    setLoading(false);
+                }
+                return;
+            }
+
             setLoading(true);
-            console.log(`[useCategoryProducts] Starting DIRECT fetch for slug: "${categorySlug}"`);
             try {
-                // Use the dedicated category extraction endpoint which calls /api/v1/categories/:slug
-                // This avoids the issue where getFilterOptions() doesn't return all categories
                 const data = await fetchCategoryBySlug(categorySlug, 1, limit);
 
                 if (isMounted) {
                     if (data && data.products) {
-                        console.log(`[useCategoryProducts] Successfully fetched category "${categorySlug}" with ${data.products.length} products`);
-                        // Cast to ProductWithDetails because the endpoint returns products with media/variants included
-                        setProducts((data.products as unknown as ProductWithDetails[]) || []);
+                        const fetched = (data.products as unknown as ProductWithDetails[]) || [];
+                        productsCache.set(cacheKey, fetched);
+                        setProducts(fetched);
                     } else {
-                        console.warn(`[useCategoryProducts] No data found for category: "${categorySlug}" (fetchCategoryBySlug returned null/empty)`);
                         setProducts([]);
                     }
                 }
@@ -46,7 +62,7 @@ export function useCategoryProducts(categorySlug: string, limit: number = 20) {
         return () => {
             isMounted = false;
         };
-    }, [categorySlug, limit]);
+    }, [categorySlug, limit, enabled, cacheKey]);
 
     return { products, loading, error };
 }

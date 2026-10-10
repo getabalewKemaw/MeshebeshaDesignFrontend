@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import OtpInput from "@/components/forms/OtpInput";
 
-export default function VerifyEmailPage() {
+function VerifyEmailForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
@@ -37,7 +37,7 @@ export default function VerifyEmailPage() {
       if (error) setGeneralError(error.message || "Invalid OTP code");
       else if (data) router.push("/auth/sign-in");
     } catch (err: unknown) {
-      const errMsg=err instanceof Error ? err.message : "An unexpected error occurred";
+      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred";
       setGeneralError(errMsg || "An error occurred");
     } finally {
       setLoading(false);
@@ -61,7 +61,7 @@ export default function VerifyEmailPage() {
         setTimeout(() => setResendSuccess(false), 3000);
       }
     } catch (err: unknown) {
-      const msg= err instanceof Error ? err.message :"an expecetd error occured";
+      const msg = err instanceof Error ? err.message : "an expecetd error occured";
       setGeneralError(msg || "An error occurred");
     } finally {
       setResending(false);
@@ -70,7 +70,6 @@ export default function VerifyEmailPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      
       {/* Background */}
       <div 
         className="absolute inset-0 bg-cover bg-center"
@@ -81,7 +80,6 @@ export default function VerifyEmailPage() {
 
       {/* Container */}
       <div className="relative z-10 bg-white/90 backdrop-blur-xl shadow-2xl rounded-2xl p-8 md:p-10 w-full max-w-md border border-white/20">
-        
         <div className="text-center mb-8">
           <div className="w-16 h-16 mx-auto flex items-center justify-center bg-green-100 rounded-full">
             <span className="text-3xl">📧</span>
@@ -148,5 +146,19 @@ export default function VerifyEmailPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center p-4 bg-black/70">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
+        </div>
+      }
+    >
+      <VerifyEmailForm />
+    </Suspense>
   );
 }

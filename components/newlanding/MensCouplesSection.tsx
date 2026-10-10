@@ -7,10 +7,10 @@ import { useCategoryProducts } from './useCategoryProducts';
 import NewLandingProductCard from './NewLandingProductCard';
 
 export default function MensCouplesSection() {
-    const { products: menProducts, loading: menLoading } = useCategoryProducts('mens', 6);
-    const { products: coupleProducts, loading: coupleLoading } = useCategoryProducts('couples', 10);
-
     const [isVisible, setIsVisible] = useState(false);
+    const { products: coupleProducts, loading: coupleLoading } = useCategoryProducts('couples', 10, isVisible);
+
+    const { products: menProducts, loading: menLoading } = useCategoryProducts('mens', 6, isVisible);
     const sectionRef = useRef<HTMLElement>(null);
     const menScrollRef = useRef<HTMLDivElement>(null);
     const coupleScrollRef = useRef<HTMLDivElement>(null);
@@ -27,7 +27,7 @@ export default function MensCouplesSection() {
                     }
                 });
             },
-            { threshold: 0.1 }
+            { threshold: 0.05, rootMargin: '250px' }
         );
 
         if (sectionRef.current) {
