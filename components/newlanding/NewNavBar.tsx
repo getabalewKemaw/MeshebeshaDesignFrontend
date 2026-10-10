@@ -25,18 +25,53 @@ export default function NewNavBar() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [loadingCategories, setLoadingCategories] = useState(true);
     const [scrolled, setScrolled] = useState(false);
+    const [visible, setVisible] = useState(true);
+    const lastScrollY = useRef(0);
     const [hoveredCategoryId, setHoveredCategoryId] = useState<string | null>(null);
     const [mobileExpandedCategory, setMobileExpandedCategory] = useState<string | null>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
-    // Handle scroll effect
+    // Handle scroll effect: hide on scroll down, show on scroll up
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
+            const currentScrollY = window.scrollY;
+
+            // Always show navbar near the top of the page
+            if (currentScrollY < 60) {
+                setVisible(true);
+                setScrolled(currentScrollY > 20);
+                lastScrollY.current = currentScrollY;
+                return;
+            }
+
+            // Keep navbar visible if mobile drawer or account dropdown is open
+            if (open || dropdownOpen) {
+                setVisible(true);
+                setScrolled(true);
+                lastScrollY.current = currentScrollY;
+                return;
+            }
+
+            const scrollDelta = currentScrollY - lastScrollY.current;
+
+            // Buffer threshold to avoid jitter on micro-scrolls
+            if (Math.abs(scrollDelta) > 6) {
+                if (scrollDelta > 0) {
+                    // Scrolling DOWN -> hide
+                    setVisible(false);
+                } else {
+                    // Scrolling UP -> show
+                    setVisible(true);
+                }
+                lastScrollY.current = currentScrollY;
+            }
+
+            setScrolled(true);
         };
-        window.addEventListener('scroll', handleScroll);
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
+    }, [open, dropdownOpen]);
 
     // Fetch categories on mount
     useEffect(() => {
@@ -78,8 +113,9 @@ export default function NewNavBar() {
     };
 
     return (
-        <nav className={`fixed top-0 left-0 right-0 z-50 w-full bg-white/95 backdrop-blur-md border-b-[3px] border-[#310101] transition-all duration-300 ${scrolled ? 'shadow-xl bg-white' : 'shadow-md'
-            }`}>
+        <nav className={`fixed top-0 left-0 right-0 z-50 w-full bg-white/95 backdrop-blur-md border-b-[3px] border-[#310101] transition-transform duration-300 ease-in-out ${
+            scrolled ? 'shadow-xl bg-white' : 'shadow-md'
+        } ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
             <div className="max-w-[1400px] mx-auto h-[70px] px-0 md:px-0 flex items-center justify-between">
                 {/* Logo and Brand */}
                 <Link href="/" className="flex items-center gap-3 group">
