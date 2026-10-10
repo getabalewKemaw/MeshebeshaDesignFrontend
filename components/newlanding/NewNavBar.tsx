@@ -36,8 +36,8 @@ export default function NewNavBar() {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
 
-            // Always show navbar near the top of the page
-            if (currentScrollY < 60) {
+            // Always show navbar near the top of the page (within 35px)
+            if (currentScrollY < 35) {
                 setVisible(true);
                 setScrolled(currentScrollY > 20);
                 lastScrollY.current = currentScrollY;
@@ -113,9 +113,8 @@ export default function NewNavBar() {
     };
 
     return (
-        <nav className={`fixed top-0 left-0 right-0 z-50 w-full bg-white/95 backdrop-blur-md border-b-[3px] border-[#310101] transition-transform duration-300 ease-in-out ${
-            scrolled ? 'shadow-xl bg-white' : 'shadow-md'
-        } ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
+        <nav className={`fixed top-0 left-0 right-0 z-50 w-full bg-white/95 backdrop-blur-md border-b-[3px] border-[#310101] transition-transform duration-300 ease-in-out ${scrolled ? 'shadow-xl bg-white' : 'shadow-md'
+            } ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
             <div className="max-w-[1400px] mx-auto h-[70px] px-0 md:px-0 flex items-center justify-between">
                 {/* Logo and Brand */}
                 <Link href="/" className="flex items-center gap-3 group">
@@ -160,9 +159,9 @@ export default function NewNavBar() {
                     {/* Dynamic Categories - Limit to 4 with Dropdowns */}
                     {!loadingCategories && categories.slice(0, 4).map((category) => {
                         const hasSubCategories = category.children && category.children.length > 0;
-                        const isActive = pathname === `/categories/${category.slug}` || 
-                                      (category.children?.some(child => pathname === `/categories/${child.slug}`));
-                        
+                        const isActive = pathname === `/categories/${category.slug}` ||
+                            (category.children?.some(child => pathname === `/categories/${child.slug}`));
+
                         return (
                             <div
                                 key={category.id}
@@ -184,10 +183,10 @@ export default function NewNavBar() {
                                         <span className="absolute left-0 right-0 -bottom-1 h-[2px] bg-[#310101]" />
                                     )}
                                 </Link>
-                                
+
                                 {/* Dropdown for Sub-Categories */}
                                 {hasSubCategories && hoveredCategoryId === category.id && (
-                                    <div 
+                                    <div
                                         className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
                                     >
                                         <div className="py-2">
@@ -397,7 +396,7 @@ export default function NewNavBar() {
                         {!loadingCategories && categories.map((category) => {
                             const hasSubCategories = category.children && category.children.length > 0;
                             const isExpanded = mobileExpandedCategory === category.id;
-                            
+
                             return (
                                 <li key={category.id}>
                                     {hasSubCategories ? (
@@ -457,6 +456,7 @@ export default function NewNavBar() {
                             );
                         })}
 
+
                         <li>
                             <Link
                                 href="/products"
@@ -505,5 +505,3 @@ export default function NewNavBar() {
         </nav>
     );
 }
-
-
